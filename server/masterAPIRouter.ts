@@ -1,15 +1,15 @@
-import { Hono } from "hono";
 import masterUserRouter from "./user/masterUserRouter";
 import { logRouteNotFound } from "./middlewares";
+import { Request, Response, Router } from "express";
 
-const app = new Hono();
+const router = Router();
 
-app.route("/user", masterUserRouter);
+router.use("/user", masterUserRouter);
 
-app.get("/", async (c) => {
-  return c.json({ message: "Hello, api route!" });
+router.get("/", async (_req: Request, res: Response) => {
+  return res.json({ message: "Hello, api route!" });
 });
 
-app.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
+router.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
 
-export default app;
+export default router;

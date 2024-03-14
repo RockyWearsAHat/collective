@@ -3,15 +3,18 @@ import mongoose, { CallbackWithoutResultAndOptionalError } from "mongoose";
 
 export interface IUser extends Document {
   username: string;
+  email: string;
   password: string;
   verifyPassword: (password: string) => boolean;
+  toJSON: () => Partial<IUser>;
 }
 
 interface UserModel extends mongoose.Model<IUser> {}
 
 const userSchema = new mongoose.Schema<IUser, UserModel>({
   username: String,
-  password: String,
+  email: String,
+  password: String
 });
 
 userSchema.method("verifyPassword", function (password: string) {

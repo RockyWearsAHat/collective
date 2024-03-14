@@ -1,0 +1,21 @@
+let frontendFiles: string;
+if (!process.env["VITE"]) {
+  console.log("VITE not found, serving from build folder");
+  frontendFiles = process.cwd() + "/build/";
+} else {
+  frontendFiles = process.cwd() + "/";
+}
+
+console.log(frontendFiles);
+
+app.use(Express.static(frontendFiles));
+app.get("/*", (_: Request, res: Response) => {
+  res.send("/index.html");
+});
+app.listen(process.env["PORT"] ? process.env["PORT"] : 4000);
+
+if (!process.env["VITE"]) {
+  console.log(
+    `Server started on http://localhost:${process.env["PORT"] ? process.env["PORT"] : 4000}`
+  );
+}

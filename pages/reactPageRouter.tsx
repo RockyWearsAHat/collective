@@ -11,37 +11,28 @@
 //wrappers/context/everything else for the react app, then finally render pages
 
 import { ReactNode } from "react";
-import {
-  Navigate,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
 
-import App from "./home/App";
-import Test from "./test/test";
+import { Route, Routes, Navigate } from "react-router-dom";
 
-const handle = () => {
-  console.log("test2");
-};
-
-const router = createBrowserRouter([
-  {
-    path: "/test",
-    element: <Test />,
-    action: () => handle,
-  },
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/*",
-    element: <Navigate to="/" replace />,
-  },
-]);
+import Home from "./home/Home";
+import Contact from "./contact/Contact";
+import Login from "./login/Login";
+import Upload from "./upload/Upload";
+import Profile from "./profile/Profile";
 
 const PageRouter = (): ReactNode => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/create" element={<Upload />} />
+        <Route path="/*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
+  );
 };
 
 export default PageRouter;

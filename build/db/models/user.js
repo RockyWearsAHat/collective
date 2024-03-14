@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     username: String,
-    password: String,
+    email: String,
+    password: String
 });
 userSchema.method("verifyPassword", function (password) {
     return bcrypt.compareSync(password, this.password);
