@@ -48,7 +48,7 @@ export default {
     typescript({ moduleResolution: "bundler" }),
     resolve({ preferBuiltins: true }),
     commonjs({ ignoreDynamicRequires: true, ignore: builtinModules }),
-    copyFile("robots.txt", "/build/robots.txt")
+    copyFile("robots.txt", "build/robots.txt")
     // gzipPlugin()
   ]
 };
