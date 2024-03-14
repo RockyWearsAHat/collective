@@ -1,14 +1,17 @@
-import { Hono } from "hono";
+import { logRouteNotFound } from "../middlewares";
+import { Router } from "express";
+
 import registerRouter from "./register";
 import loginRouter from "./login";
 import deleteAllRouter from "./deleteAll";
-import { logRouteNotFound } from "../middlewares";
+import savePFP from "./savePFP";
 
-const app = new Hono();
+const router = Router();
 
-app.route("/register", registerRouter);
-app.route("/login", loginRouter);
-app.route("/delete-all", deleteAllRouter);
-app.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
+router.use("/register", registerRouter);
+router.use("/login", loginRouter);
+router.use("/delete-all", deleteAllRouter);
+router.use("/savePFP", savePFP);
+router.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
 
-export default app;
+export default router;

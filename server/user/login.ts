@@ -1,37 +1,38 @@
-import { Hono } from "hono";
 import connectToMongo from "../../db/connectToMongo";
 import User, { IUser } from "../../db/models/user";
+import { Request, Response, Router } from "express";
 
-const app = new Hono();
+const router = Router();
 
-app.post("/", async (c) => {
-  await connectToMongo();
+router.post("/", async (req: Request, res: Response) => {
+  let { username, password }: Partial<IUser> = req.body;
+  console.log(typeof username, typeof password, username, password);
 
-  const { username, password }: Partial<IUser> = await c.req.json();
-
+  //Validate input
   if (typeof username !== "string" || typeof password !== "string")
-    return c.json({ message: "Username and password must be strings" });
+    return res.json({ error: "Username and password must be strings" });
 
   if (!username || !password || username.length == 0 || password.length == 0)
-    return c.json({ message: "Username and password must not be empty" });
+    return res.json({ error: "Username and password must not be empty" });
 
+  //Get user from DB
+  await connectToMongo();
   const foundUser = await User.findOne<IUser>({ username });
 
+  //Handle errors (user not found)
   if (!foundUser)
-    return c.json({ message: `Unable to find user with username ${username}` });
+    return res.json({ error: `Unable to find user with username ${username}` });
 
-  console.log(foundUser);
-
-  //   console.log(foundUser.verifyPassword(password));
-
+  //Verify the user entered the right info
   const passwordsMatch = foundUser.verifyPassword(password);
 
-  console.log(passwordsMatch);
+  //If not, throw error
+  if (!passwordsMatch) return res.json({ error: "Invalid password" });
 
-  return c.json({
-    loginRes: foundUser ? foundUser : "No user found",
-    passwordsMatch,
-  });
+  //If so, assemble object to return and send it
+  const returnObj = { correctLogIn: true, username: foundUser.username };
+
+  return res.json(returnObj);
 });
 
-export default app;
+export default router;

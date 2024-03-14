@@ -5,26 +5,32 @@ import { builtinModules } from "node:module";
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import gzipPlugin from "rollup-plugin-gzip";
+import { brotliCompress } from "zlib";
+import { promisify } from "util";
+import { copyFile, copyIndexFile } from "./plugins/copyFile.js";
+
+const brotliPromise = promisify(brotliCompress);
 
 export default {
   input: Object.fromEntries(
     glob
       .sync(
         [
-          "server.ts",
+          "*.ts",
           "api/**/*.ts",
           "db/*.ts",
           "db/**/*.ts",
           "server/**/*.ts",
-          "server/*.ts",
+          "server/*.ts"
         ],
         {
-          ignore: ["**/*.d.ts", "**/*.test.ts"],
+          ignore: ["**/*.d.ts", "**/*.test.ts"]
         }
       )
-      .map((file) => [
+      .map(file => [
         file.slice(0, file.length - extname(file).length),
-        fileURLToPath(new URL(file, import.meta.url)),
+        fileURLToPath(new URL(file, import.meta.url))
       ])
   ),
   output: {
@@ -32,14 +38,17 @@ export default {
     format: "esm",
     sourcemap: true,
     preserveModules: true,
-    preserveModulesRoot: ".",
+    preserveModulesRoot: "."
   },
   external(id) {
     return id.includes(sep + "node_modules" + sep);
   },
   plugins: [
+    // copyIndexFile("index.html", "/build/index.html", true),
     typescript({ moduleResolution: "bundler" }),
     resolve({ preferBuiltins: true }),
     commonjs({ ignoreDynamicRequires: true, ignore: builtinModules }),
-  ],
+    copyFile("robots.txt", "/build/robots.txt")
+    // gzipPlugin()
+  ]
 };

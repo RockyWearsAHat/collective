@@ -1,20 +1,19 @@
-import { Hono } from "hono";
 import connectToMongo from "../../db/connectToMongo";
 import User from "../../db/models/user";
-import { Context } from "hono";
+import { Request, Response, Router } from "express";
 
-const app = new Hono();
+const router = Router();
 
-const handleDelete = async (c: Context) => {
+const handleDelete = async (_req: Request, res: Response) => {
   try {
     await connectToMongo();
     await User.deleteMany();
-    return c.json({ message: "Deleted all users" });
+    return res.json({ message: "Deleted all users" });
   } catch (err) {
-    return c.json({ message: "No users to delete" });
+    return res.json({ message: "No users to delete" });
   }
 };
 
-app.delete("/", handleDelete).post("/", handleDelete);
+router.delete("/", handleDelete).post("/", handleDelete);
 
-export default app;
+export default router;
