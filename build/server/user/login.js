@@ -5,7 +5,6 @@ import { Router } from 'express';
 const router = Router();
 router.post("/", async (req, res) => {
     let { username, password } = req.body;
-    console.log(typeof username, typeof password, username, password);
     //Validate input
     if (typeof username !== "string" || typeof password !== "string")
         return res.json({ error: "Username and password must be strings" });

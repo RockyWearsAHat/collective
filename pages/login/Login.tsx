@@ -7,10 +7,13 @@ export default function Login(): ReactNode {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setIsLoading(true);
     const res = await fetch("/api/user/login", {
       method: "POST",
       headers: {
@@ -18,6 +21,7 @@ export default function Login(): ReactNode {
       },
       body: JSON.stringify({ username: email, password })
     });
+    setIsLoading(false);
 
     const data = await res.json();
 
@@ -82,16 +86,12 @@ export default function Login(): ReactNode {
           </div>
           <button
             type="submit"
-            className="rounded-full border-2 border-black transition-all duration-300 ease-in-out
-             hover:bg-slate-700 hover:text-white"
+            className={`rounded-full border-2 border-black transition-all duration-300
+             ease-in-out hover:bg-slate-700 hover:text-white ${isLoading ?? "bg-slate-800"}`}
           >
             Login
           </button>
         </form>
-
-        <button onClick={() => console.log(Cookies.get("username"))}>
-          Click to check cookie
-        </button>
       </div>
     </>
   );

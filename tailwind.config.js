@@ -3,10 +3,8 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   //Assumes that all styled pages are located in the ./pages or ./components directory, either directly or in subdirectories.
   content: [
-    "./pages/*.{html,js,tsx,jsx}",
-    "./pages/**/*.{html,js,tsx,jsx}",
-    "./components/*.{html,js,tsx,jsx}",
-    "./components/**/*.{html,js,tsx,jsx}"
+    "./{pages,components}/*.{html,js,tsx,jsx}",
+    "./{pages,components}/**/*.{html,js,tsx,jsx}"
   ],
   theme: {
     extend: {
@@ -21,6 +19,6 @@ module.exports = {
         nav: "3rem"
       }
     },
-    plugins: [require("tailwindcss-3d")]
+    plugins: []
   }
 };

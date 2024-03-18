@@ -17,7 +17,7 @@ export default function Profile(): ReactNode {
   };
 
   return (
-    <div className="p-nav">
+    <div className="pt-nav">
       <form onSubmit={handleFileUpload} encType="multipart/form-data">
         <input
           type="file"
