@@ -20,6 +20,8 @@ export default function Navbar(): ReactNode {
     ["/logout", "Logout"]
   ];
 
+  //Testing 123 abc
+
   if (!Cookies.get("loggedIn")) activeLinks.push(["/login", "Login"]);
 
   //Underscore denotes that the variable is not used, lint will throw an error otherwise
