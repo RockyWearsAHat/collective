@@ -23,7 +23,11 @@ export default function Home(): ReactNode {
           />
         </Suspense>
       </Parallax>
-      <div className="h-[100vh] w-[100vw] bg-black"></div>
+      <div className="flex h-[100vh] w-[100vw] justify-center bg-black align-middle">
+        <div className="self-center">
+          <h1>Hello</h1>
+        </div>
+      </div>
     </>
   );
 }

@@ -10,29 +10,48 @@
 //a direct handler, this index.html file then calls the client.tsx entry point for the react app, which will then create the
 //wrappers/context/everything else for the react app, then finally render pages
 
-import { ReactNode } from "react";
-
-import { Route, Routes, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import Home from "./home/Home";
 import Contact from "./contact/Contact";
 import Login from "./login/Login";
 import Upload from "./upload/Upload";
 import Profile from "./profile/Profile";
+import Logout from "./logout/Logout";
+import App from "./app/App";
 
-const PageRouter = (): ReactNode => {
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/create" element={<Upload />} />
-        <Route path="/*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
-  );
-};
+const PageRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        index: true,
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/contact",
+        element: <Contact />
+      },
+      {
+        path: "/login",
+        element: <Login />
+      },
+      {
+        path: "/profile",
+        element: <Profile />
+      },
+      {
+        path: "/create",
+        element: <Upload />
+      },
+      {
+        path: "/logout",
+        element: <Logout />
+      }
+    ]
+  }
+]);
 
 export default PageRouter;

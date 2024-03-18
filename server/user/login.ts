@@ -6,7 +6,6 @@ const router = Router();
 
 router.post("/", async (req: Request, res: Response) => {
   let { username, password }: Partial<IUser> = req.body;
-  console.log(typeof username, typeof password, username, password);
 
   //Validate input
   if (typeof username !== "string" || typeof password !== "string")
