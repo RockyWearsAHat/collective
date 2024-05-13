@@ -13,6 +13,9 @@ import { IUser } from "../db/models/user";
 
 import MongoStore from "connect-mongo";
 
+//Import serverless-http for running in AWS Lambda
+import serverless from "serverless-http";
+
 export const app = express();
 
 //Set up session store for cookies and storing JWTs and auth
@@ -89,11 +92,13 @@ if (process.env !== undefined && process.env["VITE"]) {
         res.sendFile("index.html", { root: frontendFiles });
       });
 
-      app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
-        console.log(
-          !process.env["PORT"] ? "Server started on http://localhost:4000" : ""
-        );
-      });
+      // app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
+      //   console.log(
+      //     !process.env["PORT"] ? "Server started on http://localhost:4000" : ""
+      //   );
+      // });
     }
   }
 }
+
+export const handler = serverless(app);

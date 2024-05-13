@@ -90,7 +90,7 @@ const ImageEditor: FC<ImageEditorProps> = ({ file, setTarget }): ReactNode => {
           (document.getElementById("modifiedImage") as HTMLImageElement)!.src =
             URL.createObjectURL(modifiedFile);
 
-          //   setTarget(modifiedFile);
+          setTarget(modifiedFile);
         }}
       >
         Finish Selection and Upload
