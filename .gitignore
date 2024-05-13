@@ -6,6 +6,7 @@ node_modules
 
 # Extra files
 .DS_Store
+.vscode
 # .gitignore
 
 # Build files, if you want to build just download and run npm run buildnrun or npm build
