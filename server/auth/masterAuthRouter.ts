@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { validateTokenHandler } from "./validateToken";
 import { signToken, validateToken } from "../tokens/jwt";
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 
 export const masterAuthRouter: Router = Router();
 

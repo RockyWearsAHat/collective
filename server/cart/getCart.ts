@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { withAuth } from "../auth/masterAuthRouter";
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 import { ICartItem } from "../../db/models/cartItem";
 
 export const getCartRouter: Router = Router();
