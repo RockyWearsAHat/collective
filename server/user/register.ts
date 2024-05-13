@@ -1,6 +1,6 @@
 import User, { IUser } from "../../db/models/user";
 import { Request, Response, Router } from "express";
-import checkIfEmail from "../../helpers/checkIfEmail";
+import { checkIfEmail } from "../../helpers/checkIfEmail";
 
 export const registerRouter = Router();
 
