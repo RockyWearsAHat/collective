@@ -1,6 +1,6 @@
 import express, { Response, Request } from "express";
 
-import apiRouter from "./masterAPIRouter";
+import { masterAPIRouter } from "./masterAPIRouter";
 
 import cluster from "cluster";
 import { cpus } from "os";
@@ -61,7 +61,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Set up the router for API routes
-app.use("/api", apiRouter);
+app.use("/api", masterAPIRouter);
 
 if (process.env !== undefined && process.env["VITE"]) {
   //If running in dev, just run the server from vite, vite plugin to run express is used (SEE vite.config.ts)

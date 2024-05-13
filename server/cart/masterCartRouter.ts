@@ -1,12 +1,10 @@
 import { Router } from "express";
-import addToCartRouter from "./addToCart";
-import removeFromCartRouter from "./removeFromCart";
-import getCartRouter from "./getCart";
+import { addToCartRouter } from "./addToCart";
+import { removeFromCartRouter } from "./removeFromCart";
+import { getCartRouter } from "./getCart";
 
-const router: Router = Router();
+export const masterCartRouter: Router = Router();
 
-router.use("/addToCart", addToCartRouter);
-router.use("/removeFromCart", removeFromCartRouter);
-router.use("/getCart", getCartRouter);
-
-export default router;
+masterCartRouter.use("/addToCart", addToCartRouter);
+masterCartRouter.use("/removeFromCart", removeFromCartRouter);
+masterCartRouter.use("/getCart", getCartRouter);

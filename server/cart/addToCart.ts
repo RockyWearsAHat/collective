@@ -4,9 +4,9 @@ import User from "../../db/models/user";
 import mongoose, { ObjectId } from "mongoose";
 import CartItem, { ICartItem } from "../../db/models/cartItem";
 
-const router: Router = Router();
+export const addToCartRouter: Router = Router();
 
-router.post("/", withAuth, async (req: Request, res: Response) => {
+addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
   console.log("got request");
   const { productToAdd } = await req.body;
 
@@ -63,5 +63,3 @@ router.post("/", withAuth, async (req: Request, res: Response) => {
 
   res.json("successfully added item to cart");
 });
-
-export default router;

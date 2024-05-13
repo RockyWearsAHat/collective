@@ -2,9 +2,9 @@ import { Request, Response, Router } from "express";
 // import { withAuth } from "../auth/masterAuthRouter";
 import Item from "../../db/models/item";
 
-const router = Router();
+export const createItemRouter = Router();
 
-router.post("/", async function (req: Request, res: Response) {
+createItemRouter.post("/", async function (req: Request, res: Response) {
   const { name, price, salePrice } = req.body;
 
   if (!name || !price || !salePrice) {
@@ -23,5 +23,3 @@ router.post("/", async function (req: Request, res: Response) {
   console.log(newItem.toJSON());
   res.json({ ok: true, message: "Item created" });
 });
-
-export default router;

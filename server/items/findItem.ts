@@ -3,9 +3,9 @@ import { Request, Response, Router } from "express";
 import Item, { IItem } from "../../db/models/item";
 import mongoose from "mongoose";
 
-const router = Router();
+export const findItemRouter = Router();
 
-router.post("/", async function (req: Request, res: Response) {
+findItemRouter.post("/", async function (req: Request, res: Response) {
   //Set defaults so routing can understand the request if malformed URL => /products//ID or something similar
   let { productName = "", productID = "", currentURL = "" } = req.body;
 
@@ -128,5 +128,3 @@ router.post("/", async function (req: Request, res: Response) {
     return res.json({ item: foundItem.toJSON() });
   }
 });
-
-export default router;

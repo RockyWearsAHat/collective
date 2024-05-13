@@ -1,12 +1,10 @@
-import { logRouteNotFound } from "../middlewares";
+import { logRouteNotFound } from "../helpers/middlewares/middlewares";
 import { Router } from "express";
-import createItemRouter from "./createItem";
-import findItemRouter from "./findItem";
+import { createItemRouter } from "./createItem";
+import { findItemRouter } from "./findItem";
 
-const router = Router();
+export const masterProductRouter = Router();
 
-router.use("/create", createItemRouter);
-router.use("/find", findItemRouter);
-router.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
-
-export default router;
+masterProductRouter.use("/create", createItemRouter);
+masterProductRouter.use("/find", findItemRouter);
+masterProductRouter.use("/*", logRouteNotFound);
