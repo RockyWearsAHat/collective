@@ -101,4 +101,6 @@ if (process.env !== undefined && process.env["VITE"]) {
   }
 }
 
+//SOME ERRORS TO FIX TO DO WITH DEFAULT EXPORTS OF ROUTES, ALL NEED TO BE NAMED EXPORTS (I THINK??)
+
 export const handler = serverless(app);
