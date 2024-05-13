@@ -1,7 +1,7 @@
 import User, { IUser } from "../../db/models/user";
 import { Request, Response, Router } from "express";
 import { signToken, validateToken } from "../tokens/jwt";
-import checkIfEmail from "../../helpers/checkIfEmail";
+import { checkIfEmail } from "../../helpers/checkIfEmail";
 import { getUserPFP } from "../helpers/s3";
 
 export const loginRouter = Router();
