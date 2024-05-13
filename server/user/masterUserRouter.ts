@@ -18,6 +18,6 @@ router.use("/savePFP", savePFPRouter);
 router.use("/getPFP", getPFPRouter);
 router.use("/logout", logoutRouter);
 router.use("/checkLoggedIn", checkLoggedInRouter);
-router.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
+router.use("/*", logRouteNotFound);
 
 export default router;
