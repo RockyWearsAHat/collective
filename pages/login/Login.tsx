@@ -44,8 +44,7 @@ export default function Login(): ReactNode {
     if (error || data.error) {
       setErrorDisplay(error ? error : data.error);
     } else {
-      console.log(`logged in ${data}`);
-      // window.location.href = "/";
+      window.location.href = "/";
     }
   };
 
