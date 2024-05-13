@@ -3,7 +3,6 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 
 import "../globals.css";
 
-//Include tailwindcss
 import "../tailwindOutput.css";
 import Navbar from "../../components/navbar/Navbar";
 import { Outlet } from "react-router-dom";
@@ -24,8 +23,8 @@ const App: React.FC = () => {
 
   return (
     <>
-      <ActiveContext.Provider value={activePageContextValue}>
-        <HelmetProvider>
+      <HelmetProvider>
+        <ActiveContext.Provider value={activePageContextValue}>
           <Helmet>
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link
@@ -40,8 +39,8 @@ const App: React.FC = () => {
           </Helmet>
           <Navbar />
           <Outlet />
-        </HelmetProvider>
-      </ActiveContext.Provider>
+        </ActiveContext.Provider>
+      </HelmetProvider>
     </>
   );
 };

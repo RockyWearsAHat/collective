@@ -1,4 +1,3 @@
-import connectToMongo from "../../db/connectToMongo";
 import User from "../../db/models/user";
 import { Request, Response, Router } from "express";
 
@@ -6,7 +5,6 @@ const router = Router();
 
 const handleDelete = async (_req: Request, res: Response) => {
   try {
-    await connectToMongo();
     await User.deleteMany();
     return res.json({ message: "Deleted all users" });
   } catch (err) {

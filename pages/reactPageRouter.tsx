@@ -19,11 +19,16 @@ import Upload from "./upload/Upload";
 import Profile from "./profile/Profile";
 import Logout from "./logout/Logout";
 import App from "./app/App";
+import ErrorPage from "./error/Error";
+import Product from "./products/Product";
+import MultipleProductSelect from "./products/MultipleProductsSelect";
+import ProductNotFound from "./products/ProductNotFound";
 
 const PageRouter = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -49,6 +54,26 @@ const PageRouter = createBrowserRouter([
       {
         path: "/logout",
         element: <Logout />
+      },
+      {
+        path: "/products/browse/:productName",
+        element: <MultipleProductSelect />
+      },
+      {
+        path: "/products/:productName",
+        element: <Product />
+      },
+      {
+        path: "/products//:productID?",
+        element: <Product />
+      },
+      {
+        path: "/products/:productName/:productID?",
+        element: <Product />
+      },
+      {
+        path: "/product-not-found",
+        element: <ProductNotFound />
       }
     ]
   }

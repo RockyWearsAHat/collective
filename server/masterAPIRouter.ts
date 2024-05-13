@@ -1,14 +1,16 @@
-import masterUserRouter from "./user/masterUserRouter";
 import { logRouteNotFound } from "./middlewares";
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+import masterUserRouter from "./user/masterUserRouter";
+import masterAuthRouter from "./auth/masterAuthRouter";
+import masterCartRouter from "./cart/masterCartRouter";
+import masterProductRouter from "./items/masterProductRouter";
 
 const router = Router();
 
 router.use("/user", masterUserRouter);
-
-router.get("/", async (_req: Request, res: Response) => {
-  return res.json({ message: "Hello, api route!" });
-});
+router.use("/auth", masterAuthRouter);
+router.use("/cart", masterCartRouter);
+router.use("/products", masterProductRouter);
 
 router.get("/*", logRouteNotFound).post("/*", logRouteNotFound);
 

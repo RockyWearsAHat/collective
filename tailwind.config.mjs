@@ -1,4 +1,4 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
+import defaultTheme from "tailwindcss/defaultTheme";
 
 module.exports = {
   //Assumes that all styled pages are located in the ./pages or ./components directory, either directly or in subdirectories.

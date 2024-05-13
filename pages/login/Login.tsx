@@ -1,52 +1,51 @@
 import { ReactNode, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import Cookies from "js-cookie";
+import { useMutation } from "../../hooks/useMutation";
+
+export const ToggleEye = ({
+  className,
+  showPassword,
+  setShowPassword
+}: {
+  className: string;
+  showPassword: boolean;
+  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  return showPassword ? (
+    <FaEye className={className} onClick={() => setShowPassword(false)} />
+  ) : (
+    <FaEyeSlash className={className} onClick={() => setShowPassword(true)} />
+  );
+};
 
 export default function Login(): ReactNode {
-  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const [errorDisplay, setErrorDisplay] = useState<string>("");
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {
+    loading,
+    error,
+    fn: logInUser
+  } = useMutation({
+    url: "/api/user/login",
+    method: "POST"
+  });
 
   const handleSubmit = async (e: any) => {
+    setErrorDisplay("");
     e.preventDefault();
-    setIsLoading(true);
-    const res = await fetch("/api/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username: email, password })
-    });
-    setIsLoading(false);
+    const data = await logInUser({ username, password });
 
-    const data = await res.json();
-
-    console.log(data);
-
-    if (data.error) {
-      alert(data.error);
+    if (error || data.error) {
+      setErrorDisplay(error ? error : data.error);
     } else {
-      Cookies.set("loggedIn", data.loggedIn, { expires: 1 });
       window.location.href = "/";
     }
-  };
-
-  const ToggleEye = (props: { className: string }) => {
-    return showPassword ? (
-      <FaEye
-        className={props.className}
-        onClick={() => setShowPassword(false)}
-      />
-    ) : (
-      <FaEyeSlash
-        className={props.className}
-        onClick={() => setShowPassword(true)}
-      />
-    );
   };
 
   return (
@@ -63,9 +62,9 @@ export default function Login(): ReactNode {
           <h1 className="uppercase">Login</h1>
           <input
             type="text"
-            placeholder="Email / Username"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            placeholder="Username / Email"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             name="username"
             autoComplete="username"
             id="username"
@@ -82,12 +81,25 @@ export default function Login(): ReactNode {
               id="current-password"
               className={`${showPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
             />
-            <ToggleEye className="absolute right-2 top-[7px] hover:cursor-pointer" />
+            <ToggleEye
+              className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          </div>
+          <div
+            className={`relative w-full ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
+          >
+            <p
+              className={`rounded-md text-red-500 ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
+            >
+              {errorDisplay}
+            </p>
           </div>
           <button
             type="submit"
-            className={`rounded-full border-2 border-black transition-all duration-300
-             ease-in-out hover:bg-slate-700 hover:text-white ${isLoading ?? "bg-slate-800"}`}
+            className={`rounded-full border-2 border-black
+             ${loading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
           >
             Login
           </button>

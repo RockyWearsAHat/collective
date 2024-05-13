@@ -83,7 +83,7 @@ export default [
     plugins: [
       // copyIndexFile("index.html", "/build/index.html", true),
       typescript({ moduleResolution: "bundler" }),
-      resolve({ preferBuiltins: true }),
+      resolve({ preferBuiltins: true, jsnext: true, main: true }),
       commonjs({ ignoreDynamicRequires: true, ignore: builtinModules }),
       copyFile("robots.txt", "build/robots.txt"),
       gzipPlugin(),

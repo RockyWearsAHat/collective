@@ -1,19 +1,68 @@
-import Express, { Response, Request } from "express";
+import express, { Response, Request } from "express";
 
 import apiRouter from "./masterAPIRouter";
 
 import cluster from "cluster";
 import { cpus } from "os";
 
-export const app = Express();
+import cors from "cors";
 
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: true }));
+//Import connection code from mongoose, self contained so no need to call it, just handle errors and log when server opens
+import db from "../db/connectToMongo";
+import { IUser } from "../db/models/user";
 
+import MongoStore from "connect-mongo";
+
+export const app = express();
+
+//Set up session store for cookies and storing JWTs and auth
+declare module "express-session" {
+  export interface SessionData {
+    token: string;
+    user: Partial<IUser> | undefined;
+    userPFP: string;
+  }
+}
+import expressSession from "express-session";
+
+const sessionStore = new MongoStore({
+  client: db.getClient(),
+  dbName: "balls",
+  collectionName: "sessions",
+  stringify: false,
+  autoRemove: "disabled"
+});
+
+app.use(
+  expressSession({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: false,
+    store: sessionStore,
+    unset: "destroy",
+    name: "artistcollective.sid",
+    cookie: {
+      httpOnly: true,
+      sameSite: true,
+      secure: false,
+      path: "/"
+    }
+  })
+);
+
+//Use Cors
+app.use(cors({ origin: true, credentials: true }));
+
+//Parse JSON and FormData
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//Set up the router for API routes
 app.use("/api", apiRouter);
 
 if (process.env !== undefined && process.env["VITE"]) {
   //If running in dev, just run the server from vite, vite plugin to run express is used (SEE vite.config.ts)
+  console.log("Running in dev mode");
 } else {
   //If not running in dev, check how many threads and spawn workers
   if (cluster.isPrimary) {
@@ -34,15 +83,17 @@ if (process.env !== undefined && process.env["VITE"]) {
   } else {
     if (!process.env["VITE"]) {
       const frontendFiles = process.cwd() + "/build/";
-      app.use(Express.static(frontendFiles));
+      app.use(express.static(frontendFiles));
 
       app.get("/*", (_: Request, res: Response) => {
         res.sendFile("index.html", { root: frontendFiles });
       });
-      app.listen(process.env["PORT"] ? process.env["PORT"] : 4000);
-      console.log(
-        !process.env["PORT"] ? "Server started on http://localhost:4000" : ""
-      );
+
+      app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
+        console.log(
+          !process.env["PORT"] ? "Server started on http://localhost:4000" : ""
+        );
+      });
     }
   }
 }
