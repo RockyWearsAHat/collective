@@ -1,35 +1,61 @@
 import { ReactNode, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { ActiveContext } from "../app/App";
+import { useMutation } from "../../hooks/useMutation";
+import { Helmet } from "react-helmet-async";
 
 const Logout = (): ReactNode => {
-  const { active: _active, setActive } = useContext(ActiveContext);
+  const { active, setActive } = useContext(ActiveContext);
+
+  const { fn: logout } = useMutation({
+    url: "/api/user/logout",
+    method: "GET",
+    credentials: "same-origin"
+  });
+
+  const { fn: checkLoggedIn } = useMutation({
+    url: "/api/user/checkLoggedIn",
+    method: "GET",
+    credentials: "same-origin"
+  });
 
   useEffect(() => {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++)
-      Cookies.set(cookies[i].split("=")[0], "", { expires: -1 });
+    checkLoggedIn().then(res => {
+      if (res.loggedIn == true && res.loggedIn) {
+        setActive("/logout");
+        logout().then(res => {
+          setActive(res.page);
+        });
+      }
+    });
+  }, [active]);
 
-    setActive("/loggedOut");
+  useEffect(() => {
+    setActive("/logout");
   }, []);
 
   return (
-    <div className="flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
-      <div className="flex h-auto w-auto flex-col justify-center self-center text-center align-middle">
-        <h1 className="text-3xl">You Have Been Successfully Logged Out</h1>
-        <p>
-          Thank you for using the Artist Collective, we hope you enjoyed your
-          visit
-        </p>
-        <Link
-          to="/"
-          className="underline decoration-white transition-all duration-300 ease-in-out hover:text-blue-200 hover:decoration-blue-200"
-        >
-          Go Back To Homepage
-        </Link>
+    <>
+      <Helmet>
+        <title>The Artist Collective | Logout</title>
+      </Helmet>
+      <div className="flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
+        <div className="flex h-auto w-auto flex-col justify-center self-center text-center align-middle">
+          <h1 className="text-3xl">You Have Been Successfully Logged Out</h1>
+          <p>
+            Thank you for using the Artist Collective, we hope you enjoyed your
+            visit
+          </p>
+          <Link
+            to="/"
+            className="underline decoration-white transition-all duration-300 ease-in-out hover:text-blue-200 hover:decoration-blue-200"
+            onClick={() => setActive("/")}
+          >
+            Go Back To Homepage
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

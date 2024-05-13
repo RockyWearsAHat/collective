@@ -1,13 +1,49 @@
-import { ReactNode, Suspense, useContext } from "react";
+import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
-import Cookies from "js-cookie";
 import { ActiveContext } from "../../pages/app/App";
+import { useMutation } from "../../hooks/useMutation";
 
 type LinkMap = [url: string, title: string];
 
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
+  if (extensionUrl == "") extensionUrl = "/";
+
+  //Underscore denotes that the variable is not used, lint will throw an error otherwise
+  //State just used to tell the component to re-render when updated, context so that logout page can update
+  const { active, setActive } = useContext(ActiveContext);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
+
+  const { fn: checkLoggedIn } = useMutation({
+    url: "/api/user/checkLoggedIn",
+    method: "GET",
+    credentials: "same-origin"
+  });
+
+  const { fn: fetchUserProfilePhoto } = useMutation({
+    url: "/api/user/getPFP",
+    method: "GET",
+    credentials: "same-origin"
+  });
+
+  useEffect(() => {
+    //Check if the user is logged in, on every page change, if so update nav to render logged in state
+    if (!userProfilePhoto || active == "/profilePhotoChanged") {
+      fetchUserProfilePhoto().then(res => {
+        if (res && res.link) {
+          if (userProfilePhoto != res.link) setUserProfilePhoto(res.link);
+        }
+        setActive(extensionUrl);
+      });
+    }
+    checkLoggedIn().then(res => {
+      if (res && (res.loggedIn == true || res.loggedIn == false)) {
+        setLoggedIn(res.loggedIn);
+      }
+    });
+  }, [active]);
 
   const activeLinks: Array<LinkMap> = [
     ["/", "Home"],
@@ -20,11 +56,7 @@ export default function Navbar(): ReactNode {
     ["/logout", "Logout"]
   ];
 
-  if (!Cookies.get("loggedIn")) activeLinks.push(["/login", "Login"]);
-
-  //Underscore denotes that the variable is not used, lint will throw an error otherwise
-  //State just used to tell the component to re-render when updated, context so that logout page can update
-  const { active: _active, setActive } = useContext(ActiveContext);
+  if (!loggedIn) activeLinks.push(["/login", "Login"]);
 
   return (
     <div className="absolute z-50 min-w-[100vw] max-w-[100vw] select-none">
@@ -51,7 +83,7 @@ export default function Navbar(): ReactNode {
             </li>
           );
         })}
-        {Cookies.get("loggedIn") && (
+        {loggedIn && (
           <>
             <li className="group relative">
               <Link
@@ -60,7 +92,10 @@ export default function Navbar(): ReactNode {
                 onClick={() => setActive("/profile")}
               >
                 <div
-                  className={`group z-50 h-[24px] w-[24px] rounded-full bg-[url('/examplePFP.jpg')] bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
+                  style={{
+                    backgroundImage: `${userProfilePhoto ? `url(${userProfilePhoto})` : ""}`
+                  }}
+                  className={`group z-50 h-[24px] w-[24px] rounded-full ${userProfilePhoto ? "" : "bg-[url('/placeholderProfilePhoto.jpg')] "}bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
                 ></div>
               </Link>
               <div className={`absolute h-[0.5rem] w-[24px]`}>
@@ -70,7 +105,7 @@ export default function Navbar(): ReactNode {
                       return (
                         <div
                           key={url}
-                          className="profileDropdownLink pointer-events-none flex w-[100%] justify-end transition-all duration-300 ease-in-out hover:bg-slate-700"
+                          className={`profileDropdownLink pointer-events-none flex w-[100%] justify-end transition-all duration-300 ease-in-out hover:bg-slate-700 ${active == url ? "bg-slate-700" : ""}`}
                         >
                           <Link
                             to={url}
@@ -93,7 +128,7 @@ export default function Navbar(): ReactNode {
                 title="Create New Piece"
               >
                 <FaPlus
-                  className={`z-50 max-h-5 min-h-5 min-w-5 max-w-5`}
+                  className={`z-50 max-h-5 min-h-5 min-w-5 max-w-5 rounded-full transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                   title="Upload"
                 />
               </Link>

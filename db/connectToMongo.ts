@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
-async function connectToMongo() {
-  try {
-    await mongoose.connect(
-      "mongodb+srv://alexwaldmann2004:85sv6aS8z2RQxY1s@cluster0.8rpqnmn.mongodb.net/balls?retryWrites=true&w=majority"
-    );
-    console.log("Connected to the database");
-  } catch (error) {
-    console.error("Failed to connect to the database:", error);
+mongoose.connect(
+  process.env.MONGO_LOCAL
+    ? ``
+    : `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.8rpqnmn.mongodb.net/balls?retryWrites=true&w=majority`,
+  {
+    retryWrites: true,
+    retryReads: true
   }
-}
+);
+mongoose.connection.on("error", console.log.bind(console, "connection error:"));
+mongoose.connection.once("open", () => {
+  console.log("Connected to Mongo");
+});
 
-export default connectToMongo;
+export default mongoose.connection;
