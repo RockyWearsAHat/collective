@@ -8,7 +8,7 @@ import { cpus } from "os";
 import cors from "cors";
 
 //Import connection code from mongoose, self contained so no need to call it, just handle errors and log when server opens
-import db from "../db/connectToMongo";
+import { db } from "../db/connectToMongo";
 import { IUser } from "../db/models/user";
 
 import MongoStore from "connect-mongo";

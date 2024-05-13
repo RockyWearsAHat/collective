@@ -16,4 +16,4 @@ mongoose.connection.once("open", () => {
   console.log("Connected to Mongo");
 });
 
-export default mongoose.connection;
+export const db = mongoose.connection;
