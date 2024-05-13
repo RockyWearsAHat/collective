@@ -2,9 +2,9 @@ import User, { IUser } from "../../db/models/user";
 import { Request, Response, Router } from "express";
 import checkIfEmail from "../../helpers/checkIfEmail";
 
-const router = Router();
+export const registerRouter = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+registerRouter.post("/", async (req: Request, res: Response) => {
   try {
     const { username, email, password }: Partial<IUser> = req.body;
 
@@ -42,5 +42,3 @@ router.post("/", async (req: Request, res: Response) => {
     return res.json({ message: `Error creating user ${err}` });
   }
 });
-
-export default router;

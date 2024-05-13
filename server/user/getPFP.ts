@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 import { withAuth } from "../auth/masterAuthRouter";
-import { getUserPFP } from "../s3";
+import { getUserPFP } from "../helpers/s3";
 
-const router = Router();
+export const getPFPRouter: Router = Router();
 
 const getPFP = async (req: Request, res: Response) => {
   if (!req.session.user?._id)
@@ -13,6 +13,4 @@ const getPFP = async (req: Request, res: Response) => {
   return res.json({ link: pfpLink });
 };
 
-router.get("/", withAuth, getPFP);
-
-export default router;
+getPFPRouter.get("/", withAuth, getPFP);

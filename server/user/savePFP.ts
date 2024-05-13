@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
 import multer, { memoryStorage } from "multer";
 import { withAuth } from "../auth/masterAuthRouter";
-import { uploadToS3 } from "../s3";
+import { uploadToS3 } from "../helpers/s3";
 import User from "../../db/models/user";
 
-const router = Router();
+export const savePFPRouter: Router = Router();
 
 const storage = memoryStorage();
 const upload = multer({ storage });
@@ -25,6 +25,4 @@ const savePFP = async (req: Request, res: Response) => {
   return res.json({ message: "PFP saved" });
 };
 
-router.post("/", withAuth, upload.single("newPFP"), savePFP);
-
-export default router;
+savePFPRouter.post("/", withAuth, upload.single("newPFP"), savePFP);

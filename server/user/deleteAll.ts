@@ -1,7 +1,7 @@
 import User from "../../db/models/user";
 import { Request, Response, Router } from "express";
 
-const router = Router();
+export const deleteAllRouter: Router = Router();
 
 const handleDelete = async (_req: Request, res: Response) => {
   try {
@@ -12,6 +12,4 @@ const handleDelete = async (_req: Request, res: Response) => {
   }
 };
 
-router.delete("/", handleDelete).post("/", handleDelete);
-
-export default router;
+deleteAllRouter.delete("/", handleDelete).post("/", handleDelete);

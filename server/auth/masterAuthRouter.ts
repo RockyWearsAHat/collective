@@ -1,13 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express";
-import validateTokenHandler from "./validateToken";
+import { validateTokenHandler } from "./validateToken";
 import { signToken, validateToken } from "../tokens/jwt";
 import User from "../../db/models/user";
 
-const masterAuthRouter: Router = Router();
+export const masterAuthRouter: Router = Router();
 
 masterAuthRouter.use("/validateToken", validateTokenHandler);
-
-export default masterAuthRouter;
 
 export const withAuth = async (
   req: Request,

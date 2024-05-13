@@ -2,11 +2,11 @@ import User, { IUser } from "../../db/models/user";
 import { Request, Response, Router } from "express";
 import { signToken, validateToken } from "../tokens/jwt";
 import checkIfEmail from "../../helpers/checkIfEmail";
-import { getUserPFP } from "../s3";
+import { getUserPFP } from "../helpers/s3";
 
-const router = Router();
+export const loginRouter = Router();
 
-router.post("/", async function (req: Request, res: Response) {
+loginRouter.post("/", async function (req: Request, res: Response) {
   let { username, password }: Partial<IUser> = req.body;
 
   //Validate input
@@ -79,5 +79,3 @@ router.post("/", async function (req: Request, res: Response) {
 
   return res.json(returnObj);
 });
-
-export default router;

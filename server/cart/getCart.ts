@@ -3,9 +3,9 @@ import { withAuth } from "../auth/masterAuthRouter";
 import User from "../../db/models/user";
 import { ICartItem } from "../../db/models/cartItem";
 
-const router: Router = Router();
+export const getCartRouter: Router = Router();
 
-router.get("/", withAuth, async (req: Request, res: Response) => {
+getCartRouter.get("/", withAuth, async (req: Request, res: Response) => {
   const loggedInUser = await User.findById(req.session.user!._id).populate(
     "cart"
   );
@@ -20,5 +20,3 @@ router.get("/", withAuth, async (req: Request, res: Response) => {
 
   res.json(cart);
 });
-
-export default router;

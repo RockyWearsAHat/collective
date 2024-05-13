@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 
-const router: Router = Router();
+export const logoutRouter: Router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+logoutRouter.get("/", async (req: Request, res: Response) => {
   if (!req.session || !req.session.token) {
     return res.json({ redirect: "/" });
   } else {
@@ -13,5 +13,3 @@ router.get("/", async (req: Request, res: Response) => {
     });
   }
 });
-
-export default router;
