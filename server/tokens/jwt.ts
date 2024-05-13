@@ -2,10 +2,12 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import { IUser } from "../../db/models/user";
 
-const privateKey = fs.readFileSync(`${process.cwd()}/server/tokens/RS256.key`);
-const publicKey = fs.readFileSync(
-  `${process.cwd()}/server/tokens/RS256.key.pub`
-);
+const privateKey =
+  fs.readFileSync(`${process.cwd()}/server/tokens/RS256.key`) ||
+  process.env.RS256KEY;
+const publicKey =
+  fs.readFileSync(`${process.cwd()}/server/tokens/RS256.key.pub`) ||
+  process.env.RS256KEYPUB;
 
 const signToken = async (user?: IUser): Promise<string | null> => {
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
