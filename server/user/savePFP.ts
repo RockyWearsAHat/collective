@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import multer, { memoryStorage } from "multer";
 import { withAuth } from "../auth/masterAuthRouter";
 import { uploadToS3 } from "../helpers/s3";
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 
 export const savePFPRouter: Router = Router();
 

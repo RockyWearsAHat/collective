@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { withAuth } from "../auth/masterAuthRouter";
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 import mongoose, { ObjectId } from "mongoose";
 import CartItem, { ICartItem } from "../../db/models/cartItem";
 

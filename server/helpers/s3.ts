@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ObjectId } from "mongoose";
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 
 const s3: S3Client = new S3Client();
 const bucket = process.env.BUCKET;
