@@ -53,5 +53,4 @@ userSchema.pre<IUser>(
 
 const User = mongoose.model<IUser>("User", userSchema);
 
-export { userSchema };
-export default User;
+export { userSchema, User };

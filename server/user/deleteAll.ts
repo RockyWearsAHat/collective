@@ -1,4 +1,4 @@
-import User from "../../db/models/user";
+import { User } from "../../db/models/user";
 import { Request, Response, Router } from "express";
 
 export const deleteAllRouter: Router = Router();

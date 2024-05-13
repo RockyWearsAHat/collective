@@ -1,4 +1,4 @@
-import User, { IUser } from "../../db/models/user";
+import { User, IUser } from "../../db/models/user";
 import { Request, Response, Router } from "express";
 import { checkIfEmail } from "../../helpers/checkIfEmail";
 
