@@ -95,7 +95,7 @@ export default function Navbar(): ReactNode {
                   style={{
                     backgroundImage: `${userProfilePhoto ? `url(${userProfilePhoto})` : ""}`
                   }}
-                  className={`group z-50 h-[24px] w-[24px] rounded-full ${userProfilePhoto ? "" : "bg-[url('/placeholderProfilePhoto.jpg')] "}bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
+                  className={`group z-50 h-[24px] w-[24px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
                 ></div>
               </Link>
               <div className={`absolute h-[0.5rem] w-[24px]`}>

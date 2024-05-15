@@ -32,13 +32,8 @@ const Product: FC = (): ReactNode => {
       <h1>Product Page</h1>
       <button onClick={() => console.log(foundProduct ? foundProduct : null)}>
         Click to display found item
-        {foundProduct ? (
-          <div>
-            <p>{foundProduct.name}</p>
-            <p>{foundProduct.price}</p>
-          </div>
-        ) : null}
       </button>
+      <p>{foundProduct?.name}</p>
     </div>
   );
 };

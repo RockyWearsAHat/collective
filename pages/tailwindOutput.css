@@ -841,10 +841,6 @@ video {
   background-image: url('/navbg.jpg');
 }
 
-.bg-\[url\(\'\/placeholderProfilePhoto\.jpg\'\)\] {
-  background-image: url('/placeholderProfilePhoto.jpg');
-}
-
 .bg-cover {
   background-size: cover;
 }

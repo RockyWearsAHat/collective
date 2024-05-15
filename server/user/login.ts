@@ -51,6 +51,7 @@ loginRouter.post("/", async function (req: Request, res: Response) {
 
   if (user.pfpId) {
     const link = await getUserPFP(foundUser._id);
+    console.log(link);
 
     if (typeof link == "string") {
       req.session.userPFP = link;
