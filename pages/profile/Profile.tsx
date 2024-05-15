@@ -1,6 +1,6 @@
 import { ReactNode, useContext, useState } from "react";
 import { ActiveContext } from "../app/App";
-import ImageEditor from "../../components/imageEditor/ImageEditor";
+// import ImageEditor from "../../components/imageEditor/ImageEditor";
 
 export default function Profile(): ReactNode {
   const [profilePhoto, setProfilePhoto] = useState<File>();
@@ -33,7 +33,7 @@ export default function Profile(): ReactNode {
           htmlFor="pfpUploadBtn"
           className="rounded-md bg-slate-600 p-4 text-white hover:cursor-pointer"
         >
-          Upload New Profile Image
+          Choose New Profile Image
         </label>
         <input
           id="pfpUploadBtn"
@@ -44,7 +44,8 @@ export default function Profile(): ReactNode {
             if (e.target.files) setProfilePhoto(e.target.files[0]);
           }}
         />
-        <ImageEditor file={profilePhoto} setTarget={setProfilePhoto} />
+        <button type="submit">Upload</button>
+        {/* <ImageEditor file={profilePhoto} setTarget={setProfilePhoto} /> */}
       </form>
     </div>
   );

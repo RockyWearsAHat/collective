@@ -4,6 +4,7 @@ export interface IItem extends Document {
   name: string;
   price: number | string;
   salePrice?: number;
+  imageLink?: string;
   toJSON: () => IItem;
 }
 
@@ -12,7 +13,8 @@ interface ItemModel extends mongoose.Model<IItem> {}
 const itemSchema = new mongoose.Schema<IItem, ItemModel>({
   name: { type: String, required: true },
   price: { type: Number, required: true },
-  salePrice: { type: Number }
+  salePrice: { type: Number },
+  imageLink: { type: String }
 });
 
 itemSchema.method("toJSON", function () {

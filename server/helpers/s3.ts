@@ -7,7 +7,7 @@ import {
   _Object
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { User } from "../../db/models/user";
 
 const s3: S3Client = new S3Client();
@@ -30,7 +30,8 @@ export const uploadToS3 = async (file: any, userId: ObjectId) => {
     }
   }
 
-  const key = `${userId.toString()}/${Date.now()}-${file.originalname}`;
+  const key = `${userId.toString()}/${Date.now()}-${file.originalname.replaceAll("/", "")}`;
+
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
@@ -61,11 +62,18 @@ const getAllUsersImages = async (userId: ObjectId) => {
 
 export const getUserPFP = async (userId: ObjectId) => {
   try {
+    const foundUser = await User.findById(userId);
+
+    if (!foundUser) return { error: "User not found" };
+
+    if (!mongoose.Types.ObjectId.isValid(foundUser.pfpId.split("/")[0])) {
+      return `/defaultPFPs/default${foundUser.pfpId}.jpg`;
+    }
+
     const imageKeys = await getAllUsersImages(userId);
 
     if (!imageKeys.length) return { error: "No images found" };
 
-    const foundUser = await User.findById(userId);
     let currentKey: Array<string | undefined> | string | undefined =
       await Promise.all(
         imageKeys.filter(key => {
