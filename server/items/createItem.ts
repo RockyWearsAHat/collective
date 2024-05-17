@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 // import { withAuth } from "../auth/masterAuthRouter";
-import Item from "../../db/models/item";
+import { Item } from "../../db/models/item";
 
 export const createItemRouter = Router();
 
