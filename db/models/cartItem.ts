@@ -32,5 +32,4 @@ cartItemSchema.pre("findOneAndDelete", async function (next) {
 
 const CartItem = mongoose.model<ICartItem>("CartItem", cartItemSchema);
 
-export { cartItemSchema };
-export default CartItem;
+export { CartItem, cartItemSchema };

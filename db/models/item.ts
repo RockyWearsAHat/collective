@@ -29,5 +29,4 @@ itemSchema.method("toJSON", function () {
 
 const Item = mongoose.model<IItem>("Item", itemSchema);
 
-export { itemSchema };
-export default Item;
+export { Item, itemSchema };
