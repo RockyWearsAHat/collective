@@ -17,9 +17,11 @@ export default defineConfig({
     "process.env.MONGO_PASSWORD": JSON.stringify(env.MONGO_PASSWORD),
     "process.env.BUCKET": JSON.stringify(env.BUCKET),
     "process.env.DEFAULT_REGION": JSON.stringify(env.DEFAULT_REGION),
-    "process.env.AWS_ACCESS_KEY_ID": JSON.stringify(env.AWS_ACCESS_KEY_ID),
-    "process.env.AWS_SECRET_ACCESS_KEY": JSON.stringify(
-      env.AWS_SECRET_ACCESS_KEY
+    "process.env.ENV_AWS_ACCESS_KEY_ID": JSON.stringify(
+      env.ENV_AWS_ACCESS_KEY_ID
+    ),
+    "process.env.ENV_AWS_SECRET_ACCESS_KEY": JSON.stringify(
+      env.ENV_AWS_SECRET_ACCESS_KEY
     )
   },
   plugins: [react(), express("server/server.ts")],
