@@ -10,7 +10,13 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose, { ObjectId } from "mongoose";
 import { User } from "../../db/models/user";
 
-const s3: S3Client = new S3Client();
+const s3: S3Client = new S3Client({
+  region: process.env.DEFAULT_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+  }
+});
 const bucket = process.env.BUCKET;
 
 export const uploadToS3 = async (file: any, userId: ObjectId) => {
