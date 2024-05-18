@@ -40,7 +40,7 @@ const Logout = (): ReactNode => {
         <title>The Artist Collective | Logout</title>
       </Helmet>
       <div className="flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
-        <div className="flex h-auto w-auto flex-col justify-center self-center text-center align-middle">
+        <div className="flex h-auto w-auto flex-col justify-center self-center px-10 text-center align-middle">
           <h1 className="text-3xl">You Have Been Successfully Logged Out</h1>
           <p>
             Thank you for using the Artist Collective, we hope you enjoyed your
