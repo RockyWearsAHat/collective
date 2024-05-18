@@ -28,6 +28,7 @@ declare module "express-session" {
 }
 import expressSession from "express-session";
 
+//Set up express session
 const sessionStore = new MongoStore({
   client: db.getClient(),
   dbName: "balls",
