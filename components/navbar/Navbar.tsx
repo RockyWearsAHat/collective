@@ -99,7 +99,7 @@ export default function Navbar(): ReactNode {
                 ></div>
               </Link>
               <div className={`absolute h-[0.5rem] w-[24px]`}>
-                <div className="absolute right-0 mt-2 max-h-0 w-[200px] overflow-hidden transition-all duration-300 ease-in-out hover:max-h-[10vh] group-hover:max-h-[10vh]">
+                <div className="grid-rows-0 absolute right-0 mt-2 grid w-[200px] overflow-hidden transition-all duration-300 ease-in-out hover:grid-rows-1 group-hover:grid-rows-1">
                   <div className="overflow-hidden bg-slate-500">
                     {dropdownLinks.map(([url, title]: LinkMap) => {
                       return (
