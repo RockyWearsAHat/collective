@@ -47,7 +47,7 @@ export default function Navbar(): ReactNode {
     });
 
     //Close the navigation menu after navigating to another page
-    console.log("closing nav menu");
+    setMobileClicks(0);
 
     const dropdownMenu = document.getElementById("dropdownMenuGroup");
     const pfp = document.getElementById("userProfilePhoto");
