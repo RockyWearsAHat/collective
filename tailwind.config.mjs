@@ -17,6 +17,10 @@ module.exports = {
       },
       padding: {
         nav: "3rem"
+      },
+      gridTemplateRows: {
+        0: "0fr",
+        1: "1fr"
       }
     },
     plugins: []
