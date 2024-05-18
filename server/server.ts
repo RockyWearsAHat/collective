@@ -92,15 +92,18 @@ if (process.env !== undefined && process.env["VITE"]) {
         res.sendFile("index.html", { root: frontendFiles });
       });
 
-      // app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
-      //   console.log(
-      //     !process.env["PORT"] ? "Server started on http://localhost:4000" : ""
-      //   );
-      // });
+      //If running on netlify, server is ran via lamda functions created by serverless-http
+      if (!process.env.NETLIFY) {
+        app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
+          console.log(
+            !process.env["PORT"]
+              ? "Server started on http://localhost:4000"
+              : ""
+          );
+        });
+      }
     }
   }
 }
-
-//SOME ERRORS TO FIX TO DO WITH DEFAULT EXPORTS OF ROUTES, ALL NEED TO BE NAMED EXPORTS (I THINK??)
 
 export const handler = serverless(app);
