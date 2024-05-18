@@ -735,10 +735,6 @@ video {
           user-select: none;
 }
 
-.grid-rows-none {
-  grid-template-rows: none;
-}
-
 .grid-rows-0 {
   grid-template-rows: 0fr;
 }
@@ -863,11 +859,6 @@ video {
 
 .p-4 {
   padding: 1rem;
-}
-
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
 }
 
 .py-2 {
@@ -1070,10 +1061,6 @@ video {
   content: var(--tw-content);
 }
 
-.hover\:max-h-\[10vh\]:hover {
-  max-height: 10vh;
-}
-
 .hover\:cursor-default:hover {
   cursor: default;
 }
@@ -1141,10 +1128,6 @@ video {
 .disabled\:bg-red-300:disabled {
   --tw-bg-opacity: 1;
   background-color: rgb(252 165 165 / var(--tw-bg-opacity));
-}
-
-.group:hover .group-hover\:max-h-\[10vh\] {
-  max-height: 10vh;
 }
 
 .group:hover .group-hover\:grid-rows-1 {
