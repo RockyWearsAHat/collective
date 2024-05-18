@@ -1,20 +1,22 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface IItem extends Document {
+  userCreatedId: ObjectId;
   name: string;
   price: number | string;
   salePrice?: number;
-  imageLink?: string;
+  imageLinks?: string[];
   toJSON: () => IItem;
 }
 
 interface ItemModel extends mongoose.Model<IItem> {}
 
 const itemSchema = new mongoose.Schema<IItem, ItemModel>({
+  userCreatedId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true },
   price: { type: Number, required: true },
   salePrice: { type: Number },
-  imageLink: { type: String }
+  imageLinks: { type: Array<String> }
 });
 
 itemSchema.method("toJSON", function () {
