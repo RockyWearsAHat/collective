@@ -12,14 +12,12 @@ export default function Home(): ReactNode {
 
   const { loading: removeItemLoading, fn: removeItemFromCart } = useMutation({
     url: "/api/cart/removeFromCart",
-    method: "POST",
-    credentials: "same-origin"
+    method: "POST"
   });
 
   const { fn: logCart } = useMutation({
     url: "/api/cart/getCart",
-    method: "GET",
-    credentials: "same-origin"
+    method: "GET"
   });
 
   return (
@@ -29,17 +27,19 @@ export default function Home(): ReactNode {
       </Helmet>
       <div className="absolute left-10 top-10 z-50">
         <button
-          onClick={() =>
-            addItemToCart({ productToAdd: "6635e0c40aaae30d3da434fe" })
+          onClick={async () =>
+            await addItemToCart({ productToAdd: "662c738bac9dc592260182c8" })
           }
         >
           Add new item to cart
         </button>
         <br />
         <button
-          onClick={() =>
-            removeItemFromCart({ productToRemove: "662c40606b247846a4a17eda" })
-          }
+          onClick={async () => {
+            await removeItemFromCart({
+              productToRemove: "662c40606b247846a4a17eda"
+            });
+          }}
           disabled={removeItemLoading}
           className="bg-red-500 disabled:bg-red-300"
         >

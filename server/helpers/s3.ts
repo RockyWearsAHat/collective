@@ -9,6 +9,7 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose, { ObjectId } from "mongoose";
 import { User } from "../../db/models/user";
+import { Item } from "../../db/models/item";
 
 const s3: S3Client = new S3Client({
   region: process.env.DEFAULT_REGION!,
@@ -110,4 +111,31 @@ export const getUserPFP = async (userId: ObjectId) => {
     console.log(error);
     return { error };
   }
+};
+
+export const uploadProductImagesToS3 = async (
+  files: any[],
+  itemId: ObjectId
+) => {
+  const item = await Item.findById(itemId);
+
+  files.forEach(async file => {
+    const key = `${itemId.toString()}/${Date.now()}-${file.originalname.replaceAll("/", "")}`;
+
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype
+    });
+
+    try {
+      await s3.send(command);
+      console.log("uploaded successfully");
+      return { key };
+    } catch (error) {
+      console.log(error);
+      return { error };
+    }
+  });
 };
