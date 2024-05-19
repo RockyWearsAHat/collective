@@ -29,11 +29,18 @@ const Product: FC = (): ReactNode => {
 
   return (
     <div className="flex h-[100vh] w-[100vw] flex-col items-center justify-center">
-      <h1>Product Page</h1>
-      <button onClick={() => console.log(foundProduct ? foundProduct : null)}>
-        Click to display found item
-      </button>
-      <p>{foundProduct?.name}</p>
+      {foundProduct && (
+        <>
+          {foundProduct.imageLinks && foundProduct.imageLinks.length > 0 && (
+            <div
+              style={{
+                backgroundImage: `${foundProduct.imageLinks ? `url(/${foundProduct.imageLinks[0]})` : ""}`
+              }}
+              className={`h-[30vh] w-[30vw] bg-cover bg-center`}
+            ></div>
+          )}
+        </>
+      )}
     </div>
   );
 };

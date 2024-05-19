@@ -5,6 +5,7 @@ import mongoose, {
   ObjectId
 } from "mongoose";
 import { ICartItem } from "./cartItem";
+import { IItem } from "./item";
 
 export interface IUser extends Document {
   _id: ObjectId;
@@ -13,6 +14,7 @@ export interface IUser extends Document {
   password: string;
   pfpId: string;
   cart: Array<ObjectId | ICartItem>;
+  createdItems: Array<ObjectId | IItem>;
   verifyPassword: (password: string) => boolean;
   toJSON: () => Partial<IUser>;
 }
@@ -24,7 +26,8 @@ const userSchema = new mongoose.Schema<IUser, UserModel>({
   email: { type: String, unique: true, trim: true },
   password: String,
   pfpId: String,
-  cart: [{ type: mongoose.Types.ObjectId, ref: "CartItem" }]
+  cart: [{ type: mongoose.Types.ObjectId, ref: "CartItem" }],
+  createdItems: [{ type: mongoose.Types.ObjectId, ref: "Item" }]
 });
 
 userSchema.method("verifyPassword", function (password: string) {
