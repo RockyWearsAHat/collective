@@ -119,6 +119,8 @@ export const uploadProductImagesToS3 = async (
 ) => {
   const item = await Item.findById(itemId);
 
+  if (!item) return;
+
   files.forEach(async file => {
     const key = `${itemId.toString()}/${Date.now()}-${file.originalname.replaceAll("/", "")}`;
 
