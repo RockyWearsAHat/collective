@@ -11,3 +11,6 @@ node_modules
 
 # Build files, if you want to build just download and run npm run buildnrun or npm build
 build
+
+# Package lock so lock is generated on install
+package-lock.json
