@@ -1,6 +1,6 @@
 [build]
   functions = "build/server"
-  command = "npm i && npm install --cpu=x64 --os=linux sharp && npm run build"
+  command = "npm i && npm run build"
   publish = "build"
 
 [[redirects]]
