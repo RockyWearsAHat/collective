@@ -1,6 +1,7 @@
 import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface ICartItem extends Document {
+  _id: ObjectId;
   user: ObjectId;
   item: ObjectId;
   quantity: number;
