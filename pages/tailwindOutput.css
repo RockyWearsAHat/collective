@@ -651,6 +651,10 @@ video {
   height: 24px;
 }
 
+.h-\[30vh\] {
+  height: 30vh;
+}
+
 .h-\[70px\] {
   height: 70px;
 }
@@ -667,20 +671,12 @@ video {
   height: 100vh;
 }
 
-.h-\[30vh\] {
-  height: 30vh;
-}
-
 .max-h-5 {
   max-height: 1.25rem;
 }
 
 .min-h-5 {
   min-height: 1.25rem;
-}
-
-.min-h-\[30vh\] {
-  min-height: 30vh;
 }
 
 .w-64 {
@@ -703,6 +699,10 @@ video {
   width: 24px;
 }
 
+.w-\[30vw\] {
+  width: 30vw;
+}
+
 .w-auto {
   width: auto;
 }
@@ -715,20 +715,12 @@ video {
   width: 100vw;
 }
 
-.w-\[30vw\] {
-  width: 30vw;
-}
-
 .min-w-5 {
   min-width: 1.25rem;
 }
 
 .min-w-\[100vw\] {
   min-width: 100vw;
-}
-
-.min-w-\[30vw\] {
-  min-width: 30vw;
 }
 
 .max-w-5 {
@@ -873,14 +865,6 @@ video {
 
 .bg-\[url\(\'\/navbg\.jpg\'\)\] {
   background-image: url('/navbg.jpg');
-}
-
-.bg-\[url\(\"\/\$\{foundProduct\.imageLinks\[0\]\}\"\)\] {
-  background-image: url("/${foundProduct.imageLinks[0]}");
-}
-
-.bg-\[url\(\'\/\$\{foundProduct\.imageLinks\[0\]\}\'\)\] {
-  background-image: url('/${foundProduct.imageLinks[0]}');
 }
 
 .bg-cover {
