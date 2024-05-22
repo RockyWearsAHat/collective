@@ -3,6 +3,9 @@
   command = "npm i && npm run build"
   publish = "build"
 
+[functions]
+  included_files=["node_modules/sharp/**/*"]
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/server/api/:splat"
