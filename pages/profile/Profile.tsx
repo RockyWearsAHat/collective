@@ -39,7 +39,7 @@ export default function Profile(): ReactNode {
           id="pfpUploadBtn"
           className="hidden"
           type="file"
-          accept="image/*"
+          accept="image/*, .heic"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.files) setProfilePhoto(e.target.files[0]);
           }}
