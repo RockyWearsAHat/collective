@@ -4,6 +4,7 @@
   publish = "build"
 
 [functions]
+  external_node_modules = ["sharp"]
   included_files=["node_modules/sharp/**/*"]
 
 [[redirects]]
