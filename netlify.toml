@@ -1,6 +1,6 @@
 [build]
   functions = "build/server"
-  command = "npm i && npm i --legacy-peer-deps --cpu=x64 --os=linux --libc=musl sharp -f && npm i --legacy-peer-deps --cpu=x64 --os=linux --libc=glibc sharp -f && npm run build"
+  command = "npm i && npm run build"
   publish = "build"
 
 [functions]
