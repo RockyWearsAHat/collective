@@ -1,6 +1,6 @@
 [build]
   functions = "build/server"
-  command = "npm i && npm run build"
+  command = "npm i && npm i --legacy-peer-deps sharp && npm run build"
   publish = "build"
 
 [functions]
