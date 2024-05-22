@@ -3,7 +3,7 @@ import multer, { memoryStorage } from "multer";
 import { withAuth } from "../auth/masterAuthRouter";
 import { uploadToS3 } from "../helpers/s3";
 import { User } from "../../db/models/user";
-import sharp from "sharp";
+import sharp from "mysharp";
 
 export const savePFPRouter: Router = Router();
 
