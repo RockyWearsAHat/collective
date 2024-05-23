@@ -1,6 +1,5 @@
 # Files
-node_modules/*
-!node_modules/sharp
+node_modules
 *.key
 *.key.pub
 .env
