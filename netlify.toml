@@ -14,5 +14,5 @@
 
 [build]
   functions = "build/server"
-  command = "npm install --cpu=x64 --os=linux --libc=glibc sharp && npm install --cpu=x64 --os=linux --libc=musl sharp && npm install && npm run build"
+  command = "npm run build"
   publish = "build"
