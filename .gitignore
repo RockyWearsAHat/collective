@@ -1,6 +1,6 @@
 # Files
 node_modules
-package-lock.json
+# package-lock.json
 *.key
 *.key.pub
 .env
