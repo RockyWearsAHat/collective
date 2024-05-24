@@ -10,7 +10,8 @@
     "buildnrun": "npm run removeBuild && npm run build && npm run start",
     "removeBuild": "rm -rf build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "start": "node build/server/server.js"
+    "start": "node build/server/server.js",
+    "installSharp": "npm install --cpu=x64 --os=linux --libc=glibc sharp && npm install --cpu=x64 --os=linux --libc=musl sharp"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.569.0",
