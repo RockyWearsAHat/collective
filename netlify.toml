@@ -10,5 +10,5 @@
 
 [build]
   functions = "build/server"
-  command = "npm install && npm uninstall sharp && npm run installSharp && npm run build"
+  command = "npm install && npm run build"
   publish = "build"
