@@ -7,46 +7,7 @@ import { glob } from "glob";
 import { extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinModules } from "node:module";
-import { brotliCompress } from "zlib";
-import { promisify } from "util";
 import { copyFile } from "./plugins/copyFile.js";
-import MagicString from "magic-string";
-
-const brotliPromise = promisify(brotliCompress);
-
-function rewriteGzipImports() {
-  // match dynamic imports with .js but not .gz.js
-  const patternDImport = new RegExp(/"\.\/([\w\-.]+)\.js(?<!\.gz\.js)"/, "mg");
-  return {
-    name: "rewriteImports",
-    renderChunk(code) {
-      const magicString = new MagicString(code);
-      let hasReplacements = false;
-      let match;
-      let start;
-      let end;
-      let replacement;
-
-      function replaceImport() {
-        hasReplacements = true;
-        start = match.index + 3;
-        end = start + match[1].length;
-        replacement = String(match[1].replace(match[1], match[1] + ".gz"));
-        magicString.overwrite(start, end, replacement);
-      }
-
-      // work against dynamic imports
-      while ((match = patternDImport.exec(code))) {
-        replaceImport();
-      }
-
-      if (!hasReplacements) {
-        return null;
-      }
-      return { code: magicString.toString() };
-    }
-  };
-}
 
 export default [
   {
