@@ -1,3 +1,7 @@
+[[functions]]
+  external_node_modules = ["sharp"]
+  included_files = ["node_modules/sharp/**/*"]
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/server/api/:splat"
@@ -10,9 +14,5 @@
 
 [build]
   functions = "build/server"
-  command = "npm install --cpu=x64 --os=linux --libc=glibc sharp --force && npm install --cpu=x64 --os=linux --libc=musl sharp --force && npm install && npm run build"
+  command = "npm install --cpu=x64 --os=linux --libc=glibc sharp && npm install --cpu=x64 --os=linux --libc=musl sharp && npm install && npm run build"
   publish = "build"
-
-[functions]
-  external_node_modules = ["sharp"]
-  included_files = ["node_modules/sharp/**/*"]
