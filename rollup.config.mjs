@@ -1,7 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import gzipPlugin from "rollup-plugin-gzip";
 
 import { glob } from "glob";
 import { extname, sep } from "node:path";
@@ -47,8 +46,6 @@ export default [
       resolve({ preferBuiltins: true, jsnext: true, main: true }),
       commonjs({ ignoreDynamicRequires: true, ignore: builtinModules }),
       copyFile("robots.txt", "build/robots.txt"),
-      gzipPlugin(),
-      rewriteGzipImports()
     ]
   }
 ];
