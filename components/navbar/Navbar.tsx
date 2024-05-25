@@ -229,7 +229,7 @@ export default function Navbar(): ReactNode {
                   title="Create New Piece"
                 >
                   <div
-                    className={`z-[100] flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                   >
                     <FaPlus className="text-xl" />
                   </div>
