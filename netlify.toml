@@ -8,6 +8,9 @@
   to = "/index.html"
   status = 200
 
+[functions]
+  included_files = ["./node_modules/@img/**/*]
+
 [build]
   functions = "build/server"
   command = "npm install && npm run build"
