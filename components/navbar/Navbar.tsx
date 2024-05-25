@@ -7,6 +7,13 @@ import { useNavigate } from "react-router-dom";
 
 type LinkMap = [url: string, title: string];
 
+function useForceUpdate() {
+  const [value, setValue] = useState(0); // integer state
+  return () => setValue(value => value + 1); // update state to force render
+  // A function that increment 👆🏻 the previous state like here
+  // is better than directly setting `setValue(value + 1)`
+}
+
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
   if (extensionUrl == "") extensionUrl = "/";
@@ -17,6 +24,7 @@ export default function Navbar(): ReactNode {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [mobileClicks, setMobileClicks] = useState<number>(0);
+  const forceUpdate = useForceUpdate();
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
@@ -40,6 +48,7 @@ export default function Navbar(): ReactNode {
         setActive(extensionUrl);
       });
     }
+
     checkLoggedIn().then(res => {
       if (res && (res.loggedIn == true || res.loggedIn == false)) {
         setLoggedIn(res.loggedIn);
@@ -138,7 +147,7 @@ export default function Navbar(): ReactNode {
             id="navBg"
           ></div>
         </Suspense>
-        <ul className="flex justify-end gap-4 py-2 pr-4 text-white ">
+        <ul className="flex justify-end gap-4 overflow-visible py-2 pr-4 text-white">
           {activeLinks.map(([url, title]: LinkMap) => {
             return (
               <li key={url}>
@@ -227,10 +236,11 @@ export default function Navbar(): ReactNode {
                   onClick={() => setActive("/create")}
                   title="Create New Piece"
                 >
-                  <FaPlus
-                    className={`z-50 h-[20px] w-[20px] overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
-                    title="Upload"
-                  />
+                  <div
+                    className={`z-[100] flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                  >
+                    <FaPlus className="text-xl" />
+                  </div>
                 </Link>
               </li>
             </>
