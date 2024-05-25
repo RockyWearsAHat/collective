@@ -6,8 +6,8 @@ A site for artists to share and sell their work
 
 [Email me](mailto:alexwaldmann2004@gmail.com)
 
-JWT Auth requires RSA256 public and private keys to be created in the tokens folder, either generate RSA keys or I can send them over for development, however they are not published in the public repository
+# Notes
 
-HTTPS cert does jack shit beause it's self signed
+Currently JWT encryption is just based off a hard coded secret, will eventually be RS256 encryption
 
 # [Live Version](https://artist-collective.netlify.app/)
