@@ -7,13 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 type LinkMap = [url: string, title: string];
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0); // integer state
-  return () => setValue(value => value + 1); // update state to force render
-  // A function that increment 👆🏻 the previous state like here
-  // is better than directly setting `setValue(value + 1)`
-}
-
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
   if (extensionUrl == "") extensionUrl = "/";
@@ -24,7 +17,6 @@ export default function Navbar(): ReactNode {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [mobileClicks, setMobileClicks] = useState<number>(0);
-  const forceUpdate = useForceUpdate();
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
