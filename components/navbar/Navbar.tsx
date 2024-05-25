@@ -180,6 +180,7 @@ export default function Navbar(): ReactNode {
                     }
                   }}
                 >
+                  {/* <Suspense> */}
                   <div
                     id="userProfilePhoto"
                     style={{
@@ -187,12 +188,13 @@ export default function Navbar(): ReactNode {
                     }}
                     className={`group z-50 h-[24px] w-[24px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
                   ></div>
+                  {/* </Suspense> */}
                 </div>
                 <div
                   className={`absolute h-[0.5rem] w-[24px]`}
                   id="dropdownMenuGroup"
                 >
-                  <div className="grid-rows-0 absolute right-0 mt-2 grid w-[200px] overflow-hidden transition-all duration-300 ease-in-out hover:grid-rows-1 group-hover:grid-rows-1">
+                  <div className="absolute right-0 mt-2 grid w-[200px] grid-rows-0 overflow-hidden transition-all duration-300 ease-in-out hover:grid-rows-1 group-hover:grid-rows-1">
                     <div className="overflow-hidden bg-slate-500">
                       {dropdownLinks.map(([url, title]: LinkMap) => {
                         return (
@@ -226,7 +228,7 @@ export default function Navbar(): ReactNode {
                   title="Create New Piece"
                 >
                   <FaPlus
-                    className={`z-50 max-h-5 min-h-5 min-w-5 max-w-5 rounded-full transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                    className={`z-50 max-h-5 min-h-5 min-w-5 max-w-5 overflow-visible rounded-full transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                     title="Upload"
                   />
                 </Link>

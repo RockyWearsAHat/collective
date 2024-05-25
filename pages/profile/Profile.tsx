@@ -20,14 +20,9 @@ export default function Profile(): ReactNode {
 
     const res = await savePFP(formData);
 
-    const json = await res.json();
-
-    if (!json.activeLink) {
-      console.error(json.message);
-      return;
-    }
+    console.log(res);
     //Reload navbar to show new profile photo
-    setActive(json.activeLink);
+    setActive(res.activeLink);
   };
 
   return (
@@ -49,7 +44,10 @@ export default function Profile(): ReactNode {
           type="file"
           accept="image/*, .heic"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files) setProfilePhoto(e.target.files[0]);
+            console.log(e.target.files);
+            if (e.target.files) {
+              setProfilePhoto(e.target.files[0]);
+            }
           }}
         />
         <button type="submit">Upload</button>

@@ -23,16 +23,25 @@ export const useMutation = ({
     loading: false
   });
 
-  const fn = async (body?: any): Promise<any> => {
+  const fn = async (body?: Object | String | FormData): Promise<any> => {
     try {
-      const bodyForReq = body
-        ? {
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-          }
-        : {};
+      let bodyForReq = {};
+      //Parse body for JSON, FormData, or no body
+      if (body instanceof FormData) {
+        console.log("FormData");
+        bodyForReq = {
+          body
+        };
+      } else if (body instanceof Object) {
+        bodyForReq = {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        };
+      } else {
+        bodyForReq = {};
+      }
 
       setState(prevState => ({ ...prevState, loading: true }));
       const res = await fetch(url, {
