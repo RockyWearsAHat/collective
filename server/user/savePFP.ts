@@ -16,14 +16,17 @@ const savePFP = async (req: Request, res: Response) => {
   if (!file || !req.session.user?._id)
     return res.status(400).json({ message: "No file uploaded" });
 
-  const convertedImageBuffer = await sharp(file.buffer)
-    .toFormat("jpg")
-    .toBuffer();
+  //Convert image to jpeg if not already
+  if (file.mimetype != "image/jpeg") {
+    const convertedImageBuffer = await sharp(file.buffer)
+      .toFormat("jpg")
+      .toBuffer();
 
-  // //Load image with new converted data
-  file.buffer = convertedImageBuffer;
-  file.originalname = file.originalname.replace(/\.[^/.]+$/, ".jpg");
-  file.mimetype = "image/jpeg";
+    // //Load image with new converted data
+    file.buffer = convertedImageBuffer;
+    file.originalname = file.originalname.replace(/\.[^/.]+$/, ".jpg");
+    file.mimetype = "image/jpeg";
+  }
 
   const { error, key } = await uploadToS3(file, req.session.user._id);
   if (error) return res.status(500).json({ message: (error as Error).message });
@@ -32,7 +35,7 @@ const savePFP = async (req: Request, res: Response) => {
     pfpId: key
   });
 
-  return res.json({ message: "PFP saved" });
+  return res.json({ message: "PFP saved", activeLink: "/profilePhotoChanged" });
 };
 
 savePFPRouter.post("/", withAuth, upload.single("newPFP"), savePFP);

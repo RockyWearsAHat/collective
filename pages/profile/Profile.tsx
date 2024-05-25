@@ -1,10 +1,15 @@
 import { ReactNode, useContext, useState } from "react";
 import { ActiveContext } from "../app/App";
+import { useMutation } from "../../hooks/useMutation";
 // import ImageEditor from "../../components/imageEditor/ImageEditor";
 
 export default function Profile(): ReactNode {
   const [profilePhoto, setProfilePhoto] = useState<File>();
   const { setActive } = useContext(ActiveContext);
+  const { fn: savePFP } = useMutation({
+    url: "/api/user/savePFP",
+    method: "POST"
+  });
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -13,13 +18,16 @@ export default function Profile(): ReactNode {
     const formData = new FormData();
     formData.append("newPFP", profilePhoto);
 
-    await fetch("/api/user/savePFP", {
-      method: "POST",
-      body: formData
-    });
+    const res = await savePFP(formData);
 
+    const json = await res.json();
+
+    if (!json.activeLink) {
+      console.error(json.message);
+      return;
+    }
     //Reload navbar to show new profile photo
-    setActive("/profilePhotoChanged");
+    setActive(json.activeLink);
   };
 
   return (
