@@ -14,7 +14,7 @@ const savePFP = async (req: Request, res: Response) => {
   let { file } = req;
 
   if (!file || !req.session.user?._id)
-    return res.status(400).json({ message: "No file uploaded" });
+    return res.status(400).json({ error: "No file uploaded" });
 
   //Convert image to jpeg if not already
   if (file.mimetype != "image/jpeg") {
@@ -29,7 +29,7 @@ const savePFP = async (req: Request, res: Response) => {
   }
 
   const { error, key } = await uploadToS3(file, req.session.user._id);
-  if (error) return res.status(500).json({ message: (error as Error).message });
+  if (error) return res.status(500).json({ error: (error as Error).message });
 
   await User.findByIdAndUpdate(req.session.user._id, {
     pfpId: key
