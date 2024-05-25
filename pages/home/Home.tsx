@@ -25,7 +25,7 @@ export default function Home(): ReactNode {
       <Helmet>
         <title>Artist Collective | Home</title>
       </Helmet>
-      <div className="absolute left-10 top-10 z-50">
+      <div className="absolute left-10 top-10 z-10">
         <button
           onClick={async () =>
             await addItemToCart({ productToAdd: "662c738bac9dc592260182c8" })
