@@ -9,7 +9,7 @@
   status = 200
 
 [functions]
-  included_files = ["./node_modules/@img/**/*]
+  included_files = ["./node_modules/@img/**/*"]
 
 [build]
   functions = "build/server"
