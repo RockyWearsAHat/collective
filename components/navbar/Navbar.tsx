@@ -228,7 +228,7 @@ export default function Navbar(): ReactNode {
                   title="Create New Piece"
                 >
                   <FaPlus
-                    className={`z-50 max-h-5 min-h-5 min-w-5 max-w-5 overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                    className={`z-50 h-[20px] w-[20px] overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                     title="Upload"
                   />
                 </Link>
