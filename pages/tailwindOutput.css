@@ -671,6 +671,10 @@ video {
   height: 100vh;
 }
 
+.h-\[20px\] {
+  height: 20px;
+}
+
 .max-h-5 {
   max-height: 1.25rem;
 }
@@ -713,6 +717,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[20px\] {
+  width: 20px;
 }
 
 .min-w-5 {
@@ -854,13 +862,13 @@ video {
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
 
+.bg-transparent {
+  background-color: transparent;
+}
+
 .bg-zinc-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(63 63 70 / var(--tw-bg-opacity));
-}
-
-.bg-transparent {
-  background-color: transparent;
 }
 
 .bg-\[url\(\'\/bg\.jpg\'\)\] {
@@ -992,10 +1000,6 @@ video {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.outline-2 {
-  outline-width: 2px;
 }
 
 .ring-2 {
