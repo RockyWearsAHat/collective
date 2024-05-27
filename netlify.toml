@@ -10,7 +10,7 @@
 
 [functions]
   included_files = ["./node_modules/@img/**/*"]
-  directory = "ac_functions"
+  directory = "/.netlify/functions/server"
 
 [build]
   functions = "build/server"
