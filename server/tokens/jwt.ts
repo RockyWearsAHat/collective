@@ -2,13 +2,27 @@ import jwt from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
 
-const privateKey = `${process.env.RS256KEY1}${process.env.RS256KEY2}${process.env.RS256KEY3}${process.env.RS256KEY4}${process.env.RS256KEY5}${process.env.RS256KEY6}${process.env.RS256KEY7}${process.env.RS256KEY8}${process.env.RS256KEY9}${process.env.RS256KEY10}${process.env.RS256KEY11}${process.env.RS256KEY12}${process.env.RS256KEY13}`;
-const publicKey = `${process.env.RS256KEYPUB1}${process.env.RS256KEYPUB2}${process.env.RS256KEYPUB3}${process.env.RS256KEYPUB4}`;
+const privateKeyRes = await fetch(`${process.env.GITHUB_KEY_REPO}/RS256.key`, {
+  headers: {
+    Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
+  }
+});
+const publicKeyRes = await fetch(
+  `${process.env.GITHUB_KEY_REPO}/RS256.key.pub`,
+  {
+    headers: {
+      Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
+    }
+  }
+);
 
-if (!privateKey || !publicKey) {
-  console.error("No RS256 public/private key found in environment variables");
+if (!privateKeyRes || !publicKeyRes) {
+  console.error("Error fetching keys");
   process.exit();
 }
+
+const privateKey = await privateKeyRes.text();
+const publicKey = await publicKeyRes.text();
 
 const signToken = async (user?: IUser): Promise<string | null> => {
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
