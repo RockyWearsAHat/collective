@@ -8,8 +8,4 @@ A site for artists to share and sell their work
 
 [Email me](mailto:alexwaldmann2004@gmail.com) or Text/Call (435) 731-7654
 
-# Notes
-
-Currently JWT encryption is just based off a hard coded secret, will eventually be RS256 encryption
-
 # [Live Version](https://artistcollective.store/)
