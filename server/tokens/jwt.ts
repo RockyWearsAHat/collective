@@ -2,9 +2,12 @@ import jwt from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
 
+let privateKey: string | null = null,
+  publicKey: string | null = null;
+
 const getKeys = async (): Promise<{
-  privateKey: string;
-  publicKey: string;
+  rtnPrivateKey: string;
+  rtnPublicKey: string;
 }> => {
   const privateKeyRes = await fetch(
     `${process.env.GITHUB_KEY_REPO}/RS256.key`,
@@ -28,14 +31,19 @@ const getKeys = async (): Promise<{
     process.exit();
   }
 
-  const privateKey = await privateKeyRes.text();
-  const publicKey = await publicKeyRes.text();
+  const rtnPrivateKey = await privateKeyRes.text();
+  const rtnPublicKey = await publicKeyRes.text();
 
-  return { privateKey, publicKey };
+  return { rtnPrivateKey, rtnPublicKey };
 };
 
 const signToken = async (user?: IUser): Promise<string | null> => {
-  const { privateKey } = await getKeys();
+  if (!publicKey || !privateKey) {
+    const { rtnPrivateKey, rtnPublicKey } = await getKeys();
+    publicKey = rtnPublicKey;
+    privateKey = rtnPrivateKey;
+  }
+
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
     algorithm: "RS256",
     expiresIn: "2h"
@@ -52,7 +60,12 @@ export interface IToken {
 
 const validateToken = async (token: string): Promise<boolean> => {
   try {
-    const { publicKey } = await getKeys();
+    if (!publicKey || !privateKey) {
+      const { rtnPrivateKey, rtnPublicKey } = await getKeys();
+      publicKey = rtnPublicKey;
+      privateKey = rtnPrivateKey;
+    }
+
     jwt.verify(token, publicKey);
     return true;
   } catch (error) {
