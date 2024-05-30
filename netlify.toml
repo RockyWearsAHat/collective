@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/server/api/:splat"
+  to = "/functions/server/api/:splat"
   status = 200
 
 [[redirects]]
@@ -10,7 +10,7 @@
 
 [functions]
   included_files = ["./node_modules/@img/**/*"]
-  directory = "/.netlify/functions/server"
+  directory = "/functions/server"
 
 [build]
   functions = "build/server"
