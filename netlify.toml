@@ -10,9 +10,8 @@
 
 [functions]
   included_files = ["./node_modules/@img/**/*"]
-  directory = "/.netlify/functions/server"
 
 [build]
-  functions = "/build/server"
+  functions = "build/server"
   command = "npm install && npm run build"
   publish = "build"
