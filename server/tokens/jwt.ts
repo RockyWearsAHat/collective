@@ -2,29 +2,40 @@ import jwt from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
 
-const privateKeyRes = await fetch(`${process.env.GITHUB_KEY_REPO}/RS256.key`, {
-  headers: {
-    Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
-  }
-});
-const publicKeyRes = await fetch(
-  `${process.env.GITHUB_KEY_REPO}/RS256.key.pub`,
-  {
-    headers: {
-      Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
+const getKeys = async (): Promise<{
+  privateKey: string;
+  publicKey: string;
+}> => {
+  const privateKeyRes = await fetch(
+    `${process.env.GITHUB_KEY_REPO}/RS256.key`,
+    {
+      headers: {
+        Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
+      }
     }
+  );
+  const publicKeyRes = await fetch(
+    `${process.env.GITHUB_KEY_REPO}/RS256.key.pub`,
+    {
+      headers: {
+        Authorization: `token ${process.env.GITHUB_READ_TOKEN}`
+      }
+    }
+  );
+
+  if (!privateKeyRes || !publicKeyRes) {
+    console.error("Error fetching keys");
+    process.exit();
   }
-);
 
-if (!privateKeyRes || !publicKeyRes) {
-  console.error("Error fetching keys");
-  process.exit();
-}
+  const privateKey = await privateKeyRes.text();
+  const publicKey = await publicKeyRes.text();
 
-const privateKey = await privateKeyRes.text();
-const publicKey = await publicKeyRes.text();
+  return { privateKey, publicKey };
+};
 
 const signToken = async (user?: IUser): Promise<string | null> => {
+  const { privateKey } = await getKeys();
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
     algorithm: "RS256",
     expiresIn: "2h"
@@ -41,6 +52,7 @@ export interface IToken {
 
 const validateToken = async (token: string): Promise<boolean> => {
   try {
+    const { publicKey } = await getKeys();
     jwt.verify(token, publicKey);
     return true;
   } catch (error) {
