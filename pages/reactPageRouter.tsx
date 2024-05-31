@@ -23,6 +23,7 @@ import ErrorPage from "./error/Error";
 import Product from "./products/Product";
 import MultipleProductSelect from "./products/MultipleProductsSelect";
 import ProductNotFound from "./products/ProductNotFound";
+import Register from "./register/Register";
 
 const PageRouter = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/login",
         element: <Login />
+      },
+      {
+        path: "/register",
+        element: <Register />
       },
       {
         path: "/profile",

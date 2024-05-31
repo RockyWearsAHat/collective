@@ -962,6 +962,10 @@ video {
   line-height: 1;
 }
 
+.text-\[12px\] {
+  font-size: 12px;
+}
+
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;

@@ -1,38 +1,29 @@
 import { ReactNode, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useMutation } from "../../hooks/useMutation";
-import { Link } from "react-router-dom";
+import { ToggleEye } from "../login/Login";
 
-export const ToggleEye = ({
-  className,
-  showPassword,
-  setShowPassword
-}: {
-  className: string;
-  showPassword: boolean;
-  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  return showPassword ? (
-    <FaEye className={className} onClick={() => setShowPassword(false)} />
-  ) : (
-    <FaEyeSlash className={className} onClick={() => setShowPassword(true)} />
-  );
-};
-
-export default function Login(): ReactNode {
+export default function Register(): ReactNode {
+  const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [rptPassword, setRptPassword] = useState<string>("");
 
   const [errorDisplay, setErrorDisplay] = useState<string>("");
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showRptPassword, setShowRptPassword] = useState<boolean>(false);
 
   const {
     loading,
     error,
-    fn: logInUser
+    fn: registerUser
   } = useMutation({
+    url: "/api/user/register",
+    method: "POST"
+  });
+
+  const { fn: loginUser } = useMutation({
     url: "/api/user/login",
     method: "POST"
   });
@@ -40,11 +31,18 @@ export default function Login(): ReactNode {
   const handleSubmit = async (e: any) => {
     setErrorDisplay("");
     e.preventDefault();
-    const data = await logInUser({ username, password });
+
+    if (password !== rptPassword)
+      return setErrorDisplay("Passwords do not match");
+
+    const data = await registerUser({ username, email, password });
+
+    console.log(data);
 
     if (error || data.error) {
       setErrorDisplay(error ? error : data.error);
     } else {
+      await loginUser({ username, password });
       window.location.href = "/";
     }
   };
@@ -52,7 +50,7 @@ export default function Login(): ReactNode {
   return (
     <>
       <Helmet>
-        <title>Artist Collective | Login</title>
+        <title>Artist Collective | Register</title>
       </Helmet>
       <div className="relative flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
         <div className="bg-middle absolute -z-10 h-[100vh] w-[100vw] scale-110 flex-col justify-center bg-[url('/loginbg.jpg')] bg-cover bg-center bg-no-repeat align-middle blur-sm"></div>
@@ -60,14 +58,24 @@ export default function Login(): ReactNode {
           onSubmit={handleSubmit}
           className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
         >
-          <h1 className="uppercase">Login</h1>
+          <h1 className="uppercase">Register</h1>
           <input
             type="text"
-            placeholder="Username / Email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            name="email"
+            autoComplete="email"
+            id="email"
+            className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+          />
+          <input
+            type="text"
+            placeholder="Username"
             value={username}
             onChange={e => setUsername(e.target.value)}
             name="username"
-            autoComplete="username"
+            autoComplete="off"
             id="username"
             className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
           />
@@ -88,6 +96,23 @@ export default function Login(): ReactNode {
               setShowPassword={setShowPassword}
             />
           </div>
+          <div className="relative w-full">
+            <input
+              type={showRptPassword ? "text" : "password"}
+              placeholder="Repeat Password"
+              value={rptPassword}
+              onChange={e => setRptPassword(e.target.value)}
+              name="rptPassword"
+              autoComplete="current-password"
+              id="repeat-current-password"
+              className={`${showRptPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
+            />
+            <ToggleEye
+              className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
+              showPassword={showRptPassword}
+              setShowPassword={setShowRptPassword}
+            />
+          </div>
           <div
             className={`relative w-full ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
           >
@@ -102,11 +127,8 @@ export default function Login(): ReactNode {
             className={`rounded-full border-2 border-black
              ${loading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
           >
-            Login
+            Register
           </button>
-          <Link to="/register" className="text-[12px]">
-            Don't have an account? Sign up here
-          </Link>
         </form>
       </div>
     </>
