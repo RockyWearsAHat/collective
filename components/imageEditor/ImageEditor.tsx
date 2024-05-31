@@ -85,7 +85,6 @@ const ImageEditor: FC<ImageEditorProps> = ({ file, setTarget }): ReactNode => {
           const src = await fetch(img.src);
           const blob = await src.blob();
           const modifiedFile = new File([blob], file.name, blob);
-          console.log(modifiedFile);
 
           (document.getElementById("modifiedImage") as HTMLImageElement)!.src =
             URL.createObjectURL(modifiedFile);
