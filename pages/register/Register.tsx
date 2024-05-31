@@ -37,8 +37,6 @@ export default function Register(): ReactNode {
 
     const data = await registerUser({ username, email, password });
 
-    console.log(data);
-
     if (error || data.error) {
       setErrorDisplay(error ? error : data.error);
     } else {

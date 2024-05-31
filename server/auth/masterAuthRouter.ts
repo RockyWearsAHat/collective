@@ -14,7 +14,6 @@ export const withAuth = async (
 ) => {
   let tokenValidated: boolean = false;
   if (!req.session || !req.session.token) {
-    console.log("no session or token");
     return res.json({ tokenValidated: false });
   }
   tokenValidated = await validateToken(req.session.token);
@@ -35,8 +34,6 @@ export const withAuth = async (
 
   req.session.token = token;
   req.session.save();
-
-  // console.log(req.session);
 
   next();
 };

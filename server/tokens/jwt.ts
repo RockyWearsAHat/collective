@@ -70,7 +70,7 @@ const validateToken = async (token: string): Promise<boolean> => {
     return true;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      console.log("Token expired");
+      console.log("Token has expired");
     }
     return false;
   }

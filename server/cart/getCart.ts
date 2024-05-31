@@ -14,7 +14,6 @@ getCartRouter.get("/", withAuth, async (req: Request, res: Response) => {
   const cart: ICartItem[] = loggedInUser.cart as ICartItem[];
 
   for (let i = 0; i < cart.length; i++) {
-    console.log(cart[i]);
     cart[i] = await cart[i].populate(["item"]);
   }
 

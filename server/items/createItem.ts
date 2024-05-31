@@ -36,7 +36,6 @@ createItemRouter.post(
       $push: { createdItems: newItem._id }
     });
 
-    console.log(newItem.toJSON());
     res.json({ ok: true, message: "Item created" });
   }
 );
