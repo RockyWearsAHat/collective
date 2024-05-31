@@ -4,6 +4,8 @@ import { checkIfEmail } from "../../helpers/checkIfEmail";
 
 export const registerRouter = Router();
 
+const numberOfPfps = 5;
+
 registerRouter.post("/", async (req: Request, res: Response) => {
   try {
     const { username, email, password }: Partial<IUser> = req.body;
@@ -14,7 +16,7 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       typeof email !== "string"
     )
       return res.json({
-        message: "Username, email and password must be strings"
+        error: "Username, email and password must be strings"
       });
 
     if (
@@ -26,19 +28,32 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       email.length == 0
     )
       return res.json({
-        message: "Username, email and password must not be empty"
+        error: "Username, email and password must not be empty"
       });
 
-    console.log(checkIfEmail(email));
+    if (!checkIfEmail(email)) return res.json({ error: "Invalid email" });
 
-    if (!checkIfEmail(email)) return res.json({ message: "Invalid email" });
+    let userExists = await User.findOne({ email });
+    if (userExists)
+      return res.json({
+        error: `A user with the email ${email} already exists`
+      });
+    userExists = await User.findOne({ username });
+    if (userExists)
+      return res.json({
+        error: `A user with the username ${username} already exists`
+      });
 
-    const newUser = await User.create({ username, email, password });
+    const pfpId = Math.floor(Math.random() * numberOfPfps) + 1;
+
+    const newUser = await User.create({ username, email, password, pfpId });
+
+    console.log(newUser);
 
     return res.json({
       registerRes: newUser
     });
   } catch (err) {
-    return res.json({ message: `Error creating user ${err}` });
+    return res.json({ error: `Error creating user ${err}` });
   }
 });

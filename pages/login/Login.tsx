@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useMutation } from "../../hooks/useMutation";
+import { Link } from "react-router-dom";
 
 export const ToggleEye = ({
   className,
@@ -103,6 +104,9 @@ export default function Login(): ReactNode {
           >
             Login
           </button>
+          <Link to="/register" className="text-[12px]">
+            Don't have an account? Sign up here
+          </Link>
         </form>
       </div>
     </>

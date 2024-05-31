@@ -6,8 +6,6 @@ module.exports = {
     "./{pages,components}/*.{html,js,tsx,jsx}",
     "./{pages,components}/**/*.{html,js,tsx,jsx}"
   ],
-  safelist: [
-  ],
   theme: {
     extend: {
       fontFamily: {
