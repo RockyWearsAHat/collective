@@ -34,7 +34,6 @@ const MultipleProductSelect: FC = (): ReactNode => {
       <div className="flex gap-5">
         {foundProducts &&
           foundProducts.map((item: IItem, index) => {
-            console.log(item.salePrice);
             return (
               <ProductCard
                 id={item._id as ObjectId}

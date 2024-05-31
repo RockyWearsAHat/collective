@@ -30,7 +30,6 @@ export const uploadToS3 = async (file: any, userId: ObjectId) => {
     });
     try {
       await s3.send(rmvCommand);
-      console.log("removed old image");
     } catch (error) {
       console.log(error);
       return { error };
@@ -48,7 +47,6 @@ export const uploadToS3 = async (file: any, userId: ObjectId) => {
 
   try {
     await s3.send(command);
-    console.log("uploaded successfully");
     return { key };
   } catch (error) {
     console.log(error);
@@ -133,7 +131,6 @@ export const uploadProductImagesToS3 = async (
 
     try {
       await s3.send(command);
-      console.log("uploaded successfully");
       return { key };
     } catch (error) {
       console.log(error);

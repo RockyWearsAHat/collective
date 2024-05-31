@@ -48,8 +48,6 @@ registerRouter.post("/", async (req: Request, res: Response) => {
 
     const newUser = await User.create({ username, email, password, pfpId });
 
-    console.log(newUser);
-
     return res.json({
       registerRes: newUser
     });

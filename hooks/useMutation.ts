@@ -28,7 +28,6 @@ export const useMutation = ({
       let bodyForReq = {};
       //Parse body for JSON, FormData, or no body
       if (body instanceof FormData) {
-        console.log("FormData");
         bodyForReq = {
           body
         };

@@ -1195,8 +1195,8 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.after\:content-\[attr\(saleLabel\)\]::after {
-  --tw-content: attr(saleLabel);
+.after\:content-\[attr\(salelabel\)\]::after {
+  --tw-content: attr(salelabel);
   content: var(--tw-content);
 }
 

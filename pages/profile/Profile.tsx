@@ -20,7 +20,6 @@ export default function Profile(): ReactNode {
 
     const res = await savePFP(formData);
 
-    console.log(res);
     //Reload navbar to show new profile photo
     setActive(res.activeLink);
   };

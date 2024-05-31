@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 declare module "react" {
   interface HTMLAttributes<T> extends DOMAttributes<T> {
-    saleLabel?: string;
+    salelabel?: string;
   }
 }
 
@@ -45,8 +45,8 @@ const ProductCard: FC<ProductCardProps> = ({
       to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
     >
       <div
-        saleLabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
-        className={`relative h-56 w-56 ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(saleLabel)]` : ""}`}
+        salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
+        className={`relative h-56 w-56 ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(salelabel)]` : ""}`}
       >
         <img
           className="h-full w-full object-cover"

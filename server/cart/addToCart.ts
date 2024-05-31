@@ -7,11 +7,9 @@ import { CartItem, ICartItem } from "../../db/models/cartItem";
 export const addToCartRouter: Router = Router();
 
 addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
-  console.log("got request");
   const { productToAdd } = await req.body;
 
   if (mongoose.Types.ObjectId.isValid(productToAdd) === false) {
-    console.log("invalid id");
     return res;
   }
 
@@ -22,10 +20,8 @@ addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
 
   let userHasItemInCart: boolean = false;
   let linkId: ObjectId;
-  // console.log(loggedInUser.cart);
   for (let i = 0; i < loggedInUser.cart.length; i++) {
     if ((loggedInUser.cart[i] as ICartItem).item == productToAdd) {
-      console.log("found item in cart");
       userHasItemInCart = true;
       linkId = (loggedInUser.cart[i] as ICartItem)._id;
       break;
@@ -57,7 +53,6 @@ addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
 
   const updatedUser = await User.findById(req.session.user?._id);
   if (!updatedUser) return res.json({ message: "error finding user" });
-  console.log(updatedUser);
   req.session.user = updatedUser;
   req.session.save();
 

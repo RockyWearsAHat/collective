@@ -13,8 +13,6 @@ const upload = multer({ storage });
 const savePFP = async (req: Request, res: Response) => {
   let { file } = req;
 
-  // console.log(req, file);
-
   if (!file || !req.session.user?._id)
     return res.status(400).json({ error: "No file uploaded" });
 

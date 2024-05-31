@@ -13,7 +13,6 @@ removeFromCartRouter.post(
     const { productToRemove } = await req.body;
 
     if (mongoose.Types.ObjectId.isValid(productToRemove) === false) {
-      console.log("invalid id");
       return res;
     }
 
@@ -26,7 +25,6 @@ removeFromCartRouter.post(
     let linkId: ObjectId;
     for (let i = 0; i < loggedInUser.cart.length; i++) {
       if ((loggedInUser.cart[i] as ICartItem).item == productToRemove) {
-        console.log("found item in cart");
         userHasItemInCart = true;
         linkId = (loggedInUser.cart[i] as ICartItem)._id;
         break;
@@ -36,7 +34,6 @@ removeFromCartRouter.post(
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
-      console.log(productLink);
       if (!productLink)
         return res.json({ message: "error finding product link" });
       if (productLink.quantity == 1) {
