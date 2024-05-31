@@ -23,7 +23,11 @@ export default function Register(): ReactNode {
     method: "POST"
   });
 
-  const { fn: loginUser } = useMutation({
+  const {
+    error: loginError,
+    loading: loginLoading,
+    fn: loginUser
+  } = useMutation({
     url: "/api/user/login",
     method: "POST"
   });
@@ -40,8 +44,13 @@ export default function Register(): ReactNode {
     if (error || data.error) {
       setErrorDisplay(error ? error : data.error);
     } else {
-      await loginUser({ username, password });
-      window.location.href = "/";
+      const loginData = await loginUser({ username, password });
+
+      if (loginError || loginData.error) {
+        setErrorDisplay(loginError ? loginError : loginData.error);
+      } else {
+        window.location.href = "/";
+      }
     }
   };
 
@@ -123,7 +132,7 @@ export default function Register(): ReactNode {
           <button
             type="submit"
             className={`rounded-full border-2 border-black
-             ${loading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
+             ${loading || loginLoading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
           >
             Register
           </button>
