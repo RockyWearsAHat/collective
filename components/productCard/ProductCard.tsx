@@ -2,6 +2,12 @@ import { ObjectId } from "mongoose";
 import { FC, Key, ReactNode } from "react";
 import { Link } from "react-router-dom";
 
+declare module "react" {
+  interface HTMLAttributes<T> extends DOMAttributes<T> {
+    saleLabel?: string;
+  }
+}
+
 interface ProductCardProps {
   name: string;
   id: ObjectId;
@@ -26,7 +32,7 @@ const ProductCard: FC<ProductCardProps> = ({
       ((Number(price.split("$")[1]) - Number(salePrice.split("$")[1])) /
         Number(price.split("$")[1])) *
       100
-    ).toFixed(2);
+    ).toFixed(0);
 
     if (Number.isInteger((Number.parseFloat(salePricePercentage) * 100) / 100))
       salePricePercentage = Number.parseInt(salePricePercentage);
@@ -39,7 +45,8 @@ const ProductCard: FC<ProductCardProps> = ({
       to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
     >
       <div
-        className={`relative h-56 w-56 ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-['Sale:_${salePricePercentage}_Off']` : ""}`}
+        saleLabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
+        className={`relative h-56 w-56 ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(saleLabel)]` : ""}`}
       >
         <img
           className="h-full w-full object-cover"
