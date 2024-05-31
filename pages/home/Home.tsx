@@ -28,7 +28,7 @@ export default function Home(): ReactNode {
       <div className="absolute left-10 top-10 z-10">
         <button
           onClick={async () =>
-            await addItemToCart({ productToAdd: "662c738bac9dc592260182c8" })
+            await addItemToCart({ productToAdd: "664943ff5fdc05ba00fb4508" })
           }
         >
           Add new item to cart
@@ -37,7 +37,7 @@ export default function Home(): ReactNode {
         <button
           onClick={async () => {
             await removeItemFromCart({
-              productToRemove: "662c40606b247846a4a17eda"
+              productToRemove: "664943ff5fdc05ba00fb4508"
             });
           }}
           disabled={removeItemLoading}

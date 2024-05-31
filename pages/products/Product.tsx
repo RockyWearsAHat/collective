@@ -32,12 +32,9 @@ const Product: FC = (): ReactNode => {
       {foundProduct && (
         <>
           {foundProduct.imageLinks && foundProduct.imageLinks.length > 0 && (
-            <div
-              style={{
-                backgroundImage: `${foundProduct.imageLinks ? `url(/${foundProduct.imageLinks[0]})` : ""}`
-              }}
-              className={`h-[30vh] w-[30vw] bg-cover bg-center`}
-            ></div>
+            <div>
+              <img src={`${foundProduct.imageLinks[0]}`} className="w-24" />
+            </div>
           )}
         </>
       )}
