@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Parallax, ParallaxLayer } from "@react-spring/parallax";
 import { useMutation } from "../../hooks/useMutation";
 
-export default function Home(): ReactNode {
+export function Home(): ReactNode {
   const { fn: addItemToCart } = useMutation({
     url: "/api/cart/addToCart",
     method: "POST",

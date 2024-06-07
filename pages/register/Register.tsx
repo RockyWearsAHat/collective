@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { useMutation } from "../../hooks/useMutation";
 import { ToggleEye } from "../login/Login";
 
-export default function Register(): ReactNode {
+export function Register(): ReactNode {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");

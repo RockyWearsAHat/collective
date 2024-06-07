@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMutation } from "../../hooks/useMutation";
 import { IItem } from "../../db/models/item";
 
-const Product: FC = (): ReactNode => {
+export const Product: FC = (): ReactNode => {
   const { productName, productID } = useParams();
 
   const { fn: findProduct } = useMutation({
@@ -41,5 +41,3 @@ const Product: FC = (): ReactNode => {
     </div>
   );
 };
-
-export default Product;

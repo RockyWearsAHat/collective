@@ -3,7 +3,7 @@ import { ActiveContext } from "../app/App";
 import { useMutation } from "../../hooks/useMutation";
 // import ImageEditor from "../../components/imageEditor/ImageEditor";
 
-export default function Profile(): ReactNode {
+export function Profile(): ReactNode {
   const [profilePhoto, setProfilePhoto] = useState<File>();
   const { setActive } = useContext(ActiveContext);
   const { fn: savePFP } = useMutation({

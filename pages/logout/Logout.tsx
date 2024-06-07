@@ -4,7 +4,7 @@ import { ActiveContext } from "../app/App";
 import { useMutation } from "../../hooks/useMutation";
 import { Helmet } from "react-helmet-async";
 
-const Logout = (): ReactNode => {
+export const Logout = (): ReactNode => {
   const { active, setActive } = useContext(ActiveContext);
 
   const { fn: logout } = useMutation({
@@ -58,5 +58,3 @@ const Logout = (): ReactNode => {
     </>
   );
 };
-
-export default Logout;
