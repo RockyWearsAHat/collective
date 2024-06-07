@@ -17,7 +17,7 @@ export const ActiveContext = React.createContext<ActiveContextInterface>({
   setActive: () => {}
 });
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [active, setActive] = useState<string>("/");
   const activePageContextValue = { active, setActive };
 
@@ -44,5 +44,3 @@ const App: React.FC = () => {
     </>
   );
 };
-
-export default App;

@@ -32,6 +32,12 @@ export default function Navbar(): ReactNode {
 
   useEffect(() => {
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
+    checkLoggedIn().then(res => {
+      if (res && (res.loggedIn == true || res.loggedIn == false)) {
+        setLoggedIn(res.loggedIn);
+      }
+    });
+
     if (!userProfilePhoto || active == "/profilePhotoChanged") {
       fetchUserProfilePhoto().then(res => {
         if (res && res.link) {
@@ -40,12 +46,6 @@ export default function Navbar(): ReactNode {
         setActive(extensionUrl);
       });
     }
-
-    checkLoggedIn().then(res => {
-      if (res && (res.loggedIn == true || res.loggedIn == false)) {
-        setLoggedIn(res.loggedIn);
-      }
-    });
 
     //Close the navigation menu after navigating to another page
     setMobileClicks(0);
@@ -181,7 +181,6 @@ export default function Navbar(): ReactNode {
                     }
                   }}
                 >
-                  {/* <Suspense> */}
                   <div
                     id="userProfilePhoto"
                     style={{
@@ -189,7 +188,6 @@ export default function Navbar(): ReactNode {
                     }}
                     className={`group z-50 h-[24px] w-[24px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
                   ></div>
-                  {/* </Suspense> */}
                 </div>
                 <div
                   className={`absolute h-[0.5rem] w-[24px]`}

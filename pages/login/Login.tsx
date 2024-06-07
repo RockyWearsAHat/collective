@@ -20,7 +20,7 @@ export const ToggleEye = ({
   );
 };
 
-export default function Login(): ReactNode {
+export function Login(): ReactNode {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 

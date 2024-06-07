@@ -12,18 +12,19 @@
 
 import { createBrowserRouter } from "react-router-dom";
 
-import Home from "./home/Home";
-import Contact from "./contact/Contact";
-import Login from "./login/Login";
-import Upload from "./upload/Upload";
-import Profile from "./profile/Profile";
-import Logout from "./logout/Logout";
-import App from "./app/App";
-import ErrorPage from "./error/Error";
-import Product from "./products/Product";
-import MultipleProductSelect from "./products/MultipleProductsSelect";
-import ProductNotFound from "./products/ProductNotFound";
-import Register from "./register/Register";
+import { Home } from "./home/Home";
+import { Contact } from "./contact/Contact";
+import { Login } from "./login/Login";
+import { Upload } from "./upload/Upload";
+import { Profile } from "./profile/Profile";
+import { Logout } from "./logout/Logout";
+import { App } from "./app/App";
+import { ErrorPage } from "./error/Error";
+import { Product } from "./products/Product";
+import { MultipleProductSelect } from "./products/MultipleProductsSelect";
+import { ProductNotFound } from "./products/ProductNotFound";
+import { Register } from "./register/Register";
+import { SessionTimedOut } from "./timeout/SessionTimedOut";
 
 const PageRouter = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/logout",
         element: <Logout />
+      },
+      {
+        path: "/sessuion-timed-out",
+        element: <SessionTimedOut />
       },
       {
         path: "/products/browse/:productName",

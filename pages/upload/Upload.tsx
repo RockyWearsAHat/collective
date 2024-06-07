@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useMutation } from "../../hooks/useMutation";
 
-export default function Upload(): ReactNode {
+export function Upload(): ReactNode {
   const { loading, fn: uploadNewProduct } = useMutation({
     url: "/api/products/create",
     method: "POST"

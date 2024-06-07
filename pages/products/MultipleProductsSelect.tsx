@@ -5,7 +5,7 @@ import { IItem } from "../../db/models/item";
 import ProductCard from "../../components/productCard/ProductCard";
 import { ObjectId } from "mongoose";
 
-const MultipleProductSelect: FC = (): ReactNode => {
+export const MultipleProductSelect: FC = (): ReactNode => {
   const { productName } = useParams();
 
   const { fn: findProduct } = useMutation({
@@ -51,5 +51,3 @@ const MultipleProductSelect: FC = (): ReactNode => {
     </div>
   );
 };
-
-export default MultipleProductSelect;
