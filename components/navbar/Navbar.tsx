@@ -41,20 +41,17 @@ export default function Navbar(): ReactNode {
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
-      console.log("validating token");
-      timeout = setTimeout(() => {
-        validateToken().then(res => {
-          if (!res.tokenValidated) {
-            if (
-              !fullExtensionUrl.match(/^\/$/) &&
-              extensionUrl.indexOf("/login") == -1 &&
-              extensionUrl.indexOf("/contact") == -1 &&
-              fullExtensionUrl.indexOf("/product") == -1
-            ) {
-              return navigate("/session-timed-out");
-            }
+      validateToken().then(res => {
+        if (!res.tokenValidated) {
+          if (
+            !fullExtensionUrl.match(/^\/$/) &&
+            extensionUrl.indexOf("/login") == -1 &&
+            extensionUrl.indexOf("/contact") == -1 &&
+            fullExtensionUrl.indexOf("/product") == -1
+          ) {
+            return navigate("/session-timed-out");
           }
-        });
+        }
       });
 
       if (res && (res.loggedIn == true || res.loggedIn == false)) {
