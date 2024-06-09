@@ -8,7 +8,7 @@ export const SessionTimedOut = (): ReactNode => {
   const { active, setActive } = useContext(ActiveContext);
 
   const { fn: logout } = useMutation({
-    url: "/api/user/logout",
+    url: "/api/user/sessionTime",
     method: "GET",
     credentials: "same-origin"
   });

@@ -62,7 +62,7 @@ const PageRouter = createBrowserRouter([
         element: <Logout />
       },
       {
-        path: "/sessuion-timed-out",
+        path: "/session-timed-out",
         element: <SessionTimedOut />
       },
       {

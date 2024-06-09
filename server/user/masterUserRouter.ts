@@ -7,6 +7,7 @@ import { deleteAllRouter } from "./deleteAll";
 import { savePFPRouter } from "./savePFP";
 import { getPFPRouter } from "./getPFP";
 import { logoutRouter } from "./logout";
+import { sessionTimeoutRouter } from "./sessionTimeoutRouter";
 import { checkLoggedInRouter } from "./checkLoggedIn";
 
 export const masterUserRouter = Router();
@@ -17,5 +18,6 @@ masterUserRouter.use("/delete-all", deleteAllRouter);
 masterUserRouter.use("/savePFP", savePFPRouter);
 masterUserRouter.use("/getPFP", getPFPRouter);
 masterUserRouter.use("/logout", logoutRouter);
+masterUserRouter.use("/sessionTimeout", sessionTimeoutRouter);
 masterUserRouter.use("/checkLoggedIn", checkLoggedInRouter);
 masterUserRouter.use("/*", logRouteNotFound);

@@ -1,5 +1,5 @@
 import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { ActiveContext } from "../../pages/app/App";
 import { useMutation } from "../../hooks/useMutation";
@@ -9,6 +9,7 @@ type LinkMap = [url: string, title: string];
 
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
+  let fullExtensionUrl = `/${window.location.href.split("/").slice(3).join("/")}`;
   if (extensionUrl == "") extensionUrl = "/";
 
   //Underscore denotes that the variable is not used, lint will throw an error otherwise
@@ -30,22 +31,59 @@ export default function Navbar(): ReactNode {
     credentials: "same-origin"
   });
 
+  const { fn: validateToken } = useMutation({
+    url: "/api/auth/validateToken",
+    method: "GET",
+    credentials: "same-origin"
+  });
+
   useEffect(() => {
+    let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
+      console.log("validating token");
+      timeout = setTimeout(() => {
+        validateToken().then(res => {
+          console.log(res);
+          console.log(fullExtensionUrl.indexOf("/product"), fullExtensionUrl);
+          console.log(
+            !fullExtensionUrl.match(/^\/$/),
+            extensionUrl.indexOf("/login") == -1,
+            extensionUrl.indexOf("/contact") == -1,
+            fullExtensionUrl.indexOf("/product") == -1
+          );
+          if (!res.tokenValidated) {
+            if (
+              !fullExtensionUrl.match(/^\/$/) &&
+              extensionUrl.indexOf("/login") == -1 &&
+              extensionUrl.indexOf("/contact") == -1 &&
+              fullExtensionUrl.indexOf("/product") == -1
+            ) {
+              return navigate("/session-timed-out");
+            }
+          }
+        });
+      });
+
       if (res && (res.loggedIn == true || res.loggedIn == false)) {
         setLoggedIn(res.loggedIn);
       }
+
+      //If user is logged in, get their profile photo
+      if (
+        (!userProfilePhoto || active == "/profilePhotoChanged") &&
+        res.loggedIn
+      ) {
+        fetchUserProfilePhoto().then(res => {
+          if (res && res.link) {
+            if (userProfilePhoto != res.link) setUserProfilePhoto(res.link);
+          }
+          setActive(extensionUrl);
+        });
+      }
     });
 
-    if (!userProfilePhoto || active == "/profilePhotoChanged") {
-      fetchUserProfilePhoto().then(res => {
-        if (res && res.link) {
-          if (userProfilePhoto != res.link) setUserProfilePhoto(res.link);
-        }
-        setActive(extensionUrl);
-      });
-    }
+    clearTimeout(timeout);
 
     //Close the navigation menu after navigating to another page
     setMobileClicks(0);
