@@ -47,18 +47,18 @@ loginRouter.post("/", async function (req: Request, res: Response) {
 
   req.session.token = token;
   req.session.user = user;
-  req.session.save();
 
   if (user.pfpId) {
     const link = await getUserPFP(foundUser._id);
 
     if (typeof link == "string") {
       req.session.userPFP = link;
-      req.session.save();
     } else {
       return res.json({ error: "Error getting user PFP" });
     }
   }
+
+  req.session.save();
 
   // ("token", token, {
   //   httpOnly: true,
