@@ -45,9 +45,11 @@ const signToken = async (user?: IUser): Promise<string | null> => {
     privateKey = rtnPrivateKey;
   }
 
+  const timeoutInSeconds = sessionTimeout / 1000;
+
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
     algorithm: "RS256",
-    expiresIn: sessionTimeout / 1000
+    expiresIn: timeoutInSeconds
   });
 
   const verified = await validateToken(JWT);

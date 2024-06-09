@@ -20,9 +20,6 @@ export const withAuth = async (
   }
 
   tokenValidated = await validateToken(req.session.token);
-  console.log("Valid token: " + tokenValidated);
-  console.log("Current session data");
-  console.log(req.session);
   if (!tokenValidated) {
     return res.json({ tokenValidated: false });
   }

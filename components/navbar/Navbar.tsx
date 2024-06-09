@@ -47,9 +47,10 @@ export default function Navbar(): ReactNode {
             !fullExtensionUrl.match(/^\/$/) &&
             extensionUrl.indexOf("/login") == -1 &&
             extensionUrl.indexOf("/contact") == -1 &&
+            extensionUrl.indexOf("/logout") == -1 &&
             fullExtensionUrl.indexOf("/product") == -1
           ) {
-            return navigate("/session-timed-out");
+            navigate("/session-timed-out");
           }
         }
       });
