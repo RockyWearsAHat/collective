@@ -18,7 +18,7 @@ import serverless from "serverless-http";
 
 export const app = express();
 
-export const sessionTimeout = 5 * 1000;
+export const sessionTimeout = 24 * 60 * 1000;
 
 //Set up session store for cookies and storing JWTs and auth
 declare module "express-session" {
