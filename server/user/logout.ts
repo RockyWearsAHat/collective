@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 
 export const logoutRouter: Router = Router();
 
-logoutRouter.get("/", async (req: Request, res: Response) => {
+export const logoutHandler = async (req: Request, res: Response) => {
   if (!req.session || !req.session.token) {
     return res.json({ redirect: "/" });
   } else {
@@ -12,4 +12,6 @@ logoutRouter.get("/", async (req: Request, res: Response) => {
         .json({ page: "/loggedOut" });
     });
   }
-});
+};
+
+logoutRouter.get("/", logoutHandler);

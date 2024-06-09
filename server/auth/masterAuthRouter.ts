@@ -13,12 +13,18 @@ export const withAuth = async (
   next: NextFunction
 ) => {
   let tokenValidated: boolean = false;
+
   if (!req.session || !req.session.token) {
+    console.log("No session or token");
     return res.json({ tokenValidated: false });
   }
+
   tokenValidated = await validateToken(req.session.token);
+  console.log("Valid token: " + tokenValidated);
+  console.log("Current session data");
+  console.log(req.session);
   if (!tokenValidated) {
-    return res.redirect("/logout");
+    return res.json({ tokenValidated: false });
   }
 
   const loggedInUser = await User.findById(req.session.user?._id);
@@ -26,13 +32,14 @@ export const withAuth = async (
   if (!loggedInUser)
     return res.json({ ok: false, message: "Error finding user" });
 
-  const token = await signToken(loggedInUser);
+  const refreshedToken = await signToken(loggedInUser);
 
-  if (!token) {
+  if (!refreshedToken) {
     return res.json({ tokenValidated: false });
   }
 
-  req.session.token = token;
+  req.session.touch();
+  req.session.token = refreshedToken;
   req.session.save();
 
   next();

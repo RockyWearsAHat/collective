@@ -18,6 +18,8 @@ import serverless from "serverless-http";
 
 export const app = express();
 
+export const sessionTimeout = 5 * 1000;
+
 //Set up session store for cookies and storing JWTs and auth
 declare module "express-session" {
   export interface SessionData {
@@ -34,7 +36,8 @@ const sessionStore = new MongoStore({
   dbName: "balls",
   collectionName: "sessions",
   stringify: false,
-  autoRemove: "disabled"
+  autoRemove: "disabled",
+  ttl: sessionTimeout
 });
 
 app.use(
@@ -49,7 +52,8 @@ app.use(
       httpOnly: true,
       sameSite: true,
       secure: false,
-      path: "/"
+      path: "/",
+      maxAge: 5000
     }
   })
 );

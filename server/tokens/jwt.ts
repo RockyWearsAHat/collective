@@ -1,6 +1,7 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
+import { sessionTimeout } from "../server";
 
 let privateKey: string | null = null,
   publicKey: string | null = null;
@@ -46,7 +47,7 @@ const signToken = async (user?: IUser): Promise<string | null> => {
 
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
     algorithm: "RS256",
-    expiresIn: "2h"
+    expiresIn: sessionTimeout / 1000
   });
 
   const verified = await validateToken(JWT);
@@ -58,15 +59,27 @@ export interface IToken {
   validated: boolean;
 }
 
-const validateToken = async (token: string): Promise<boolean> => {
+const validateToken = async (token?: string): Promise<boolean> => {
   try {
+    console.log("running validation");
+    if (!token) return false;
+
     if (!publicKey || !privateKey) {
       const { rtnPrivateKey, rtnPublicKey } = await getKeys();
       publicKey = rtnPublicKey;
       privateKey = rtnPrivateKey;
     }
 
-    jwt.verify(token, publicKey);
+    const tokenData: JwtPayload = jwt.verify(token, publicKey) as JwtPayload;
+
+    console.log(
+      "Cookie expires at " +
+        new Date(tokenData.exp! * 1000) +
+        "; Current time " +
+        new Date(Date.now())
+    );
+    console.log(tokenData.exp! * 1000 < Date.now());
+
     return true;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
