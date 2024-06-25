@@ -25,7 +25,7 @@ export default function Navbar(): ReactNode {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [mobileClicks, setMobileClicks] = useState<number>(0);
-  const [searchboxSize, setSearchboxSize] = useState<string>("300px");
+  const [searchboxSize, _setSearchboxSize] = useState<string>("300px");
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
