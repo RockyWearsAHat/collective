@@ -1,11 +1,18 @@
 import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus } from "react-icons/fa6";
+import { FiPlus } from "react-icons/fi";
+import { CiSearch } from "react-icons/ci";
 import { ActiveContext } from "../../pages/app/App";
 import { useMutation } from "../../hooks/useMutation";
 import { useNavigate } from "react-router-dom";
 
 type LinkMap = [url: string, title: string];
+
+declare module "react" {
+  interface HTMLAttributes<T> extends DOMAttributes<T> {
+    textboxsize?: string;
+  }
+}
 
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
@@ -18,6 +25,7 @@ export default function Navbar(): ReactNode {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [mobileClicks, setMobileClicks] = useState<number>(0);
+  const [searchboxSize, setSearchboxSize] = useState<string>("300px");
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
@@ -156,7 +164,7 @@ export default function Navbar(): ReactNode {
 
   return (
     <>
-      <div className="absolute z-50 min-w-[100vw] max-w-[100vw] select-none">
+      <div className="relative z-50 min-w-[100vw] max-w-[100vw] select-none">
         <Suspense
           fallback={
             <div className="absolute -z-10 h-[70px] min-w-[100vw] max-w-[100vw] bg-zinc-700 bg-cover brightness-50"></div>
@@ -167,6 +175,19 @@ export default function Navbar(): ReactNode {
             id="navBg"
           ></div>
         </Suspense>
+        <div className="absolute left-[50%] top-[50%] flex translate-x-[-50%] translate-y-[-50%]">
+          <input
+            type="text"
+            placeholder="Search"
+            className={`w-[${searchboxSize}] border-b-2 bg-transparent px-4 text-center text-white placeholder:text-white focus:outline-none focus:placeholder:invisible`}
+          />
+        </div>
+        <div
+          className={`absolute left-[calc(50%+30px)] ml-[${parseInt(searchboxSize) / 2}px] top-[50%] flex translate-x-[calc(-50%-20px)] translate-y-[-50%]`}
+        >
+          <CiSearch className="mt-1 size-[20px] text-xl text-white" />
+        </div>
+
         <ul className="flex justify-end gap-4 overflow-visible py-2 pr-4 text-white">
           {activeLinks.map(([url, title]: LinkMap) => {
             return (
@@ -257,7 +278,7 @@ export default function Navbar(): ReactNode {
                   <div
                     className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                   >
-                    <FaPlus className="text-xl" />
+                    <FiPlus className="text-xl" />
                   </div>
                 </Link>
               </li>
