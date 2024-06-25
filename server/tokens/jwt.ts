@@ -45,11 +45,11 @@ const signToken = async (user?: IUser): Promise<string | null> => {
     privateKey = rtnPrivateKey;
   }
 
-  const timeoutInSeconds = sessionTimeout / 1000;
+  const timeoutInSeconds = sessionTimeout;
 
   let JWT: string = jwt.sign(user?.toJSON() || {}, privateKey, {
     algorithm: "RS256",
-    expiresIn: timeoutInSeconds
+    expiresIn: timeoutInSeconds / 1000
   });
 
   const verified = await validateToken(JWT);
@@ -63,7 +63,6 @@ export interface IToken {
 
 const validateToken = async (token?: string): Promise<boolean> => {
   try {
-    console.log("running validation");
     if (!token) return false;
 
     if (!publicKey || !privateKey) {
@@ -72,15 +71,8 @@ const validateToken = async (token?: string): Promise<boolean> => {
       privateKey = rtnPrivateKey;
     }
 
-    const tokenData: JwtPayload = jwt.verify(token, publicKey) as JwtPayload;
-
-    console.log(
-      "Cookie expires at " +
-        new Date(tokenData.exp! * 1000) +
-        "; Current time " +
-        new Date(Date.now())
-    );
-    console.log(tokenData.exp! * 1000 < Date.now());
+    const tokenData = jwt.verify(token, publicKey) as JwtPayload;
+    console.log(tokenData);
 
     return true;
   } catch (error) {
