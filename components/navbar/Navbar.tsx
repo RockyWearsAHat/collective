@@ -1,12 +1,4 @@
-import {
-  FormEventHandler,
-  KeyboardEventHandler,
-  ReactNode,
-  Suspense,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
@@ -207,7 +199,7 @@ export default function Navbar(): ReactNode {
               placeholder="Search"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className={`w-[${searchboxSize}] border-b-2 bg-transparent px-4 text-center text-white outline-none placeholder:text-white focus:outline-none focus:outline-none focus:placeholder:invisible`}
+              className={`w-[${searchboxSize}] border-b-2 bg-transparent px-4 text-center text-white outline-none placeholder:text-white focus:outline-none focus:placeholder:invisible`}
             />
             <button type="submit">
               <CiSearch className="absolute right-0 size-[20px] translate-y-[-15px] text-xl text-white" />

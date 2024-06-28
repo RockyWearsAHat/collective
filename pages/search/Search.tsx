@@ -48,22 +48,6 @@ export const Search: FC = () => {
                   price={product.price}
                   salePrice={product.salePrice ? product.salePrice : null}
                 />
-                <ProductCard
-                  key={`${i}abc`}
-                  name={product.name}
-                  id={product._id}
-                  image={product.imageLinks[0]}
-                  price={product.price}
-                  salePrice={product.salePrice ? product.salePrice : null}
-                />
-                <ProductCard
-                  key={`${i}123`}
-                  name={product.name}
-                  id={product._id}
-                  image={product.imageLinks[0]}
-                  price={product.price}
-                  salePrice={product.salePrice ? product.salePrice : null}
-                />
               </Fragment>
             ))}
           </ul>
