@@ -1,4 +1,12 @@
-import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
+import {
+  FormEventHandler,
+  KeyboardEventHandler,
+  ReactNode,
+  Suspense,
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import { Link } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
@@ -162,6 +170,20 @@ export default function Navbar(): ReactNode {
     }
   }, [window.navigator.userAgent, window.innerWidth, window.innerHeight]);
 
+  const searchBarEnterKeyHandler = (e: any) => {
+    if (e.key == "Enter") {
+      navigate(`/search/${searchTerm}`);
+    }
+  };
+
+  const handleSearchSubmit = (e: any) => {
+    e.preventDefault();
+
+    navigate(`/search/${searchTerm}`);
+  };
+
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
   return (
     <>
       <div className="relative z-50 min-w-[100vw] max-w-[100vw] select-none">
@@ -176,17 +198,28 @@ export default function Navbar(): ReactNode {
           ></div>
         </Suspense>
         <div className="absolute left-[50%] top-[50%] flex translate-x-[-50%] translate-y-[-50%]">
-          <input
-            type="text"
-            placeholder="Search"
-            className={`w-[${searchboxSize}] border-b-2 bg-transparent px-4 text-center text-white placeholder:text-white focus:outline-none focus:placeholder:invisible`}
-          />
+          <form
+            onSubmit={handleSearchSubmit}
+            onKeyDown={searchBarEnterKeyHandler}
+          >
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className={`w-[${searchboxSize}] border-b-2 bg-transparent px-4 text-center text-white outline-none placeholder:text-white focus:outline-none focus:outline-none focus:placeholder:invisible`}
+            />
+            <button type="submit">
+              <CiSearch className="absolute right-0 size-[20px] translate-y-[-15px] text-xl text-white" />
+            </button>
+          </form>
         </div>
-        <div
-          className={`absolute left-[calc(50%+30px)] ml-[${parseInt(searchboxSize) / 2}px] top-[50%] flex translate-x-[calc(-50%-20px)] translate-y-[-50%]`}
+
+        {/* <div
+          className={`absolute left-[calc(50%+35px)] ml-[${parseInt(searchboxSize) / 2}px] top-[50%] flex translate-x-[calc(-50%-20px)] translate-y-[-50%]`}
         >
           <CiSearch className="mt-1 size-[20px] text-xl text-white" />
-        </div>
+        </div> */}
 
         <ul className="flex justify-end gap-4 overflow-visible py-2 pr-4 text-white">
           {activeLinks.map(([url, title]: LinkMap) => {

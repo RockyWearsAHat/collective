@@ -2020,11 +2020,12 @@ module.exports = {
         10: "10px"
       },
       padding: {
-        nav: "3rem"
+        nav: "2.5rem"
       },
       gridTemplateRows: {
         0: "0fr",
-        1: "1fr"
+        1: "1fr",
+        autofit: "min-content"
       }
     },
     plugins: []
