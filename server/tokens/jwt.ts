@@ -71,8 +71,7 @@ const validateToken = async (token?: string): Promise<boolean> => {
       privateKey = rtnPrivateKey;
     }
 
-    const tokenData = jwt.verify(token, publicKey) as JwtPayload;
-    console.log(tokenData);
+    jwt.verify(token, publicKey);
 
     return true;
   } catch (error) {

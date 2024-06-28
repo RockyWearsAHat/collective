@@ -25,6 +25,7 @@ import { MultipleProductSelect } from "./products/MultipleProductsSelect";
 import { ProductNotFound } from "./products/ProductNotFound";
 import { Register } from "./register/Register";
 import { SessionTimedOut } from "./timeout/SessionTimedOut";
+import { Search } from "./search/Search";
 
 const PageRouter = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/products/:productName/:productID?",
         element: <Product />
+      },
+      {
+        path: "/search/:productName",
+        element: <Search />
       },
       {
         path: "/product-not-found",

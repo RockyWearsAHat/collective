@@ -41,18 +41,20 @@ const ProductCard: FC<ProductCardProps> = ({
   }
 
   return (
-    <Link
-      to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
-    >
-      <div
-        salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
-        className={`relative h-56 w-56 ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(salelabel)]` : ""}`}
+    <div className="m-0 h-[min-content] p-0">
+      <Link
+        to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
       >
-        <img
-          className="h-full w-full object-cover"
-          src={`${image}`}
-          alt={`Image of ${name}`}
-        />
+        <div
+          salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
+          className={`relative aspect-square h-auto w-auto ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(salelabel)]` : ""}`}
+        >
+          <img
+            className="h-full w-full object-cover"
+            src={`${image}`}
+            alt={`Image of ${name}`}
+          />
+        </div>
         <h2>{name}</h2>
         {description && <p>{description}</p>}
         <p>
@@ -60,8 +62,8 @@ const ProductCard: FC<ProductCardProps> = ({
           <span className={`${salePrice ? "line-through" : ""}`}>{price}</span>
           {salePrice && <span> {salePrice}</span>}
         </p>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
