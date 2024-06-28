@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
 import { sessionTimeout } from "../server";
