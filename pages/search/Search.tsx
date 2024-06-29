@@ -15,6 +15,7 @@ export const Search: FC = () => {
 
   const findAndSetProducts = async () => {
     const data = await searchProducts();
+    console.log(data);
     setProducts(data.foundProducts);
   };
 
