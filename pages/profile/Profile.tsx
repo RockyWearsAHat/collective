@@ -25,7 +25,7 @@ export function Profile(): ReactNode {
   };
 
   return (
-    <div className="h-[100vh] pt-nav">
+    <div className="absolute left-0 top-0 h-[100vh] pt-nav">
       <form
         onSubmit={handleFileUpload}
         encType="multipart/form-data"
