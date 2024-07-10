@@ -54,7 +54,7 @@ export function Login(): ReactNode {
       <Helmet>
         <title>Artist Collective | Login</title>
       </Helmet>
-      <div className="relative flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
+      <div className="absolute top-0 flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
         <div className="bg-middle absolute -z-10 h-[100vh] w-[100vw] scale-110 flex-col justify-center bg-[url('/loginbg.jpg')] bg-cover bg-center bg-no-repeat align-middle blur-sm"></div>
         <form
           onSubmit={handleSubmit}
