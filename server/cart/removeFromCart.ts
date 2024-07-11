@@ -19,6 +19,7 @@ removeFromCartRouter.post(
     const loggedInUser = await User.findById(req.session.user!._id).populate(
       "cart"
     );
+
     if (!loggedInUser) return res.status(404).json("User not found");
 
     let userHasItemInCart: boolean = false;
