@@ -27,7 +27,7 @@ export const MultipleProductSelect: FC = (): ReactNode => {
   };
 
   useEffect(() => {
-    setActive();
+    setActive("products");
     findProducts();
   }, [window.location.href]);
 
