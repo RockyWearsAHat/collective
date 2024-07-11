@@ -1,12 +1,14 @@
-import { FC, Key, ReactNode, useEffect, useState } from "react";
+import { FC, Key, ReactNode, useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation } from "../../hooks/useMutation";
 import { IItem } from "../../db/models/item";
 import ProductCard from "../../components/productCard/ProductCard";
 import { ObjectId } from "mongoose";
+import { ActiveContext } from "../contextProvider";
 
 export const MultipleProductSelect: FC = (): ReactNode => {
   const { productName } = useParams();
+  const { setActive } = useContext(ActiveContext);
 
   const { fn: findProduct } = useMutation({
     url: "/api/products/find",
@@ -25,6 +27,7 @@ export const MultipleProductSelect: FC = (): ReactNode => {
   };
 
   useEffect(() => {
+    setActive();
     findProducts();
   }, [window.location.href]);
 

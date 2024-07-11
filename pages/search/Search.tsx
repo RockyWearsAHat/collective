@@ -1,12 +1,14 @@
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import ProductCard from "../../components/productCard/ProductCard";
 import { useMutation } from "../../hooks/useMutation";
+import { ActiveContext } from "../contextProvider";
 
 export const Search: FC = () => {
   const { productName } = useParams();
   const [products, setProducts] = useState([]);
   let tempProducts: any = [];
+  const { setActive } = useContext(ActiveContext);
 
   const { fn: searchProducts, loading } = useMutation({
     url: `/api/search/${productName}`,
@@ -23,6 +25,7 @@ export const Search: FC = () => {
   };
 
   useEffect(() => {
+    setActive("search");
     findAndSetProducts();
   }, [window.location.href]);
 
