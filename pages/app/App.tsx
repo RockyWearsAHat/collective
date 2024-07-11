@@ -1,5 +1,7 @@
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+
+import { ActiveContext } from "../contextProvider";
 
 import "../globals.css";
 
@@ -7,18 +9,8 @@ import "../tailwindOutput.css";
 import Navbar from "../../components/navbar/Navbar";
 import { Outlet } from "react-router-dom";
 
-interface ActiveContextInterface {
-  active: string;
-  setActive: React.Dispatch<SetStateAction<string>>;
-}
-
-export const ActiveContext = React.createContext<ActiveContextInterface>({
-  active: "",
-  setActive: () => {}
-});
-
-export const App: React.FC = () => {
-  const [active, setActive] = useState<string>("/");
+const App: React.FC = () => {
+  const [active, setActive] = useState<string>("");
   const activePageContextValue = { active, setActive };
 
   return (
@@ -44,3 +36,5 @@ export const App: React.FC = () => {
     </>
   );
 };
+
+export default App;

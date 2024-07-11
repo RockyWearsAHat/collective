@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 // import fs from "fs";
 import { IUser } from "../../db/models/user";
-import { sessionTimeout } from "../server";
+import { sessionTimeout } from "../serverConfig";
 
 let privateKey: string | null = null,
   publicKey: string | null = null;

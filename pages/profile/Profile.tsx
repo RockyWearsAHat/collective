@@ -1,5 +1,5 @@
 import { ReactNode, useContext, useState } from "react";
-import { ActiveContext } from "../app/App";
+import { ActiveContext } from "../contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 // import ImageEditor from "../../components/imageEditor/ImageEditor";
 

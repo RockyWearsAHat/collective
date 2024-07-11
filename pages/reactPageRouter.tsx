@@ -10,6 +10,7 @@
 //a direct handler, this index.html file then calls the client.tsx entry point for the react app, which will then create the
 //wrappers/context/everything else for the react app, then finally render pages
 
+import App from "./app/App";
 import { createBrowserRouter } from "react-router-dom";
 
 import { Home } from "./home/Home";
@@ -18,7 +19,6 @@ import { Login } from "./login/Login";
 import { Upload } from "./upload/Upload";
 import { Profile } from "./profile/Profile";
 import { Logout } from "./logout/Logout";
-import { App } from "./app/App";
 import { ErrorPage } from "./error/Error";
 import { Product } from "./products/Product";
 import { MultipleProductSelect } from "./products/MultipleProductsSelect";
@@ -26,6 +26,7 @@ import { ProductNotFound } from "./products/ProductNotFound";
 import { Register } from "./register/Register";
 import { SessionTimedOut } from "./timeout/SessionTimedOut";
 import { Search } from "./search/Search";
+import { Cart } from "./cart/Cart";
 
 const PageRouter = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/product-not-found",
         element: <ProductNotFound />
+      },
+      {
+        path: "/cart",
+        element: <Cart />
       }
     ]
   }

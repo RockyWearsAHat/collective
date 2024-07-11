@@ -1,6 +1,6 @@
 import { ReactNode, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ActiveContext } from "../app/App";
+import { ActiveContext } from "../contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 import { Helmet } from "react-helmet-async";
 

@@ -2,15 +2,17 @@ import { ReactNode, Suspense, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
-import { ActiveContext } from "../../pages/app/App";
+import { ActiveContext } from "../../pages/contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineShoppingCart } from "react-icons/ai";
 
 type LinkMap = [url: string, title: string];
 
 declare module "react" {
   interface HTMLAttributes<T> extends DOMAttributes<T> {
     textboxsize?: string;
+    cartitems?: string;
   }
 }
 
@@ -26,6 +28,7 @@ export default function Navbar(): ReactNode {
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [mobileClicks, setMobileClicks] = useState<number>(0);
   const [searchboxSize, _setSearchboxSize] = useState<string>("300px");
+  const [cartItemsLength, setCartItemsLength] = useState<number>(0);
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
@@ -45,7 +48,17 @@ export default function Navbar(): ReactNode {
     credentials: "same-origin"
   });
 
+  const { fn: getCart } = useMutation({
+    url: "/api/cart/getCart",
+    method: "GET"
+  });
+
   useEffect(() => {
+    if (active == "itemAddedToCart") {
+      setTimeout(() => {
+        setActive("testing");
+      }, 20);
+    }
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
@@ -63,6 +76,26 @@ export default function Navbar(): ReactNode {
           }
         }
       });
+
+      setTimeout(() => {
+        getCart().then(res => {
+          if (!(res instanceof Array) || res.length == 0) {
+            setCartItemsLength(0);
+            return;
+          }
+
+          let cartItems: any[] = [];
+          if (res && res.length > 0) {
+            res.forEach(item => {
+              for (let i = 0; i < item.quantity; i++) {
+                cartItems.push(item.item);
+              }
+            });
+            console.log(cartItems);
+            setCartItemsLength(cartItems.length);
+          }
+        });
+      }, 10);
 
       if (res && (res.loggedIn == true || res.loggedIn == false)) {
         setLoggedIn(res.loggedIn);
@@ -305,6 +338,20 @@ export default function Navbar(): ReactNode {
                     className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
                   >
                     <FiPlus className="text-xl" />
+                  </div>
+                </Link>
+              </li>
+              <li className="flex items-center justify-center">
+                <Link
+                  to="/cart"
+                  onClick={() => setActive("/cart")}
+                  title="View Cart"
+                >
+                  <div
+                    cartitems={cartItemsLength.toString()}
+                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:content-[attr(cartitems)] ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                  >
+                    <AiOutlineShoppingCart className="text-md" />
                   </div>
                 </Link>
               </li>
