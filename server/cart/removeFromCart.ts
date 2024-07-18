@@ -10,7 +10,7 @@ removeFromCartRouter.post(
   "/",
   withAuth,
   async (req: Request, res: Response) => {
-    const { productToRemove } = await req.body;
+    const { productToRemove, quantity } = await req.body;
 
     if (mongoose.Types.ObjectId.isValid(productToRemove) === false) {
       return res;
@@ -19,6 +19,8 @@ removeFromCartRouter.post(
     const loggedInUser = await User.findById(req.session.user!._id).populate(
       "cart"
     );
+
+    console.log(loggedInUser);
 
     if (!loggedInUser) return res.status(404).json("User not found");
 
@@ -37,14 +39,14 @@ removeFromCartRouter.post(
       productLink = await CartItem.findById(linkId!);
       if (!productLink)
         return res.json({ message: "error finding product link" });
-      if (productLink.quantity == 1) {
+      if (productLink.quantity == 1 || productLink.quantity <= quantity) {
         await CartItem.findByIdAndDelete(linkId!);
       } else {
-        productLink.quantity -= 1;
-        productLink.save();
+        productLink.quantity -= quantity ? quantity : 1;
+        await productLink.save();
 
         loggedInUser.cart = [...loggedInUser.cart];
-        loggedInUser.save();
+        await loggedInUser.save();
       }
     } else {
       return res.json({ message: "item not found in cart" });
@@ -53,8 +55,8 @@ removeFromCartRouter.post(
     const updatedUser = await User.findById(req.session.user?._id);
     if (!updatedUser) return res.json({ message: "error finding user" });
     req.session.user = updatedUser;
-    req.session.save();
-
-    res.json("successfully removed item from cart");
+    req.session.save(() => {
+      return res.json("successfully removed item from cart");
+    });
   }
 );
