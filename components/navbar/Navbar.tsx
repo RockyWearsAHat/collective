@@ -55,9 +55,7 @@ export default function Navbar(): ReactNode {
 
   useEffect(() => {
     if (active == "itemAddedToCart") {
-      setTimeout(() => {
-        setActive("testing");
-      }, 20);
+      setActive(extensionUrl);
     }
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
