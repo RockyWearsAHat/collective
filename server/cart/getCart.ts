@@ -17,5 +17,5 @@ getCartRouter.get("/", withAuth, async (req: Request, res: Response) => {
     cart[i] = await cart[i].populate(["item"]);
   }
 
-  res.json(cart);
+  return res.json(cart);
 });
