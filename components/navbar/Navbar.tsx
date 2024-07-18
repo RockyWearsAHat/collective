@@ -68,7 +68,8 @@ export default function Navbar(): ReactNode {
             extensionUrl.indexOf("/contact") == -1 &&
             extensionUrl.indexOf("/logout") == -1 &&
             fullExtensionUrl.indexOf("/product") == -1 &&
-            fullExtensionUrl.indexOf("/search") == -1
+            fullExtensionUrl.indexOf("/search") == -1 &&
+            fullExtensionUrl.indexOf("/cart") == -1
           ) {
             navigate("/session-timed-out");
           }
@@ -339,22 +340,22 @@ export default function Navbar(): ReactNode {
                   </div>
                 </Link>
               </li>
-              <li className="flex items-center justify-center">
-                <Link
-                  to="/cart"
-                  onClick={() => setActive("/cart")}
-                  title="View Cart"
-                >
-                  <div
-                    cartitems={cartItemsLength.toString()}
-                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:content-[attr(cartitems)] ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
-                  >
-                    <AiOutlineShoppingCart className="text-md" />
-                  </div>
-                </Link>
-              </li>
             </>
           )}
+          <li className="flex items-center justify-center">
+            <Link
+              to="/cart"
+              onClick={() => setActive("/cart")}
+              title="View Cart"
+            >
+              <div
+                cartitems={cartItemsLength.toString()}
+                className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:content-[attr(cartitems)] ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+              >
+                <AiOutlineShoppingCart className="text-md" />
+              </div>
+            </Link>
+          </li>
         </ul>
       </div>
     </>
