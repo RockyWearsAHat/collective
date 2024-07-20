@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { useMutation } from "../../hooks/useMutation";
 import { IItem } from "../../db/models/item";
 import { ActiveContext } from "../contextProvider";
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { QuantitySelector } from "../../components/quantitySelector/QuantitySelector";
+import { cartUpdatingDelay } from "../../server/serverConfig";
 
 export const Product: FC = (): ReactNode => {
   const { productName, productID } = useParams();
@@ -52,16 +53,7 @@ export const Product: FC = (): ReactNode => {
   const [addingProduct, setAddingProduct] = useState<boolean>(false);
   const [removingProduct, setRemovingProduct] = useState<boolean>(false);
 
-  const addRemoveProductButtonDelay = 100;
-
-  useEffect(() => {
-    setTimeout(() => {
-      const quantityInput = document.getElementById("quantityInput");
-      console.log(quantityInput);
-      if (!quantityInput) return;
-      quantityInput;
-    }, 1000);
-  }, []);
+  const addRemoveProductButtonDelay = cartUpdatingDelay;
 
   return (
     <div className="absolute left-0 top-0 grid h-[100vh] w-[100vw] px-2 pt-12 lg:grid-cols-2">
@@ -112,44 +104,10 @@ export const Product: FC = (): ReactNode => {
                   </button>
                   <div>
                     <h2>Quantity: </h2>
-                    <div className="relative flex w-[fit-content] items-center justify-around after:absolute after:left-0 after:top-[95%] after:h-[2px] after:w-full after:bg-black">
-                      <button
-                        onClick={() => {
-                          if (productQuantity !== null && productQuantity > 1)
-                            setProductQuantity(productQuantity - 1);
-                        }}
-                      >
-                        <FiMinus />
-                      </button>
-                      <span
-                        id="quantityInput"
-                        className="w-[fit-content] text-center"
-                        role="textbox"
-                        inputMode="numeric"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={e => {
-                          if (
-                            e.target.innerHTML == null ||
-                            e.target.innerHTML == ""
-                          )
-                            setProductQuantity(1);
-                          else {
-                            setProductQuantity(parseInt(e.target.innerHTML));
-                          }
-                        }}
-                      >
-                        {productQuantity}
-                      </span>
-                      <button
-                        onClick={() => {
-                          if (productQuantity == null) setProductQuantity(1);
-                          else setProductQuantity(productQuantity + 1);
-                        }}
-                      >
-                        <FiPlus />
-                      </button>
-                    </div>
+                    <QuantitySelector
+                      setProductQuantity={setProductQuantity}
+                      productQuantity={productQuantity}
+                    />
                   </div>
                   <button
                     onClick={async () => {

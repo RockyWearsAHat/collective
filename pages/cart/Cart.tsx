@@ -13,7 +13,6 @@ export const Cart: FC = () => {
   });
 
   useEffect(() => {
-    console.log("getting cart");
     setCartUpdated(false);
     getCart().then(res => {
       if (!(res instanceof Array) || res.length == 0) {
@@ -23,10 +22,9 @@ export const Cart: FC = () => {
 
       let cartItems: any[] = [];
       if (res && res.length > 0) {
-        res.forEach(item => {
-          for (let i = 0; i < item.quantity; i++) {
-            cartItems.push(item.item);
-          }
+        res.forEach((item, i) => {
+          cartItems.push(item.item);
+          cartItems[i].quantity = item.quantity;
         });
 
         setCart(cartItems);
@@ -38,7 +36,12 @@ export const Cart: FC = () => {
     <div className="absolute left-0 top-0 flex min-h-[100vh] w-[100vw] flex-col gap-3 bg-slate-600 pb-5 pl-5 pt-[3.75rem]">
       {cart.map((item, index) => {
         return (
-          <CartItem item={item} key={index} cartUpdatedState={setCartUpdated} />
+          <CartItem
+            item={item}
+            key={index}
+            cartUpdatedState={setCartUpdated}
+            quantity={item.quantity}
+          />
         );
       })}
     </div>

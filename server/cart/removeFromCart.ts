@@ -10,7 +10,7 @@ removeFromCartRouter.post(
   "/",
   withAuth,
   async (req: Request, res: Response) => {
-    const { productToRemove, quantity } = await req.body;
+    const { productToRemove, quantity, fullyRemove } = await req.body;
 
     if (mongoose.Types.ObjectId.isValid(productToRemove) === false) {
       return res;
@@ -39,7 +39,11 @@ removeFromCartRouter.post(
       productLink = await CartItem.findById(linkId!);
       if (!productLink)
         return res.json({ message: "error finding product link" });
-      if (productLink.quantity == 1 || productLink.quantity <= quantity) {
+      if (
+        productLink.quantity == 1 ||
+        productLink.quantity <= quantity ||
+        fullyRemove
+      ) {
         await CartItem.findByIdAndDelete(linkId!);
       } else {
         productLink.quantity -= quantity ? quantity : 1;
