@@ -23,6 +23,7 @@ export const CheckoutForm: FC = () => {
   const [tax, setTax] = useState<number | null>(null);
   const [shipping, setShipping] = useState<number | null>(null);
   const [total, setTotal] = useState<number | null>(null);
+  const [fees, setFees] = useState<number | null>(null);
 
   const [clientName, setClientName] = useState<string | null>(null);
   const [address, setAddress] = useState<any | null>(null);
@@ -219,9 +220,9 @@ export const CheckoutForm: FC = () => {
                       : "Enter Shipping Address to Calculate"}
                   </p>
                   <p>
-                    Shipping:{" "}
-                    {shipping
-                      ? `$${(shipping / 100).toFixed(2)}`
+                    Shipping + Fees:{" "}
+                    {shipping || fees
+                      ? `$${((shipping ? shipping + (fees ? fees : 0) : fees!) / 100).toFixed(2)}`
                       : "Enter Shipping Address to Calculate"}
                   </p>
                   <p>
@@ -291,16 +292,22 @@ export const CheckoutForm: FC = () => {
                     });
                     const { amount_total, tax_amount_exclusive } = res.tax;
 
-                    let shippingTotal = 500;
+                    let shippingTotal = 0;
+                    let feesTotal = 0;
 
                     if (amount_total && tax_amount_exclusive) {
                       setTax(tax_amount_exclusive);
                       setShipping(shippingTotal);
-
                       if (shippingTotal) {
-                        setTotal(amount_total + shippingTotal);
+                        feesTotal = Math.round(
+                          (amount_total + shippingTotal) * 0.029 + 30
+                        );
+                        setFees(feesTotal);
+                        setTotal(amount_total + shippingTotal + feesTotal);
                       } else {
-                        setTotal(amount_total);
+                        feesTotal = Math.round(amount_total * 0.029 + 30);
+                        setFees(feesTotal);
+                        setTotal(amount_total + feesTotal);
                       }
                     }
 
@@ -318,8 +325,8 @@ export const CheckoutForm: FC = () => {
                     const res2 = await updatePaymentIntent({
                       paymentIntentId,
                       newTotal: shippingTotal
-                        ? amount_total + shippingTotal
-                        : amount_total
+                        ? amount_total + shippingTotal + feesTotal
+                        : amount_total + feesTotal
                     });
 
                     console.log(res2);
