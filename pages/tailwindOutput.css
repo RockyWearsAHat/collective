@@ -753,6 +753,10 @@ video {
   height: 70px;
 }
 
+.h-\[80px\] {
+  height: 80px;
+}
+
 .h-\[calc\(100vh-4rem\)\] {
   height: calc(100vh - 4rem);
 }
@@ -772,10 +776,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[80px\] {
-  height: 80px;
 }
 
 .max-h-\[80vh\] {
@@ -828,10 +828,6 @@ video {
 
 .w-\[70\%\] {
   width: 70%;
-}
-
-.w-\[70px\] {
-  width: 70px;
 }
 
 .w-\[clamp\(400px\2c _80vw\2c _100vw\)\] {
@@ -1075,6 +1071,11 @@ video {
   background-color: rgb(48 49 61 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#313237\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(49 50 55 / var(--tw-bg-opacity));
+}
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -1110,11 +1111,6 @@ video {
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
 
-.bg-slate-950 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(2 6 23 / var(--tw-bg-opacity));
-}
-
 .bg-transparent {
   background-color: transparent;
 }
@@ -1132,51 +1128,6 @@ video {
 .bg-zinc-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(24 24 27 / var(--tw-bg-opacity));
-}
-
-.bg-slate-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#111215\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(17 18 21 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#373b47\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 59 71 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#cecece\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(206 206 206 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#353747\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(53 55 71 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#42434e\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(66 67 78 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#393a46\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(57 58 70 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#565866\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(86 88 102 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#313237\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(49 50 55 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-60 {
