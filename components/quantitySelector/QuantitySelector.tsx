@@ -37,6 +37,7 @@ export const QuantitySelector: FC<QuantitySelectorProps> = ({
       className={`relative flex w-[fit-content] items-center justify-around after:absolute after:left-0 after:top-[95%] after:h-[2px] after:w-full after:bg-black${" " + wrapperClasses}`}
     >
       <button
+        className="size-[16px]"
         disabled={updatingCart}
         onClick={async () => {
           if (productQuantity !== null && productQuantity > 1) {
@@ -61,13 +62,12 @@ export const QuantitySelector: FC<QuantitySelectorProps> = ({
       </button>
       <span
         id="quantityInput"
-        className="mx-2 w-[fit-content] text-center"
+        className="mx-2 w-[fit-content] text-center focus:outline-none"
         role="textbox"
         inputMode="numeric"
         contentEditable
         suppressContentEditableWarning
         onKeyDown={e => {
-          console.log(e);
           if (e.code == "Enter") {
             e.preventDefault();
             (e.target as HTMLElement).blur();
@@ -80,7 +80,7 @@ export const QuantitySelector: FC<QuantitySelectorProps> = ({
             Number.isNaN(parseInt(e.target.innerHTML))
           ) {
             setProductQuantity(1);
-            e.target.blur();
+            // e.target.blur();
 
             if (updateCart && itemId) {
               setUpdatingCart(true);
@@ -94,7 +94,7 @@ export const QuantitySelector: FC<QuantitySelectorProps> = ({
               }, updatingCartDelay);
             }
           } else {
-            e.target.blur();
+            // e.target.blur();
             let parsed = parseInt(e.target.innerHTML);
             if (Number.isNaN(parsed) || parsed < 1) {
               parsed = 1;
@@ -115,11 +115,13 @@ export const QuantitySelector: FC<QuantitySelectorProps> = ({
               }, updatingCartDelay);
             }
           }
+          (e.target as HTMLElement).blur();
         }}
       >
         {productQuantity}
       </span>
       <button
+        className="size-[16px]"
         disabled={updatingCart}
         onClick={async () => {
           const newQuantity = productQuantity ? productQuantity + 1 : 1;
