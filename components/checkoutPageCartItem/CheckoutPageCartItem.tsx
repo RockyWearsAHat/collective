@@ -13,12 +13,12 @@ export const CheckoutPageCartItem: FC<CheckoutPageCartItemProps> = ({
 }): ReactNode => {
   return (
     <div className="relative mb-4 flex h-auto items-center overflow-x-hidden bg-[#30313D] text-white">
-      <div className="flex h-[70px] w-[50px] items-center justify-center bg-[#21222a] px-4">
+      <div className="flex h-[80px] w-[50px] items-center justify-center bg-[#21222a] px-4">
         <h1 className="text-white">{quantity}x</h1>
       </div>
       <img
         src={item.imageLinks![0]}
-        className="aspect-square h-[70px] w-[70px] object-cover"
+        className="aspect-square size-[80px] object-cover"
       />
       <div className="flex-shrink flex-grow overflow-hidden">
         <h1 className="truncate pl-2 pr-2">{item.name}</h1>
