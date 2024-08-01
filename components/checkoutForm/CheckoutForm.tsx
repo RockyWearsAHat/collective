@@ -170,7 +170,9 @@ export const CheckoutForm: FC = () => {
   return (
     <>
       <div className="absolute left-0 top-0 flex h-[100vh] w-[100vw] items-center justify-center overflow-hidden pt-12 text-white">
-        <div className="absolute left-0 top-0 h-[100vh] w-[100vw] scale-110 bg-[url('/checkoutBg.jpg')] bg-[center_-150rem] blur-sm"></div>
+        <div
+          className={`absolute left-0 top-0 h-[100vh] w-[100vw] scale-110 bg-[url('/checkoutBg.jpg')] ${/*bg-[#313237]*/ ""} bg-[center_-150rem] blur-sm`}
+        ></div>
         <div className="relative h-auto w-[clamp(400px,_80vw,_100vw)] overflow-hidden">
           <div
             ref={containerRef}
