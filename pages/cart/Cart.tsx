@@ -100,6 +100,10 @@ export const Cart: FC = () => {
           newTotal: cartTotal
         });
 
+        console.log(
+          `Updating payment intent, client secret ${updatedPaymentIntent.paymentIntent.client_secret}`
+        );
+
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
       } else {
         console.log("creating payment intent");
@@ -115,17 +119,28 @@ export const Cart: FC = () => {
             });
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
+
+            console.log(
+              `User is logged in and has payment intent, updating payment intent, client secret ${updatedPaymentIntent.paymentIntent.client_secret}`
+            );
           } else {
             const newPaymentIntent = await createPaymentIntent({
               total: cartTotal
             });
             client_secret = newPaymentIntent.client_secret;
+
+            console.log(
+              `User is logged in and does not have a payment intent, creating payment intent, client secret ${newPaymentIntent.client_secret}`
+            );
           }
         } else {
           const newPaymentIntent = await createPaymentIntent({
             total: cartTotal
           });
           client_secret = newPaymentIntent.client_secret;
+          console.log(
+            `User is not logged in and does not have a payment intent, creating payment intent, client secret ${newPaymentIntent.client_secret}`
+          );
         }
       }
     } catch (err) {
