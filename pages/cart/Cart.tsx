@@ -214,7 +214,7 @@ export const Cart: FC = () => {
 
         getCart().then(async res => {
           if (!(res instanceof Array) || res.length == 0) return;
-          res.forEach(async (item, i) => {
+          res.forEach(async item => {
             await removeItemFromCart({
               productToRemove: item.item._id,
               fullyRemove: true
