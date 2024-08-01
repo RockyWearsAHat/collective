@@ -109,7 +109,12 @@ export const Cart: FC = () => {
           const userCartId = await getCartIdFromUser();
           console.log(userCartId.id);
           if (userCartId && userCartId.id) {
-            client_secret = userCartId.id;
+            const updatedPaymentIntent = await updatePaymentIntent({
+              paymentIntentId: userCartId.split("_secret_")[0],
+              newTotal: cartTotal
+            });
+
+            client_secret = updatedPaymentIntent.paymentIntent.client_secret;
           } else {
             const newPaymentIntent = await createPaymentIntent({
               total: cartTotal
