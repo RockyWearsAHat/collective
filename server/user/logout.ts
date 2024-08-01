@@ -6,10 +6,17 @@ export const logoutHandler = async (req: Request, res: Response) => {
   if (!req.session || !req.session.token) {
     return res.json({ redirect: "/" });
   } else {
-    req.session.destroy(() => {
-      return res
-        .clearCookie("artistcollective.sid")
-        .json({ page: "/loggedOut" });
+    req.session.destroy(err => {
+      if (err) {
+        console.log(err);
+      }
+    });
+
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        res.clearCookie("artistcollective.sid");
+        return resolve(res.json({ page: "/loggedOut" }));
+      }, 500);
     });
   }
 };

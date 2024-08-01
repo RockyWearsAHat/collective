@@ -1,6 +1,6 @@
-import { FC, Key, ReactNode, useContext, useState } from "react";
+import { FC, Key, ReactNode, useContext, useEffect, useState } from "react";
 import { IItem } from "../../db/models/item";
-import { BsTrash3 } from "react-icons/bs";
+import { BsCheck, BsTrash3 } from "react-icons/bs";
 import { useMutation } from "../../hooks/useMutation";
 import { ActiveContext } from "../../pages/contextProvider";
 import { QuantitySelector } from "../quantitySelector/QuantitySelector";
@@ -29,8 +29,27 @@ export const CartItem: FC<CartItemProps> = ({
     quantity ? quantity : 1
   );
 
+  const [confirmRemoveProduct, setConfirmRemoveProduct] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    document.addEventListener("click", (e: Event) => {
+      let target = e.target as HTMLElement;
+      if (target.nodeName == "path") {
+        target = target.parentElement as HTMLElement;
+      }
+
+      if (
+        target.id == null ||
+        (target.id != "trashBtn" && target.id != "confirmBtn")
+      ) {
+        setConfirmRemoveProduct(false);
+      }
+    });
+  }, []);
+
   return (
-    <div className="flex h-[70px] w-[70vw] items-center rounded-sm bg-zinc-800 bg-opacity-60 px-5 py-5 text-white">
+    <div className="flex h-[100px] items-center rounded-md bg-zinc-800 bg-opacity-60 px-5 py-5 text-white">
       <img
         src={item.imageLinks![0]}
         className="aspect-square h-[50px] w-[50px] object-cover"
@@ -55,18 +74,27 @@ export const CartItem: FC<CartItemProps> = ({
           itemId={item._id ? (item._id as ObjectId) : null}
         />
         <button
-          className="ml-auto"
+          className="ml-auto flex h-[24px] w-[24px] items-center justify-center"
           onClick={() => {
-            removeItemFromCart({
-              productToRemove: item._id,
-              fullyRemove: true
-            }).then(() => {
-              cartUpdatedState(true);
-              setActive("itemAddedToCart");
-            });
+            if (confirmRemoveProduct) {
+              removeItemFromCart({
+                productToRemove: item._id,
+                fullyRemove: true
+              }).then(() => {
+                setActive("itemAddedToCart");
+                cartUpdatedState(true);
+                setConfirmRemoveProduct(false);
+              });
+            } else {
+              setConfirmRemoveProduct(true);
+            }
           }}
         >
-          <BsTrash3 />
+          {!confirmRemoveProduct ? (
+            <BsTrash3 id="trashBtn" />
+          ) : (
+            <BsCheck className="text-2xl" id="confirmBtn" />
+          )}
         </button>
       </div>
     </div>

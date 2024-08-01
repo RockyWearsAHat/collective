@@ -14,9 +14,11 @@
     "installSharp": "npm install --cpu=x64 --os=linux --libc=glibc sharp && npm install --cpu=x64 --os=linux --libc=musl sharp"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.569.0",
-    "@aws-sdk/s3-request-presigner": "^3.574.0",
+    "@aws-sdk/client-s3": "^3.620.1",
+    "@aws-sdk/s3-request-presigner": "^3.620.1",
     "@react-spring/parallax": "^9.7.3",
+    "@stripe/react-stripe-js": "^2.7.3",
+    "@stripe/stripe-js": "^4.1.0",
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
@@ -33,7 +35,8 @@
     "react-router-dom": "^6.22.2",
     "rollup-plugin-gzip": "^3.1.2",
     "serverless-http": "^3.2.0",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "stripe": "^16.5.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.0",

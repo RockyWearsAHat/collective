@@ -15,17 +15,15 @@ export const Logout = (): ReactNode => {
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
-    method: "GET",
-    credentials: "same-origin"
+    method: "GET"
   });
 
   useEffect(() => {
-    checkLoggedIn().then(res => {
+    checkLoggedIn().then(async res => {
       if (res.loggedIn == true && res.loggedIn) {
         setActive("/logout");
-        logout().then(res => {
-          setActive(res.page);
-        });
+        const logoutRes = await logout();
+        setActive(logoutRes.page);
       }
     });
   }, [active]);

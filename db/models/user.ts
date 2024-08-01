@@ -9,6 +9,8 @@ import { IItem } from "./item";
 
 export interface IUser extends Document {
   _id: ObjectId;
+  stripeId: string | null;
+  cartId: string | null;
   username: string;
   email: string;
   password: string;
@@ -22,8 +24,10 @@ export interface IUser extends Document {
 interface UserModel extends mongoose.Model<IUser> {}
 
 const userSchema = new mongoose.Schema<IUser, UserModel>({
-  username: { type: String, unique: true, trim: true },
-  email: { type: String, unique: true, trim: true },
+  stripeId: { type: String, unique: true, required: false },
+  cartId: { type: String, unique: true, required: false },
+  username: { type: String, unique: true, trim: true, required: true },
+  email: { type: String, unique: true, trim: true, required: true },
   password: String,
   pfpId: String,
   cart: [{ type: mongoose.Types.ObjectId, ref: "CartItem" }],

@@ -24,7 +24,10 @@ export default defineConfig({
       env.ENV_AWS_SECRET_ACCESS_KEY
     ),
     "process.env.GITHUB_KEY_REPO": JSON.stringify(env.GITHUB_KEY_REPO),
-    "process.env.GITHUB_READ_TOKEN": JSON.stringify(env.GITHUB_READ_TOKEN)
+    "process.env.GITHUB_READ_TOKEN": JSON.stringify(env.GITHUB_READ_TOKEN),
+    "process.env.STRIPE_SECRET_KEY": JSON.stringify(env.STRIPE_SECRET_KEY),
+    "process.env.STRIPE_PUBLIC_KEY": JSON.stringify(env.STRIPE_PUBLIC_KEY),
+    "process.env.GOOGLE_MAPS_API_KEY": JSON.stringify(env.GOOGLE_MAPS_API_KEY)
   },
   plugins: [react(), express("server/server.ts")],
   build: {
