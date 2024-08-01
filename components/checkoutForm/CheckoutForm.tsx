@@ -56,10 +56,6 @@ export const CheckoutForm: FC = () => {
       return;
     }
 
-    console.log(
-      window.location.protocol + "//" + window.location.host + "/cart"
-    );
-
     const { error } = await stripe.confirmPayment({
       //`Elements` instance that was used to create the Payment Element
       elements,
