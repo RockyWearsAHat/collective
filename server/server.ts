@@ -29,10 +29,12 @@ declare module "express-session" {
   }
 }
 import expressSession from "express-session";
+import { MongoClient } from "mongodb";
 
 //Set up express session
+const client = db.getClient() as unknown as MongoClient;
 const sessionStore = new MongoStore({
-  client: db.getClient(),
+  client: client,
   dbName: "balls",
   collectionName: "sessions",
   stringify: false,
