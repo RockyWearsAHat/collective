@@ -12,7 +12,7 @@ export const logoutHandler = async (req: Request, res: Response) => {
       }
     });
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve, _reject) => {
       setTimeout(() => {
         res.clearCookie("artistcollective.sid");
         return resolve(res.json({ page: "/loggedOut" }));
