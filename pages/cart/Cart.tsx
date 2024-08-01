@@ -213,14 +213,13 @@ export const Cart: FC = () => {
         localStorage.removeItem("checkoutOptions");
 
         getCart().then(async res => {
-          for (let i = 0; i < res.length; i++) {
-            await Promise.all(
-              await removeItemFromCart({
-                productToRemove: res[i].item._id,
-                fullyRemove: true
-              })
-            );
-          }
+          if (!(res instanceof Array) || res.length == 0) return;
+          res.forEach(async (item, i) => {
+            await removeItemFromCart({
+              productToRemove: item.item._id,
+              fullyRemove: true
+            });
+          });
           const userLoggedIn = await checkLoggedIn();
           if (userLoggedIn) {
             await writeCartIdToUser({ cartId: null });
