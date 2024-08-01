@@ -81,7 +81,7 @@ export const Cart: FC = () => {
     cartTotal = cartTotal * 100;
 
     //Create or update the payment intent
-    let client_secret = "";
+    let client_secret;
 
     try {
       if (
@@ -100,13 +100,8 @@ export const Cart: FC = () => {
           newTotal: cartTotal
         });
 
-        console.log(
-          `Updating payment intent, client secret ${updatedPaymentIntent.paymentIntent.client_secret}`
-        );
-
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
       } else {
-        console.log("creating payment intent");
         const userLoggedIn = await checkLoggedIn();
         console.log(userLoggedIn);
         if (userLoggedIn) {
@@ -119,39 +114,24 @@ export const Cart: FC = () => {
             });
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
-
-            console.log(
-              `User is logged in and has payment intent, updating payment intent, client secret ${updatedPaymentIntent.paymentIntent.client_secret}`
-            );
           } else {
             const newPaymentIntent = await createPaymentIntent({
               total: cartTotal
             });
             client_secret = newPaymentIntent.client_secret;
-
-            console.log(
-              `User is logged in and does not have a payment intent, creating payment intent, client secret ${newPaymentIntent.client_secret}`
-            );
           }
         } else {
           const newPaymentIntent = await createPaymentIntent({
             total: cartTotal
           });
           client_secret = newPaymentIntent.client_secret;
-          console.log(
-            `User is not logged in and does not have a payment intent, creating payment intent, client secret ${newPaymentIntent.client_secret}`
-          );
         }
       }
     } catch (err) {
       console.log(err);
       const newPaymentIntent = await createPaymentIntent({ total: cartTotal });
-      client_secret = newPaymentIntent.paymentIntent.client_secret;
+      client_secret = newPaymentIntent.client_secret;
     }
-
-    console.log(client_secret);
-
-    if (client_secret == "") return;
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
