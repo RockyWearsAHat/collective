@@ -51,6 +51,16 @@ export const CheckoutForm: FC = () => {
       !clientName ||
       !address
     ) {
+      console.log(
+        "Stripe, Elements, or tax/shipping/total not loaded",
+        stripe,
+        elements,
+        tax,
+        shipping,
+        total,
+        clientName,
+        address
+      );
       // Stripe.js hasn't yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
