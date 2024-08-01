@@ -51,16 +51,6 @@ export const CheckoutForm: FC = () => {
       !clientName ||
       !address
     ) {
-      console.log(
-        "Stripe, Elements, or tax/shipping/total not loaded",
-        stripe,
-        elements,
-        tax,
-        shipping,
-        total,
-        clientName,
-        address
-      );
       // Stripe.js hasn't yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
@@ -70,7 +60,7 @@ export const CheckoutForm: FC = () => {
       //`Elements` instance that was used to create the Payment Element
       elements,
       confirmParams: {
-        return_url: "http://localhost:4000/cart"
+        return_url: "/cart"
       }
     });
 
@@ -304,7 +294,7 @@ export const CheckoutForm: FC = () => {
                     });
                     const { amount_total, tax_amount_exclusive } = res.tax;
 
-                    let shippingTotal = 0;
+                    let shippingTotal = 500;
                     let feesTotal = 0;
 
                     if (amount_total && tax_amount_exclusive) {
