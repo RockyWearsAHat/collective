@@ -81,7 +81,7 @@ export const Cart: FC = () => {
     cartTotal = cartTotal * 100;
 
     //Create or update the payment intent
-    let client_secret;
+    let client_secret = "";
 
     try {
       if (
@@ -150,6 +150,8 @@ export const Cart: FC = () => {
     }
 
     console.log(client_secret);
+
+    if (client_secret == "") return;
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
