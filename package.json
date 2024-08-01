@@ -19,6 +19,7 @@
     "@react-spring/parallax": "^9.7.3",
     "@stripe/react-stripe-js": "^2.7.3",
     "@stripe/stripe-js": "^4.1.0",
+    "@types/mongodb": "^4.0.6",
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
