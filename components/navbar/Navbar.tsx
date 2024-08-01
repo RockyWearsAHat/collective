@@ -90,7 +90,6 @@ export default function Navbar(): ReactNode {
                 cartItems.push(item.item);
               }
             });
-            console.log(cartItems);
             setCartItemsLength(cartItems.length);
           }
         });
@@ -211,7 +210,7 @@ export default function Navbar(): ReactNode {
 
   return (
     <>
-      <div className="relative z-50 min-w-[100vw] max-w-[100vw] select-none">
+      <div className="relative !z-[100] min-w-[100vw] max-w-[100vw] select-none">
         <Suspense
           fallback={
             <div className="absolute -z-10 h-[70px] min-w-[100vw] max-w-[100vw] bg-zinc-700 bg-cover brightness-50"></div>
@@ -334,7 +333,7 @@ export default function Navbar(): ReactNode {
                   title="Create New Piece"
                 >
                   <div
-                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
                   >
                     <FiPlus className="text-xl" />
                   </div>
@@ -350,7 +349,7 @@ export default function Navbar(): ReactNode {
             >
               <div
                 cartitems={cartItemsLength.toString()}
-                className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:content-[attr(cartitems)] ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300" : "text-white"}`}
+                className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:content-[attr(cartitems)] ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
               >
                 <AiOutlineShoppingCart className="text-md" />
               </div>

@@ -27,6 +27,7 @@ import { Register } from "./register/Register";
 import { SessionTimedOut } from "./timeout/SessionTimedOut";
 import { Search } from "./search/Search";
 import { Cart } from "./cart/Cart";
+import { Checkout } from "./checkout/Checkout";
 
 const PageRouter = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/cart",
         element: <Cart />
+      },
+      {
+        path: "/checkout",
+        element: <Checkout />
       }
     ]
   }
