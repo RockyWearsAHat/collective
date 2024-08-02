@@ -10,6 +10,7 @@ import { IItem } from "./item";
 export interface IUser extends Document {
   _id: ObjectId;
   stripeId: string | null;
+  isArtist: boolean;
   cartId: string | null;
   username: string;
   email: string;
@@ -25,6 +26,7 @@ interface UserModel extends mongoose.Model<IUser> {}
 
 const userSchema = new mongoose.Schema<IUser, UserModel>({
   stripeId: { type: String, unique: true, required: false },
+  isArtist: { type: Boolean, required: true },
   cartId: { type: String, required: false },
   username: { type: String, unique: true, trim: true, required: true },
   email: { type: String, unique: true, trim: true, required: true },
