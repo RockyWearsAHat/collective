@@ -15,7 +15,7 @@ export const Checkout: FC = () => {
       : null
   );
 
-  console.log(options);
+  // console.log(options);
 
   return (
     <>

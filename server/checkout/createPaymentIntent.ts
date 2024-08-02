@@ -8,7 +8,7 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
     return res.json({ error: "No stripe key found" });
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  const { total } = req.body;
+  const { total, cart } = req.body;
 
   if (!total) return res.json({ error: "No total found" });
 
@@ -21,6 +21,18 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
       //     destination: req.session.user?.stripeId!
       //   }
     });
+
+    // console.log(cart);
+
+    if (cart) {
+      await stripe.paymentIntents.update(paymentIntent.id, {
+        metadata: {
+          cart: JSON.stringify(cart)
+        }
+      });
+    }
+
+    // console.log(paymentIntent);
 
     if (!paymentIntent.client_secret)
       return res.json({ error: "An error occurred" });

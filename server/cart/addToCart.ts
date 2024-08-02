@@ -17,7 +17,7 @@ addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
     "cart"
   );
 
-  console.log(loggedInUser);
+  // console.log(loggedInUser);
   if (!loggedInUser) return res.status(404).json("User not found");
 
   let userHasItemInCart: boolean = false;

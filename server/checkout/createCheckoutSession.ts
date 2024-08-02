@@ -10,7 +10,7 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
 
   const { items } = req.body;
 
-  console.log(items);
+  // console.log(items);
 
   try {
     if (!items || items.length == 0)
@@ -22,7 +22,7 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
       const saleDescription = items[i].salePrice
         ? "Was " + items[i].price + ", now just " + items[i].salePrice
         : null;
-      console.log(saleDescription);
+      // console.log(saleDescription);
       lineItems.push({
         price_data: {
           currency: "usd",
@@ -59,7 +59,7 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
       automatic_tax: { enabled: true }
     });
 
-    console.log(session);
+    // console.log(session);
 
     if (!session.url)
       return res.json({

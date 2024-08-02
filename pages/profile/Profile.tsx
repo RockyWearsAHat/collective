@@ -43,7 +43,7 @@ export function Profile(): ReactNode {
           type="file"
           accept="image/*, .heic"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            console.log(e.target.files);
+            // console.log(e.target.files);
             if (e.target.files) {
               setProfilePhoto(e.target.files[0]);
             }
