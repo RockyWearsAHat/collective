@@ -111,7 +111,7 @@ export const Product: FC = (): ReactNode => {
                   </div>
                   <button
                     onClick={async () => {
-                      console.log(await getCart());
+                      // console.log(await getCart());
                     }}
                   >
                     Log Cart

@@ -1,0 +1,10 @@
+Set up onboarding to allow people to enter their banking information for transfers
+
+Refine the register page to allow people to sign up as customers or as artists
+
+I don't know if I need to store a customer id, but if so I can use the customers API
+
+DON'T ALLOW UPLOADING OF PRODUCTS BEFORE THE USER HAS TRANSFERS SETUP
+
+Once onboarding is done and transfers are enabled, stripe webhook can take an account id and transfer a percentage 
+of a product's price to it
