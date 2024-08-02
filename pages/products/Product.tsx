@@ -27,10 +27,10 @@ export const Product: FC = (): ReactNode => {
     method: "POST"
   });
 
-  const { fn: getCart } = useMutation({
-    url: "/api/cart/getCart",
-    method: "GET"
-  });
+  // const { fn: getCart } = useMutation({
+  //   url: "/api/cart/getCart",
+  //   method: "GET"
+  // });
 
   const [foundProduct, setFoundProduct] = useState<IItem>();
 
