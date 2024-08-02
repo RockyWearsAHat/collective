@@ -67,7 +67,10 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       capabilities: {
         transfers: { requested: true }
       },
-      country: "US"
+      country: "US",
+      business_profile: {
+        url: `artistcollective.store/${username}`
+      }
     });
 
     if (!stripeAccount.id)

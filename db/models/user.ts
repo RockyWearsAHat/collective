@@ -25,7 +25,7 @@ interface UserModel extends mongoose.Model<IUser> {}
 
 const userSchema = new mongoose.Schema<IUser, UserModel>({
   stripeId: { type: String, unique: true, required: false },
-  cartId: { type: String, unique: true, required: false },
+  cartId: { type: String, required: false },
   username: { type: String, unique: true, trim: true, required: true },
   email: { type: String, unique: true, trim: true, required: true },
   password: String,
