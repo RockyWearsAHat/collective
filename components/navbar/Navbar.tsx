@@ -29,6 +29,7 @@ export default function Navbar(): ReactNode {
   const [mobileClicks, setMobileClicks] = useState<number>(0);
   const [searchboxSize, _setSearchboxSize] = useState<string>("300px");
   const [cartItemsLength, setCartItemsLength] = useState<number>(0);
+  const [userIsArtist, setUserIsArtist] = useState<boolean>(false);
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
@@ -60,6 +61,7 @@ export default function Navbar(): ReactNode {
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
+      setUserIsArtist(res.isArtist);
       validateToken().then(res => {
         if (!res.tokenValidated) {
           if (
@@ -155,11 +157,11 @@ export default function Navbar(): ReactNode {
 
   const dropdownLinks: Array<LinkMap> = [
     ["/profile", "Profile"],
-    ["/create", "Upload"],
     ["/logout", "Logout"]
   ];
 
   if (!loggedIn) activeLinks.push(["/login", "Login"]);
+  if (userIsArtist) dropdownLinks.splice(1, 0, ["/create", "Upload"]);
 
   //If on mobile, stop navigation to profile page on first click of profile picture
   const [mobileRendering, setMobileRendering] = useState<boolean>(false);
@@ -327,19 +329,21 @@ export default function Navbar(): ReactNode {
                   </div>
                 </div>
               </li>
-              <li className="flex items-center justify-center">
-                <Link
-                  to="/create"
-                  onClick={() => setActive("/create")}
-                  title="Create New Piece"
-                >
-                  <div
-                    className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
+              {userIsArtist && (
+                <li className="flex items-center justify-center">
+                  <Link
+                    to="/create"
+                    onClick={() => setActive("/create")}
+                    title="Create New Piece"
                   >
-                    <FiPlus className="text-xl" />
-                  </div>
-                </Link>
-              </li>
+                    <div
+                      className={`z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}`}
+                    >
+                      <FiPlus className="text-xl" />
+                    </div>
+                  </Link>
+                </li>
+              )}
             </>
           )}
           <li className="flex items-center justify-center">

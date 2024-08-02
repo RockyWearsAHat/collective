@@ -7,7 +7,8 @@ checkLoggedInRouter.get("/", (req: Request, res: Response) => {
     return res.json({ loggedIn: false });
   } else {
     return res.json({
-      loggedIn: req.session?.token ? true : false
+      loggedIn: req.session?.token ? true : false,
+      isArtist: req.session?.user?.isArtist ? true : false
     });
   }
 });

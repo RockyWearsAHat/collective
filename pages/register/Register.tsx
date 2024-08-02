@@ -84,7 +84,7 @@ export function Register(): ReactNode {
       username: artistUsername,
       email: artistEmail,
       password: artistPassword,
-      artist: true
+      isArtist: true
     });
 
     console.log(data);
