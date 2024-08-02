@@ -14,6 +14,7 @@ registerRouter.post("/", async (req: Request, res: Response) => {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const { username, email, password }: Partial<IUser> = req.body;
+    const { isArtist } = req.body;
 
     if (
       typeof username !== "string" ||
@@ -51,38 +52,53 @@ registerRouter.post("/", async (req: Request, res: Response) => {
 
     const pfpId = Math.floor(Math.random() * numberOfPfps) + 1;
 
-    const stripeAccount = await stripe.accounts.create({
-      controller: {
-        stripe_dashboard: {
-          type: "none"
-        },
-        fees: {
-          payer: "application"
-        },
-        losses: {
-          payments: "application"
-        },
-        requirement_collection: "application"
-      },
-      capabilities: {
-        transfers: { requested: true }
-      },
-      country: "US",
-      business_profile: {
-        url: `artistcollective.store/${username}`
-      }
-    });
-
-    if (!stripeAccount.id)
-      return res.json({ error: "Error creating stripe account" });
-
-    const newUser = await User.create({
+    let userInfo: {
+      username: string;
+      email: string;
+      password: string;
+      pfpId: number | string;
+      isArtist: boolean;
+      stripeId?: string;
+    } = {
       username,
       email,
       password,
       pfpId,
-      stripeId: stripeAccount.id
-    });
+      isArtist: isArtist ? true : false
+    };
+
+    let stripeAccount: Stripe.Account;
+
+    if (isArtist) {
+      stripeAccount = await stripe.accounts.create({
+        controller: {
+          stripe_dashboard: {
+            type: "none"
+          },
+          fees: {
+            payer: "application"
+          },
+          losses: {
+            payments: "application"
+          },
+          requirement_collection: "application"
+        },
+        capabilities: {
+          transfers: { requested: true }
+        },
+        country: "US",
+        business_profile: {
+          url: `artistcollective.store/${username}`
+        }
+      });
+
+      if (!stripeAccount.id)
+        return res.json({ error: "Error creating stripe account" });
+
+      userInfo.stripeId = stripeAccount.id;
+    }
+
+    const newUser = await User.create(userInfo);
 
     return res.json({
       registerRes: newUser
