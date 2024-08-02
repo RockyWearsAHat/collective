@@ -67,6 +67,7 @@ export default function Navbar(): ReactNode {
             extensionUrl.indexOf("/login") == -1 &&
             extensionUrl.indexOf("/contact") == -1 &&
             extensionUrl.indexOf("/logout") == -1 &&
+            extensionUrl.indexOf("/register") == -1 &&
             fullExtensionUrl.indexOf("/product") == -1 &&
             fullExtensionUrl.indexOf("/search") == -1 &&
             fullExtensionUrl.indexOf("/cart") == -1

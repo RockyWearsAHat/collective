@@ -9,6 +9,7 @@ import { getPFPRouter } from "./getPFP";
 import { logoutRouter } from "./logout";
 import { sessionTimeoutRouter } from "./sessionTimeoutRouter";
 import { checkLoggedInRouter } from "./checkLoggedIn";
+import { createAccountLinkRouter } from "./createAccountLink";
 
 export const masterUserRouter = Router();
 
@@ -20,4 +21,5 @@ masterUserRouter.use("/getPFP", getPFPRouter);
 masterUserRouter.use("/logout", logoutRouter);
 masterUserRouter.use("/sessionTimeout", sessionTimeoutRouter);
 masterUserRouter.use("/checkLoggedIn", checkLoggedInRouter);
+masterUserRouter.use("/createAccountLink", createAccountLinkRouter);
 masterUserRouter.use("/*", logRouteNotFound);
