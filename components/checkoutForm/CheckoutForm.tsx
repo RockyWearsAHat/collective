@@ -40,7 +40,7 @@ export const CheckoutForm: FC = () => {
     // which would refresh the page.
     event.preventDefault();
 
-    console.log(clientName, address);
+    // console.log(clientName, address);
 
     if (
       !stripe ||
@@ -152,7 +152,7 @@ export const CheckoutForm: FC = () => {
           : Number.parseFloat(passedCart[i].price.substring(1)) *
             Number.parseInt(passedCart[i].quantity);
       }
-      cartTotal = cartTotal * 100;
+      cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
 
       setSubtotal(cartTotal);
     }
@@ -288,11 +288,12 @@ export const CheckoutForm: FC = () => {
                       addressData?.value?.name ? addressData?.value?.name : null
                     );
 
-                    console.log(addressData?.value);
+                    console.log(subtotal);
                     const res = await calculateTaxes({
                       amount: subtotal,
                       addressValue: addressData?.value
                     });
+                    console.log(res);
                     const { amount_total, tax_amount_exclusive } = res.tax;
 
                     let shippingTotal = 500;
@@ -323,16 +324,16 @@ export const CheckoutForm: FC = () => {
                       "_" +
                       checkoutOptions.clientSecret.split("_")[1];
 
-                    console.log(paymentIntentId);
+                    // console.log(paymentIntentId);
 
-                    const res2 = await updatePaymentIntent({
+                    await updatePaymentIntent({
                       paymentIntentId,
                       newTotal: shippingTotal
                         ? amount_total + shippingTotal + feesTotal
                         : amount_total + feesTotal
                     });
 
-                    console.log(res2);
+                    // console.log(res2);
                   }}
                   className="relative mx-auto mb-4 mt-4 w-full self-center justify-self-center rounded-md bg-[#30313D] p-4 px-8 text-white"
                 >

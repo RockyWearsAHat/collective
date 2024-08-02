@@ -25,7 +25,7 @@ export const Cart: FC = () => {
 
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
-    method: "GET"
+    method: "POST"
   });
 
   const { fn: createPaymentIntent } = useMutation({
@@ -78,10 +78,12 @@ export const Cart: FC = () => {
         : Number.parseFloat(cart[i].price.substring(1)) *
           Number.parseInt(cart[i].quantity);
     }
-    cartTotal = cartTotal * 100;
+    cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
 
     //Create or update the payment intent
     let client_secret;
+
+    const cartWithUserInfo = await getCart({ populateUser: true });
 
     try {
       if (
@@ -89,47 +91,55 @@ export const Cart: FC = () => {
         JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
           .clientSecret
       ) {
-        console.log("updating payment intent");
+        // console.log("updating payment intent");
         const checkoutOptions = JSON.parse(
           localStorage.getItem("checkoutOptions")!
         ).checkoutOptions;
 
-        console.log(checkoutOptions);
+        // console.log(checkoutOptions);
+        // console.log(cart);
         const updatedPaymentIntent = await updatePaymentIntent({
           paymentIntentId: checkoutOptions.clientSecret.split("_secret_")[0],
-          newTotal: cartTotal
+          newTotal: cartTotal,
+          cart: cartWithUserInfo
         });
 
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
       } else {
         const userLoggedIn = await checkLoggedIn();
-        console.log(userLoggedIn);
+        // console.log(userLoggedIn);
         if (userLoggedIn) {
           const userCartId = await getCartIdFromUser();
-          console.log(userCartId.id);
+          // console.log(userCartId.id);
           if (userCartId && userCartId.id) {
             const updatedPaymentIntent = await updatePaymentIntent({
               paymentIntentId: userCartId.id.split("_secret_")[0],
-              newTotal: cartTotal
+              newTotal: cartTotal,
+              cart: cartWithUserInfo
             });
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
           } else {
             const newPaymentIntent = await createPaymentIntent({
-              total: cartTotal
+              total: cartTotal,
+              cart: cartWithUserInfo
             });
             client_secret = newPaymentIntent.client_secret;
           }
         } else {
           const newPaymentIntent = await createPaymentIntent({
-            total: cartTotal
+            total: cartTotal,
+            cart: cartWithUserInfo
           });
           client_secret = newPaymentIntent.client_secret;
         }
       }
     } catch (err) {
       console.log(err);
-      const newPaymentIntent = await createPaymentIntent({ total: cartTotal });
+      const newPaymentIntent = await createPaymentIntent({
+        total: cartTotal,
+        cart: cartWithUserInfo
+      });
       client_secret = newPaymentIntent.client_secret;
     }
 
@@ -192,10 +202,10 @@ export const Cart: FC = () => {
   }, [cartUpdated, active]);
 
   useEffect(() => {
-    console.log(
-      urlParams.get("payment_intent_client_secret"),
-      localStorage.getItem("checkoutOptions")
-    );
+    // console.log(
+    //   urlParams.get("payment_intent_client_secret"),
+    //   localStorage.getItem("checkoutOptions")
+    // );
     if (
       urlParams.get("payment_intent_client_secret") &&
       localStorage.getItem("checkoutOptions")
@@ -204,9 +214,9 @@ export const Cart: FC = () => {
         JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
           .clientSecret == urlParams.get("payment_intent_client_secret")
       ) {
-        console.log(
-          "payment intent and query params secret match, clearing local storage"
-        );
+        // console.log(
+        //   "payment intent and query params secret match, clearing local storage"
+        // );
         localStorage.removeItem("checkoutOptions");
 
         getCart().then(async res => {
