@@ -30,8 +30,6 @@ removeFromCartRouter.post("/", async (req: Request, res: Response) => {
 
     if (!linkId) return res.json({ message: "linkId not found" });
 
-    // console.log(userHasItemInCart, linkId);
-
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
@@ -71,8 +69,6 @@ removeFromCartRouter.post("/", async (req: Request, res: Response) => {
     const loggedInUser = await User.findById(req.session.user!._id).populate(
       "cart"
     );
-
-    // console.log(loggedInUser);
 
     if (!loggedInUser) return res.status(404).json("User not found");
 

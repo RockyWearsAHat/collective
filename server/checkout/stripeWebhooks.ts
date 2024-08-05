@@ -43,7 +43,6 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
       console.log(
         `Address: ${line1}, ${line2 ? `(${line2}), ` : ""}${city} ${state}, ${country}, ${postal_code}, First Name: ${firstName}, Last Name: ${lastName}`
       );
-      console.log(cart);
 
       let cartItems = [];
 
@@ -66,25 +65,15 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
 
         const artistId = (item.userCreatedId as any).stripeId;
 
-        console.log(
-          `${artistId} gets $${Number.parseInt(artistCut.toFixed(0)) / 100}`
-        );
-
-        console.log(paymentIntent.latest_charge);
-
         // Create transfer to the artist
-        const transfer = await stripe.transfers.create({
+        await stripe.transfers.create({
           amount: Number.parseInt(artistCut.toFixed(0)), // Amount in cents
           currency: "usd",
           source_transaction: paymentIntent.latest_charge,
           destination: artistId,
           description: `Payment for ${cart[i].q}x ${item.name} - $${item.salePrice ? item.salePrice : item.price} per`
         });
-
-        console.log(transfer.id);
       }
-
-      console.log(cartItems);
 
       //Email user
       const emailBody = ReactDOMServer.renderToString(

@@ -29,7 +29,6 @@ export function Upload(): ReactNode {
   useEffect(() => {
     checkLoggedIn().then(async res => {
       const onboardingCompleteRes = await checkUserCompletedOnboarding();
-      console.log(onboardingCompleteRes);
       if (
         res.isArtist &&
         (res.onboardingComplete || onboardingCompleteRes.completed)

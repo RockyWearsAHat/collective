@@ -16,10 +16,7 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
 
     let cart = req.session.cart ? req.session.cart : [];
 
-    // console.log(cart);
     cart = cart.filter(n => n);
-
-    // console.log(cart);
 
     let userHasItemInCart: boolean = false;
     let linkId: ObjectId;
@@ -68,7 +65,6 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
       "cart"
     );
 
-    // console.log(loggedInUser);
     if (!loggedInUser) return res.status(404).json("User not found");
 
     let userHasItemInCart: boolean = false;

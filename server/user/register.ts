@@ -109,8 +109,6 @@ registerRouter.post("/", async (req: Request, res: Response) => {
 
     userInfo.stripeCustomerId = stripeCustomer.id;
 
-    console.log(userInfo);
-
     const newUser = await User.create(userInfo);
 
     return res.json({

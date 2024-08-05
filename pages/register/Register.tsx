@@ -95,8 +95,6 @@ export function Register(): ReactNode {
       isArtist: true
     });
 
-    console.log(data);
-
     if (error || data.error) {
       return setArtistErrorDisplay(error ? error : data.error);
     } else {
@@ -114,8 +112,6 @@ export function Register(): ReactNode {
           "/onboarding",
         returnURL: window.location.protocol + "//" + window.location.host + "/"
       });
-
-      console.log(onboardingUrl);
 
       if (loginError || loginData.error) {
         setArtistErrorDisplay(loginError ? loginError : loginData.error);
