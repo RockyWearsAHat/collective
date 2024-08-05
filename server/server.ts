@@ -31,7 +31,7 @@ declare module "express-session" {
 }
 import expressSession from "express-session";
 import { MongoClient } from "mongodb";
-import { ICartItem } from "../db/models/cartItem";
+import { CartItem, ICartItem } from "../db/models/cartItem";
 
 //Set up express session
 const client = db.getClient() as unknown as MongoClient;
@@ -42,6 +42,10 @@ const sessionStore = new MongoStore({
   stringify: false,
   autoRemove: "disabled",
   ttl: sessionTimeout
+});
+
+sessionStore.on("destroy", async sessionId => {
+  await CartItem.deleteMany({ sessionId: sessionId.toString() });
 });
 
 app.use(

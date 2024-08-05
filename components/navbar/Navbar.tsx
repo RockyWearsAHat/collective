@@ -81,9 +81,7 @@ export default function Navbar(): ReactNode {
         }
       });
 
-      console.log("getting cart");
       getCart().then(res => {
-        console.log("res: " + JSON.stringify(res, null, 2));
         if (!(res instanceof Array) || res.length == 0) {
           setCartItemsLength(0);
           return;
@@ -96,7 +94,6 @@ export default function Navbar(): ReactNode {
               cartItems.push(item.item);
             }
           });
-          console.log(cartItems);
           setCartItemsLength(cartItems.length);
         }
       });

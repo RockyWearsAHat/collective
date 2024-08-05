@@ -10,8 +10,6 @@ createAccountLinkRouter.post("/", async (req: Request, res: Response) => {
   try {
     const { accountId: accId, refreshURL, returnURL } = req.body;
 
-    console.log(req.session);
-
     let accountId = accId;
     if (!accId) {
       if (!req.session.user)

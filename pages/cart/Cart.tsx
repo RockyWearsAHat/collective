@@ -79,7 +79,6 @@ export const Cart: FC = () => {
       JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
         .clientSecret
     ) {
-      console.log("returning", localStorage);
       return;
     }
 
@@ -107,13 +106,10 @@ export const Cart: FC = () => {
         JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
           .clientSecret
       ) {
-        // console.log("updating payment intent");
         const checkoutOptions = JSON.parse(
           localStorage.getItem("checkoutOptions")!
         ).checkoutOptions;
 
-        // console.log(checkoutOptions);
-        // console.log(cart);
         const updatedPaymentIntent = await updatePaymentIntent({
           paymentIntentId: checkoutOptions.clientSecret.split("_secret_")[0],
           newTotal: cartTotal,
@@ -124,10 +120,8 @@ export const Cart: FC = () => {
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
       } else {
         const userLoggedIn = await checkLoggedIn();
-        // console.log(userLoggedIn);
         if (userLoggedIn) {
           const userCartId = await getCartIdFromUser();
-          // console.log(userCartId.id);
           if (userCartId && userCartId.id) {
             const updatedPaymentIntent = await updatePaymentIntent({
               paymentIntentId: userCartId.id.split("_secret_")[0],
@@ -135,8 +129,6 @@ export const Cart: FC = () => {
               cart: cartWithUserInfo,
               customerId: stripeCustomerId || null
             });
-
-            console.log(updatedPaymentIntent);
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
           } else {
@@ -146,8 +138,6 @@ export const Cart: FC = () => {
               customerId: stripeCustomerId || null
             });
 
-            console.log(newPaymentIntent);
-
             client_secret = newPaymentIntent.client_secret;
           }
         } else {
@@ -156,8 +146,6 @@ export const Cart: FC = () => {
             cart: cartWithUserInfo,
             customerId: stripeCustomerId || null
           });
-
-          console.log(newPaymentIntent);
 
           client_secret = newPaymentIntent.client_secret;
         }
@@ -170,19 +158,13 @@ export const Cart: FC = () => {
         customerId: stripeCustomerId || null
       });
 
-      console.log(newPaymentIntent);
-
       client_secret = newPaymentIntent.client_secret;
     }
-
-    console.log(client_secret);
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
       await writeCartIdToUser({ cartId: client_secret });
     }
-
-    console.log(client_secret);
 
     const checkoutOptions = {
       clientSecret: client_secret,
@@ -207,10 +189,7 @@ export const Cart: FC = () => {
       setCartUpdated(false);
     }
 
-    console.log("cart updated, getting cart");
     getCart().then(res => {
-      console.log("cart recieved");
-      console.log("Cart page cart res: ", JSON.stringify(res, null, 2));
       runningTotal = 0;
       if (!(res instanceof Array) || res.length == 0) {
         setCart([]);
@@ -225,7 +204,6 @@ export const Cart: FC = () => {
         for (let i = 0; i < res.length; i++) {
           let item = res[i];
 
-          console.log(item);
           if (item.item.salePrice) {
             runningTotal +=
               Number.parseFloat(item.item.salePrice.substring(1)) *
@@ -246,10 +224,6 @@ export const Cart: FC = () => {
   }, [cartUpdated, active]);
 
   useEffect(() => {
-    // console.log(
-    //   urlParams.get("payment_intent_client_secret"),
-    //   localStorage.getItem("checkoutOptions")
-    // );
     if (
       urlParams.get("payment_intent_client_secret") &&
       localStorage.getItem("checkoutOptions")
@@ -258,16 +232,9 @@ export const Cart: FC = () => {
         JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
           .clientSecret == urlParams.get("payment_intent_client_secret")
       ) {
-        // console.log(
-        //   "payment intent and query params secret match, clearing local storage"
-        // );
         localStorage.removeItem("checkoutOptions");
 
         getCart().then(async res => {
-          console.log(
-            "Clearning cart, removing ",
-            JSON.stringify(res, null, 2)
-          );
           if (!(res instanceof Array) || res.length == 0) return;
           res.forEach(async item => {
             await removeItemFromCart({
@@ -276,11 +243,9 @@ export const Cart: FC = () => {
             });
           });
           const userLoggedIn = await checkLoggedIn();
-          console.log(userLoggedIn);
           if (userLoggedIn) {
             await writeCartIdToUser({ cartId: null });
           } else {
-            console.log("clearing session cart");
             await clearSessionCart();
           }
           setActive("itemAddedToCart");

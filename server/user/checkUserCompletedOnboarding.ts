@@ -17,7 +17,6 @@ checkUserCompletedOnboardingRouter.get(
       if (!_id) return res.json({ error: "No logged in user" });
 
       const user = await User.findById(_id);
-      console.log(user);
 
       if (!user) return res.json({ error: "No user found" });
 
@@ -27,7 +26,6 @@ checkUserCompletedOnboardingRouter.get(
         return res.json({ error: "No stripe account id found" });
 
       const account = await stripe.accounts.retrieve(user.stripeId);
-      console.log(account);
 
       if (account.details_submitted) {
         console.log("Onboarding completed.");

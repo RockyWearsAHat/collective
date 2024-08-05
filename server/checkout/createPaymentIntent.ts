@@ -13,12 +13,6 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
 
   if (req.session.cart && !req.session.user) cart = req.session.cart;
 
-  // if (!req.session.user) {
-  //   return res.json({ error: "User is not logged in", cart });
-  // }
-
-  console.log(cart);
-
   let cartIds = [];
   for (let i = 0; i < cart.length; i++) {
     cartIds.push({ i: cart[i].item._id, q: cart[i].quantity });
@@ -38,10 +32,6 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
       currency: "usd",
       description: `Payment for ${items.join(", ")}`
     });
-
-    console.log(paymentIntent.id);
-
-    // console.log(cart);
 
     if (cartIds) {
       await stripe.paymentIntents.update(paymentIntent.id, {

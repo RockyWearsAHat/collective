@@ -24,14 +24,9 @@ getCartRouter.get("/", async (req: Request, res: Response) => {
 
     let foundCart = [];
 
-    // console.log("Cart: ");
-    // console.log(cart);
-
     for (let i = 0; i < cart.length; i++) {
       const foundItem = await CartItem.findById(cart[i]._id);
       if (foundItem == null) continue;
-      // console.log("Item at index " + i + ": ");
-      // console.log(cart[i]);
       let item = await CartItem.findById(cart[i]._id).populate("item");
 
       //It should be there?
@@ -44,8 +39,6 @@ getCartRouter.get("/", async (req: Request, res: Response) => {
     }
 
     foundCart = [...new Set(foundCart)];
-
-    console.log(foundCart);
 
     req.session.cart = foundCart;
     req.session.save();
@@ -67,8 +60,6 @@ getCartRouter.get("/", async (req: Request, res: Response) => {
         cart[i] = await cart[i].populate("user", ["stripeId", "username"]);
       }
     }
-
-    // console.log(cart);
 
     return res.json(cart);
   }
@@ -98,8 +89,6 @@ getCartRouter.post("/", async (req: Request, res: Response) => {
       }
     }
 
-    // console.log(cart);
-
     return res.json(cart);
   } else {
     const loggedInUser = await User.findById(req.session.user!._id).populate(
@@ -120,8 +109,6 @@ getCartRouter.post("/", async (req: Request, res: Response) => {
         cart[i] = await cart[i].populate("item");
       }
     }
-
-    // console.log(cart);
 
     return res.json(cart);
   }

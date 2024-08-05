@@ -10,8 +10,6 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
 
   const { items } = req.body;
 
-  // console.log(items);
-
   try {
     if (!items || items.length == 0)
       return res.json({ error: "No items in cart" });
@@ -22,7 +20,6 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
       const saleDescription = items[i].salePrice
         ? "Was " + items[i].price + ", now just " + items[i].salePrice
         : null;
-      // console.log(saleDescription);
       lineItems.push({
         price_data: {
           currency: "usd",
@@ -58,8 +55,6 @@ createCheckoutSessionRouter.post("/", async (req: Request, res: Response) => {
       cancel_url: `http://localhost:4000/cart`,
       automatic_tax: { enabled: true }
     });
-
-    // console.log(session);
 
     if (!session.url)
       return res.json({

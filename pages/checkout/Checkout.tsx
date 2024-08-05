@@ -15,8 +15,6 @@ export const Checkout: FC = () => {
       : null
   );
 
-  // console.log(options);
-
   return (
     <>
       <Helmet>
