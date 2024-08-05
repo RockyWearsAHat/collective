@@ -20,6 +20,8 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
       item: productToUpdate
     });
 
+    console.log(foundLink);
+
     if (!foundLink) return res.json({ message: "Item not found in cart" });
 
     foundLink.quantity = quantity;
@@ -27,15 +29,18 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
 
     let cart = req.session.cart ? req.session.cart : [];
 
+    let returnCart = [];
+
     console.log(foundLink.id, cart[0]._id);
-    cart =
-      cart.filter(item => item._id.toString() != foundLink._id.toString()) ||
-      [];
-    cart = [foundLink, ...cart];
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i]._id.toString() === foundLink._id.toString()) {
+        returnCart.push(foundLink);
+      } else {
+        returnCart.push(cart[i]);
+      }
+    }
 
-    console.log(cart);
-
-    req.session.cart = cart;
+    req.session.cart = returnCart;
     req.session.save();
 
     return res.json("Successfully updated quantity");

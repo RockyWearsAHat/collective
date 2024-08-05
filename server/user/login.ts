@@ -61,17 +61,6 @@ loginRouter.post("/", async function (req: Request, res: Response) {
   }
 
   let combinedUserCart: ObjectId[] = [];
-  // for (let i = 0; i < processedCart.length; i++) {
-  //   console.log(processedCart[i].item.toString());
-
-  //   combinedUserCart.push(processedCart[i]._id);
-
-  //   foundUser.cart.forEach(async userCartItem => {
-  //     console.log(userCartItem);
-  //   });
-  // }
-
-  console.log(foundUser.cart, processedCart);
 
   combinedUserCart = [
     ...foundUser.cart.map(item =>
@@ -102,11 +91,6 @@ loginRouter.post("/", async function (req: Request, res: Response) {
         continue;
       }
 
-      console.log("item link");
-      console.log(itemLink);
-      console.log("other item link");
-      console.log(otherItemLink);
-
       if (
         itemLink &&
         otherItemLink &&
@@ -118,10 +102,6 @@ loginRouter.post("/", async function (req: Request, res: Response) {
       }
     }
   }
-
-  console.log(
-    "combined user cart: " + JSON.stringify(combinedUserCart, null, 2)
-  );
 
   foundUser.cart = combinedUserCart;
   await foundUser.save();

@@ -27,11 +27,6 @@ export const Product: FC = (): ReactNode => {
     method: "POST"
   });
 
-  // const { fn: getCart } = useMutation({
-  //   url: "/api/cart/getCart",
-  //   method: "GET"
-  // });
-
   const [foundProduct, setFoundProduct] = useState<IItem>();
 
   const findProducts = async () => {
@@ -109,13 +104,6 @@ export const Product: FC = (): ReactNode => {
                       productQuantity={productQuantity}
                     />
                   </div>
-                  <button
-                    onClick={async () => {
-                      // console.log(await getCart());
-                    }}
-                  >
-                    Log Cart
-                  </button>
                 </div>
               </div>
             </>

@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 export const logoutRouter: Router = Router();
 
 export const logoutHandler = async (req: Request, res: Response) => {
-  if (!req.session || !req.session) {
+  if (!req || !req.session) {
     return res.json({ redirect: "/" });
   } else {
     req.session.destroy(err => {

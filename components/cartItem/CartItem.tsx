@@ -77,7 +77,6 @@ export const CartItem: FC<CartItemProps> = ({
           className="ml-auto flex h-[24px] w-[24px] items-center justify-center"
           onClick={async () => {
             if (confirmRemoveProduct) {
-              console.log("removing product");
               await removeItemFromCart({
                 productToRemove: item._id,
                 fullyRemove: true

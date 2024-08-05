@@ -1,13 +1,13 @@
 import { ReactNode, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import { Parallax, ParallaxLayer } from "@react-spring/parallax";
-import { useMutation } from "../../hooks/useMutation";
+// import { useMutation } from "../../hooks/useMutation";
 
 export function Home(): ReactNode {
-  const { fn: logout } = useMutation({
-    url: "/api/user/logout",
-    method: "POST"
-  });
+  // const { fn: logout } = useMutation({
+  //   url: "/api/user/logout",
+  //   method: "GET"
+  // });
 
   return (
     <>
@@ -34,13 +34,13 @@ export function Home(): ReactNode {
           <h1>Hello</h1>
         </div>
       </div>
-      <button
+      {/* <button
         onClick={async () => {
           await logout();
         }}
       >
         Logout
-      </button>
+      </button> */}
     </>
   );
 }
