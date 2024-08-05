@@ -1,9 +1,17 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useMutation } from "../../hooks/useMutation";
 import { ToggleEye } from "../login/Login";
+import { Link } from "react-router-dom";
+import { ActiveContext } from "../contextProvider";
 
 export function Register(): ReactNode {
+  const { setActive } = useContext(ActiveContext);
+
+  useEffect(() => {
+    setActive("/register");
+  }, []);
+
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -124,7 +132,7 @@ export function Register(): ReactNode {
       </Helmet>
       <div className="absolute top-0 flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
         <div className="bg-middle absolute -z-10 h-[100vh] w-[100vw] scale-110 flex-col justify-center bg-[url('/loginbg.jpg')] bg-cover bg-center bg-no-repeat align-middle blur-sm"></div>
-        <div className="absolute left-[50%] top-[200px] z-20 h-10 w-64 translate-x-[-50%] rounded-full bg-gray-300 text-white">
+        <div className="absolute left-[50%] top-[200px] z-20 h-10 w-64 translate-x-[-50%] rounded-full bg-slate-600 text-white">
           <div
             className={`h-10 w-32 rounded-full bg-slate-800 transition-transform duration-[500ms] ease-in-out ${customerArtistSignUp ? "translate-x-[100%]" : ""}`}
           ></div>
@@ -157,7 +165,7 @@ export function Register(): ReactNode {
               onSubmit={handleSubmit}
               className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
             >
-              <h1 className="uppercase">Register</h1>
+              <h1 className="uppercase">Customer</h1>
               <input
                 type="text"
                 placeholder="Email"
@@ -228,6 +236,9 @@ export function Register(): ReactNode {
               >
                 Register
               </button>
+              <Link to="/login" className="text-[12px]">
+                Already have an account? Login here
+              </Link>
             </form>
           </div>
 
@@ -239,7 +250,7 @@ export function Register(): ReactNode {
               onSubmit={handleArtistSubmit}
               className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
             >
-              <h1 className="uppercase">Register as an artist</h1>
+              <h1 className="uppercase">Artist</h1>
               <input
                 type="text"
                 placeholder="Email"
@@ -310,6 +321,9 @@ export function Register(): ReactNode {
               >
                 Register
               </button>
+              <Link to="/login" className="text-[12px]">
+                Already have an account? Login here
+              </Link>
             </form>
           </div>
         </div>

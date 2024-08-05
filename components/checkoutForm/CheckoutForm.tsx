@@ -113,6 +113,7 @@ export const CheckoutForm: FC = () => {
   //Get the cart items to display
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
+    cache: "no-store",
     method: "GET"
   });
 

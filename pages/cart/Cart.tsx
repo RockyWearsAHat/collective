@@ -25,7 +25,8 @@ export const Cart: FC = () => {
 
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
-    method: "POST"
+    cache: "no-store",
+    method: "GET"
   });
 
   const { fn: createPaymentIntent } = useMutation({
@@ -58,14 +59,27 @@ export const Cart: FC = () => {
     method: "GET"
   });
 
+  const { fn: getCustomerId } = useMutation({
+    url: "/api/user/getCustomerId",
+    method: "GET"
+  });
+
+  const { fn: clearSessionCart } = useMutation({
+    url: "/api/cart/clearSessionCart",
+    method: "POST"
+  });
+
   const createPaymentIntentAndSetOptions = async () => {
     //If saved options and the cart has not been updated since the saved options were created, return
     if (
       localStorage.getItem("checkoutOptions") &&
       JSON.stringify(
         JSON.parse(localStorage.getItem("checkoutOptions")!).cart
-      ) == JSON.stringify(cart)
+      ) == JSON.stringify(cart) &&
+      JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
+        .clientSecret
     ) {
+      console.log("returning", localStorage);
       return;
     }
 
@@ -85,6 +99,8 @@ export const Cart: FC = () => {
 
     const cartWithUserInfo = await getCart({ populateUser: true });
 
+    const { id: stripeCustomerId } = await getCustomerId();
+
     try {
       if (
         localStorage.getItem("checkoutOptions") &&
@@ -101,7 +117,8 @@ export const Cart: FC = () => {
         const updatedPaymentIntent = await updatePaymentIntent({
           paymentIntentId: checkoutOptions.clientSecret.split("_secret_")[0],
           newTotal: cartTotal,
-          cart: cartWithUserInfo
+          cart: cartWithUserInfo,
+          customerId: stripeCustomerId || null
         });
 
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
@@ -115,22 +132,33 @@ export const Cart: FC = () => {
             const updatedPaymentIntent = await updatePaymentIntent({
               paymentIntentId: userCartId.id.split("_secret_")[0],
               newTotal: cartTotal,
-              cart: cartWithUserInfo
+              cart: cartWithUserInfo,
+              customerId: stripeCustomerId || null
             });
+
+            console.log(updatedPaymentIntent);
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
           } else {
             const newPaymentIntent = await createPaymentIntent({
               total: cartTotal,
-              cart: cartWithUserInfo
+              cart: cartWithUserInfo,
+              customerId: stripeCustomerId || null
             });
+
+            console.log(newPaymentIntent);
+
             client_secret = newPaymentIntent.client_secret;
           }
         } else {
           const newPaymentIntent = await createPaymentIntent({
             total: cartTotal,
-            cart: cartWithUserInfo
+            cart: cartWithUserInfo,
+            customerId: stripeCustomerId || null
           });
+
+          console.log(newPaymentIntent);
+
           client_secret = newPaymentIntent.client_secret;
         }
       }
@@ -138,15 +166,23 @@ export const Cart: FC = () => {
       console.log(err);
       const newPaymentIntent = await createPaymentIntent({
         total: cartTotal,
-        cart: cartWithUserInfo
+        cart: cartWithUserInfo,
+        customerId: stripeCustomerId || null
       });
+
+      console.log(newPaymentIntent);
+
       client_secret = newPaymentIntent.client_secret;
     }
+
+    console.log(client_secret);
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
       await writeCartIdToUser({ cartId: client_secret });
     }
+
+    console.log(client_secret);
 
     const checkoutOptions = {
       clientSecret: client_secret,
@@ -167,8 +203,14 @@ export const Cart: FC = () => {
   };
 
   useEffect(() => {
-    setCartUpdated(false);
+    if (cartUpdated) {
+      setCartUpdated(false);
+    }
+
+    console.log("cart updated, getting cart");
     getCart().then(res => {
+      console.log("cart recieved");
+      console.log("Cart page cart res: ", JSON.stringify(res, null, 2));
       runningTotal = 0;
       if (!(res instanceof Array) || res.length == 0) {
         setCart([]);
@@ -182,6 +224,8 @@ export const Cart: FC = () => {
       if (res && res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           let item = res[i];
+
+          console.log(item);
           if (item.item.salePrice) {
             runningTotal +=
               Number.parseFloat(item.item.salePrice.substring(1)) *
@@ -220,6 +264,10 @@ export const Cart: FC = () => {
         localStorage.removeItem("checkoutOptions");
 
         getCart().then(async res => {
+          console.log(
+            "Clearning cart, removing ",
+            JSON.stringify(res, null, 2)
+          );
           if (!(res instanceof Array) || res.length == 0) return;
           res.forEach(async item => {
             await removeItemFromCart({
@@ -228,8 +276,12 @@ export const Cart: FC = () => {
             });
           });
           const userLoggedIn = await checkLoggedIn();
+          console.log(userLoggedIn);
           if (userLoggedIn) {
             await writeCartIdToUser({ cartId: null });
+          } else {
+            console.log("clearing session cart");
+            await clearSessionCart();
           }
           setActive("itemAddedToCart");
           navigate("/cart");
@@ -241,7 +293,7 @@ export const Cart: FC = () => {
   return (
     <>
       <Helmet>
-        <title>The Artist Collective | Cart</title>
+        <title>Artist Collective | Cart</title>
       </Helmet>
       <div className="absolute top-0 flex min-h-screen w-screen flex-row gap-3 bg-slate-600 px-5 pb-5 pt-[3.75rem] first-line:left-0">
         <div className="flex grow flex-col gap-3">
@@ -250,14 +302,14 @@ export const Cart: FC = () => {
               <CartItem
                 item={item}
                 key={index}
-                cartUpdatedState={setCartUpdated}
+                setCartUpdatedState={setCartUpdated}
                 quantity={item.quantity}
               />
             );
           })}
         </div>
         <div className="flex min-h-[calc(100vh-7.5rem)] min-w-[200px] max-w-[20vw] grow flex-col gap-3 rounded-md bg-zinc-800 bg-opacity-60 p-5 text-white">
-          <h1>Subtotal: {cartPrice}</h1>
+          <h1>Subtotal: {cartPrice ? cartPrice : "$0.00"}</h1>
           <button
             disabled={gettingCheckoutPage}
             className="mt-5 w-[70%] self-center justify-self-center rounded-full bg-zinc-900 py-2 transition-all duration-200 ease-in-out hover:bg-zinc-500 active:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-300"

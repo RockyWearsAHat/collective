@@ -59,12 +59,16 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       pfpId: number | string;
       isArtist: boolean;
       stripeId?: string;
+      onboardingComplete: boolean;
+      stripeCustomerId: string;
     } = {
       username,
       email,
       password,
       pfpId,
-      isArtist: isArtist ? true : false
+      isArtist: isArtist ? true : false,
+      onboardingComplete: false,
+      stripeCustomerId: ""
     };
 
     let stripeAccount: Stripe.Account;
@@ -87,8 +91,9 @@ registerRouter.post("/", async (req: Request, res: Response) => {
           transfers: { requested: true }
         },
         country: "US",
+        business_type: "individual",
         business_profile: {
-          url: `artistcollective.store/${username}`
+          url: `https://www.artistcollective.store/${username}`
         }
       });
 
@@ -97,6 +102,14 @@ registerRouter.post("/", async (req: Request, res: Response) => {
 
       userInfo.stripeId = stripeAccount.id;
     }
+
+    const stripeCustomer = await stripe.customers.create({
+      email: email
+    });
+
+    userInfo.stripeCustomerId = stripeCustomer.id;
+
+    console.log(userInfo);
 
     const newUser = await User.create(userInfo);
 

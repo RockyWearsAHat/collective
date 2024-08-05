@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { ActiveContext } from "../contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 // import ImageEditor from "../../components/imageEditor/ImageEditor";
@@ -10,6 +10,21 @@ export function Profile(): ReactNode {
     url: "/api/user/savePFP",
     method: "POST"
   });
+
+  const { fn: checkOnboardingCompleted } = useMutation({
+    url: "/api/user/checkUserCompletedOnboarding",
+    method: "GET"
+  });
+
+  const { fn: createAccountLink } = useMutation({
+    url: "/api/user/createAccountLink",
+    method: "POST"
+  });
+
+  const [_onboardingCompleted, setOnboardingCompleted] =
+    useState<boolean>(false);
+
+  const [isArtist, setIsArtist] = useState<boolean>(false);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +38,18 @@ export function Profile(): ReactNode {
     //Reload navbar to show new profile photo
     setActive(res.activeLink);
   };
+
+  useEffect(() => {
+    checkOnboardingCompleted().then(async res => {
+      res.completed
+        ? setOnboardingCompleted(true)
+        : setOnboardingCompleted(false);
+
+      res.isArtist ?? setIsArtist(res.isArtist);
+
+      console.log(res.isArtist);
+    });
+  }, []);
 
   return (
     <div className="absolute left-0 top-0 h-[100vh] pt-nav">
@@ -52,6 +79,31 @@ export function Profile(): ReactNode {
         <button type="submit">Upload</button>
         {/* <ImageEditor file={profilePhoto} setTarget={setProfilePhoto} /> */}
       </form>
+
+      {isArtist && (
+        <div className="absolute left-0 top-24">
+          <button
+            onClick={async () => {
+              const onboardingUrl = await createAccountLink({
+                refreshURL:
+                  window.location.protocol +
+                  "//" +
+                  window.location.host +
+                  "/profile",
+                returnURL:
+                  window.location.protocol +
+                  "//" +
+                  window.location.host +
+                  "/profile"
+              });
+
+              window.location.href = onboardingUrl.url;
+            }}
+          >
+            Edit Payment Information
+          </button>
+        </div>
+      )}
     </div>
   );
 }

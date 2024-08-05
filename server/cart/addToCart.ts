@@ -1,62 +1,114 @@
 import { Router, Request, Response } from "express";
-import { withAuth } from "../auth/masterAuthRouter";
 import { User } from "../../db/models/user";
 import mongoose, { ObjectId } from "mongoose";
 import { CartItem, ICartItem } from "../../db/models/cartItem";
 
 export const addToCartRouter: Router = Router();
 
-addToCartRouter.post("/", withAuth, async (req: Request, res: Response) => {
-  const { productToAdd, quantity } = await req.body;
+addToCartRouter.post("/", async (req: Request, res: Response) => {
+  if (!req.session.user) {
+    //User is not logged in
+    const { productToAdd, quantity } = req.body;
 
-  if (mongoose.Types.ObjectId.isValid(productToAdd) === false) {
-    return res;
-  }
-
-  const loggedInUser = await User.findById(req.session.user!._id).populate(
-    "cart"
-  );
-
-  // console.log(loggedInUser);
-  if (!loggedInUser) return res.status(404).json("User not found");
-
-  let userHasItemInCart: boolean = false;
-  let linkId: ObjectId;
-  for (let i = 0; i < loggedInUser.cart.length; i++) {
-    if ((loggedInUser.cart[i] as ICartItem).item == productToAdd) {
-      userHasItemInCart = true;
-      linkId = (loggedInUser.cart[i] as ICartItem)._id;
-      break;
+    if (mongoose.Types.ObjectId.isValid(productToAdd) === false) {
+      return res;
     }
-  }
 
-  let productLink: ICartItem | null;
-  if (userHasItemInCart) {
-    productLink = await CartItem.findById(linkId!);
-    if (!productLink)
-      return res.json({ message: "error finding product link" });
-    productLink.quantity += quantity ? quantity : 1;
-    productLink.save();
+    let cart = req.session.cart ? req.session.cart : [];
 
-    loggedInUser.cart = [...loggedInUser.cart];
-    await loggedInUser.save();
-  } else {
-    productLink = await CartItem.create({
-      user: req.session.user?._id,
-      item: productToAdd,
-      quantity: quantity ? quantity : 1
+    // console.log(cart);
+    cart = cart.filter(n => n);
+
+    // console.log(cart);
+
+    let userHasItemInCart: boolean = false;
+    let linkId: ObjectId;
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].item == productToAdd) {
+        userHasItemInCart = true;
+        linkId = cart[i]._id;
+        break;
+      }
+    }
+
+    let productLink: ICartItem | null;
+    if (userHasItemInCart) {
+      productLink = await CartItem.findById(linkId!);
+      if (!productLink)
+        return res.json({ message: "error finding product link" });
+      productLink.quantity += quantity ? quantity : 1;
+      await productLink.save();
+      cart = [productLink, ...cart.filter(item => item._id != linkId)];
+    } else {
+      productLink = await CartItem.create({
+        sessionId: req.sessionID,
+        item: productToAdd,
+        quantity: quantity ? quantity : 1
+      });
+
+      if (!productLink)
+        return res.json({ message: "error adding product to cart" });
+
+      cart = [...cart, productLink];
+    }
+
+    req.session.cart = cart;
+    req.session.save(() => {
+      return res.json("successfully added item to cart");
     });
-    if (!productLink)
-      return res.json({ message: "error adding product to cart" });
+  } else {
+    //User is logged in
+    const { productToAdd, quantity } = req.body;
 
-    loggedInUser.cart = [...loggedInUser.cart, productLink._id];
-    await loggedInUser.save();
+    if (mongoose.Types.ObjectId.isValid(productToAdd) === false) {
+      return res;
+    }
+
+    const loggedInUser = await User.findById(req.session.user!._id).populate(
+      "cart"
+    );
+
+    // console.log(loggedInUser);
+    if (!loggedInUser) return res.status(404).json("User not found");
+
+    let userHasItemInCart: boolean = false;
+    let linkId: ObjectId;
+    for (let i = 0; i < loggedInUser.cart.length; i++) {
+      if ((loggedInUser.cart[i] as ICartItem).item == productToAdd) {
+        userHasItemInCart = true;
+        linkId = (loggedInUser.cart[i] as ICartItem)._id;
+        break;
+      }
+    }
+
+    let productLink: ICartItem | null;
+    if (userHasItemInCart) {
+      productLink = await CartItem.findById(linkId!);
+      if (!productLink)
+        return res.json({ message: "error finding product link" });
+      productLink.quantity += quantity ? quantity : 1;
+      productLink.save();
+
+      loggedInUser.cart = [...loggedInUser.cart];
+      await loggedInUser.save();
+    } else {
+      productLink = await CartItem.create({
+        user: req.session.user?._id,
+        item: productToAdd,
+        quantity: quantity ? quantity : 1
+      });
+      if (!productLink)
+        return res.json({ message: "error adding product to cart" });
+
+      loggedInUser.cart = [...loggedInUser.cart, productLink._id];
+      await loggedInUser.save();
+    }
+
+    const updatedUser = await User.findById(req.session.user?._id);
+    if (!updatedUser) return res.json({ message: "error finding user" });
+    req.session.user = updatedUser;
+    req.session.save(() => {
+      return res.json("successfully added item to cart");
+    });
   }
-
-  const updatedUser = await User.findById(req.session.user?._id);
-  if (!updatedUser) return res.json({ message: "error finding user" });
-  req.session.user = updatedUser;
-  req.session.save(() => {
-    return res.json("successfully added item to cart");
-  });
 });
