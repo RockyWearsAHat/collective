@@ -3,8 +3,8 @@ import { Request, Response, Router } from "express";
 import { signToken, validateToken } from "../tokens/jwt";
 import { checkIfEmail } from "../../helpers/checkIfEmail";
 import { getUserPFP } from "../helpers/s3";
-import { CartItem, ICartItem } from "../../db/models/cartItem";
-import mongoose, { ObjectId } from "mongoose";
+import { CartItem } from "../../db/models/cartItem";
+import { ObjectId } from "mongoose";
 
 export const loginRouter = Router();
 

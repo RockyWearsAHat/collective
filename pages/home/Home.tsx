@@ -14,7 +14,7 @@ export function Home(): ReactNode {
       <Helmet>
         <title>Artist Collective | Home</title>
       </Helmet>
-      {/* <Parallax pages={2}>
+      <Parallax pages={2}>
         <ParallaxLayer speed={1}>
           <div
             className={`flex h-[100vh] w-[100vw] cursor-default select-none flex-col justify-center text-center text-white`}
@@ -33,7 +33,7 @@ export function Home(): ReactNode {
         <div className="self-center">
           <h1>Hello</h1>
         </div>
-      </div> */}
+      </div>
       <button
         onClick={async () => {
           await logout();
