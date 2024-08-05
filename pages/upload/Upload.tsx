@@ -13,6 +13,11 @@ export function Upload(): ReactNode {
     credentials: "same-origin"
   });
 
+  const { fn: checkUserCompletedOnboarding } = useMutation({
+    url: "/api/user/checkUserCompletedOnboarding",
+    method: "GET"
+  });
+
   const [userAllowedToViewPage, setUserAllowedToViewPage] = useState<
     boolean | null
   >(null);
@@ -22,10 +27,18 @@ export function Upload(): ReactNode {
   ] = useState<boolean | null>(null);
 
   useEffect(() => {
-    checkLoggedIn().then(res => {
-      if (res.isArtist && res.onboardingComplete) {
+    checkLoggedIn().then(async res => {
+      const onboardingCompleteRes = await checkUserCompletedOnboarding();
+      console.log(onboardingCompleteRes);
+      if (
+        res.isArtist &&
+        (res.onboardingComplete || onboardingCompleteRes.completed)
+      ) {
         setUserAllowedToViewPage(true);
-      } else if (res.isArtist && !res.onboardingComplete) {
+      } else if (
+        res.isArtist &&
+        (!res.onboardingComplete || !onboardingCompleteRes.completed)
+      ) {
         setUserAllowedToViewPage(true);
         setUserIsArtistButHasNotCompletedOnboarding(true);
       } else {

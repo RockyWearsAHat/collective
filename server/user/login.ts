@@ -3,6 +3,8 @@ import { Request, Response, Router } from "express";
 import { signToken, validateToken } from "../tokens/jwt";
 import { checkIfEmail } from "../../helpers/checkIfEmail";
 import { getUserPFP } from "../helpers/s3";
+import { CartItem, ICartItem } from "../../db/models/cartItem";
+import mongoose, { ObjectId } from "mongoose";
 
 export const loginRouter = Router();
 
@@ -43,10 +45,92 @@ loginRouter.post("/", async function (req: Request, res: Response) {
     return res.json({ error: "Error validating token, please try again" });
   }
 
+  let cart = req.session.cart ? req.session.cart : [];
+  let processedCart = [];
+  if (cart.length > 0) {
+    for (let i = 0; i < cart.length; i++) {
+      let foundLink = await CartItem.findById(cart[i]._id);
+      if (!foundLink) continue;
+
+      foundLink.user = foundUser._id;
+      foundLink.sessionId = undefined;
+      await foundLink.save();
+
+      processedCart.push(foundLink);
+    }
+  }
+
+  let combinedUserCart: ObjectId[] = [];
+  // for (let i = 0; i < processedCart.length; i++) {
+  //   console.log(processedCart[i].item.toString());
+
+  //   combinedUserCart.push(processedCart[i]._id);
+
+  //   foundUser.cart.forEach(async userCartItem => {
+  //     console.log(userCartItem);
+  //   });
+  // }
+
+  console.log(foundUser.cart, processedCart);
+
+  combinedUserCart = [
+    ...foundUser.cart.map(item =>
+      (item as any).id ? (item as any)._id : item
+    ),
+    ...processedCart.map(item => item._id)
+  ];
+
+  for (let i = 0; i < combinedUserCart.length; i++) {
+    const itemLink = await CartItem.findById(combinedUserCart[i]);
+
+    if (!itemLink) {
+      await CartItem.deleteOne({ _id: combinedUserCart[i] });
+      combinedUserCart.splice(i, 1);
+      i--;
+      continue;
+    }
+
+    for (let j = 0; j < combinedUserCart.length; j++) {
+      if (i == j) continue;
+
+      const otherItemLink = await CartItem.findById(combinedUserCart[j]);
+
+      if (!otherItemLink) {
+        await CartItem.deleteOne({ _id: combinedUserCart[j] });
+        combinedUserCart.splice(j, 1);
+        j--;
+        continue;
+      }
+
+      console.log("item link");
+      console.log(itemLink);
+      console.log("other item link");
+      console.log(otherItemLink);
+
+      if (
+        itemLink &&
+        otherItemLink &&
+        itemLink.item.toString() == otherItemLink.item.toString()
+      ) {
+        itemLink.quantity += otherItemLink.quantity;
+        await itemLink.save();
+        await CartItem.findByIdAndDelete(otherItemLink._id);
+      }
+    }
+  }
+
+  console.log(
+    "combined user cart: " + JSON.stringify(combinedUserCart, null, 2)
+  );
+
+  foundUser.cart = combinedUserCart;
+  await foundUser.save();
+
   const user = foundUser.toJSON();
 
   req.session.token = token;
   req.session.user = user;
+  req.session.cart = [];
 
   if (user.pfpId) {
     const link = await getUserPFP(foundUser._id);

@@ -51,6 +51,7 @@ export default function Navbar(): ReactNode {
 
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
+    cache: "no-store",
     method: "GET"
   });
 
@@ -61,9 +62,9 @@ export default function Navbar(): ReactNode {
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
-      setUserIsArtist(res.isArtist);
+      setUserIsArtist(res.isArtist ? res.isArtist : false);
       validateToken().then(res => {
-        if (!res.tokenValidated) {
+        if (res && !res.tokenValidated) {
           if (
             !fullExtensionUrl.match(/^\/$/) &&
             extensionUrl.indexOf("/login") == -1 &&
@@ -72,31 +73,33 @@ export default function Navbar(): ReactNode {
             extensionUrl.indexOf("/register") == -1 &&
             fullExtensionUrl.indexOf("/product") == -1 &&
             fullExtensionUrl.indexOf("/search") == -1 &&
-            fullExtensionUrl.indexOf("/cart") == -1
+            extensionUrl.indexOf("/cart") == -1 &&
+            extensionUrl.indexOf("/checkout") == -1
           ) {
-            navigate("/session-timed-out");
+            return navigate("/session-timed-out");
           }
         }
       });
 
-      setTimeout(() => {
-        getCart().then(res => {
-          if (!(res instanceof Array) || res.length == 0) {
-            setCartItemsLength(0);
-            return;
-          }
+      console.log("getting cart");
+      getCart().then(res => {
+        console.log("res: " + JSON.stringify(res, null, 2));
+        if (!(res instanceof Array) || res.length == 0) {
+          setCartItemsLength(0);
+          return;
+        }
 
-          let cartItems: any[] = [];
-          if (res && res.length > 0) {
-            res.forEach(item => {
-              for (let i = 0; i < item.quantity; i++) {
-                cartItems.push(item.item);
-              }
-            });
-            setCartItemsLength(cartItems.length);
-          }
-        });
-      }, 10);
+        let cartItems: any[] = [];
+        if (res && res.length > 0) {
+          res.forEach(item => {
+            for (let i = 0; i < item.quantity; i++) {
+              cartItems.push(item.item);
+            }
+          });
+          console.log(cartItems);
+          setCartItemsLength(cartItems.length);
+        }
+      });
 
       if (res && (res.loggedIn == true || res.loggedIn == false)) {
         setLoggedIn(res.loggedIn);

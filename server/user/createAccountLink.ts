@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import Stripe from "stripe";
+import { User } from "../../db/models/user";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -7,19 +8,27 @@ export const createAccountLinkRouter: Router = Router();
 
 createAccountLinkRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const { accountId, refreshURL, returnURL } = req.body;
+    const { accountId: accId, refreshURL, returnURL } = req.body;
 
     console.log(req.session);
 
-    if (!accountId)
-      return res.status(400).send({ error: "No account ID provided" });
+    let accountId = accId;
+    if (!accId) {
+      if (!req.session.user)
+        return res.json({
+          error: "No logged in user and no accountid provided"
+        });
+      const userId = req.session.user?._id;
 
-    // const loggedInUser = await User.findById(req.session.user._id);
+      if (!userId) return res.json({ error: "No logged in user" });
 
-    // if (!loggedInUser?.stripeId)
-    //   return res
-    //     .status(400)
-    //     .send({ error: "User does not have a stripe account" });
+      const user = await User.findById(userId);
+
+      if (!user?.stripeId)
+        return res.json({ error: "User does not have a stripe account" });
+
+      accountId = user.stripeId;
+    }
 
     const accountLink = await stripe.accountLinks.create({
       account: accountId,

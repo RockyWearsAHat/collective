@@ -8,6 +8,7 @@ import { calculateTaxRouter } from "./calculateTax";
 import { updatePaymentIntentRouter } from "./updatePaymentIntent";
 import { writeCartIdToUserRouter } from "./writeCartIdToUser";
 import { getCartIdFromUserRouter } from "./getCartIdFromUser";
+import { getBalanceOfAccountRouter } from "./getBalanceOfAccount";
 
 export const masterCheckoutRouter: Router = Router();
 
@@ -20,3 +21,4 @@ masterCheckoutRouter.use("/calculateTax", calculateTaxRouter);
 masterCheckoutRouter.use("/updatePaymentIntent", updatePaymentIntentRouter);
 masterCheckoutRouter.use("/writeCartIdToUser", writeCartIdToUserRouter);
 masterCheckoutRouter.use("/getCartIdFromUser", getCartIdFromUserRouter);
+masterCheckoutRouter.use("/getBalanceOfAccount", getBalanceOfAccountRouter);

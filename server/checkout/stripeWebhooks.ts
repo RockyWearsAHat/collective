@@ -1,12 +1,16 @@
 import { Router, Request, Response } from "express";
-// import Stripe from "stripe";
-
-export const stripeWebhookRouter = Router();
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { Item } from "../../db/models/item";
+import Stripe from "stripe";
+import { sendEmail } from "../emails/sendEmail";
+import ReactDOMServer from "react-dom/server";
+import { OrderEmail } from "../../emails/OrderEmail";
 
 //In percent, 0-100
 const artistCollectiveCut = 20;
+
+export const stripeWebhookRouter = Router();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
   const event = req.body;
@@ -41,28 +45,61 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
       );
       console.log(cart);
 
+      let cartItems = [];
+
       //Calculate artist cut
       for (let i = 0; i < cart.length; i++) {
+        const item = await Item.findById(cart[i].i).populate(
+          "userCreatedId",
+          "stripeId"
+        );
+
+        cartItems.push({ item, quantity: cart[i].q });
+
+        if (!item) continue;
         const artistCut =
-          Number.parseFloat(cart[i].item.price.substring(1)) *
-          Number.parseInt(cart[i].quantity) *
+          Number.parseFloat(
+            item.salePrice ? item.salePrice.toString() : item.price.toString()
+          ) *
+          Number.parseInt(cart[i].q) *
           (100 - artistCollectiveCut);
 
-        const artistId = cart[i].user.stripeId;
+        const artistId = (item.userCreatedId as any).stripeId;
 
         console.log(
           `${artistId} gets $${Number.parseInt(artistCut.toFixed(0)) / 100}`
         );
 
-        // Create transfer to the artist
-        // const transfer = await stripe.transfers.create({
-        //   amount: artistCut, // Amount in cents
-        //   currency: "usd",
-        //   destination: artistId
-        // });
+        console.log(paymentIntent.latest_charge);
 
-        // console.log(transfer.id);
+        // Create transfer to the artist
+        const transfer = await stripe.transfers.create({
+          amount: Number.parseInt(artistCut.toFixed(0)), // Amount in cents
+          currency: "usd",
+          source_transaction: paymentIntent.latest_charge,
+          destination: artistId,
+          description: `Payment for ${cart[i].q}x ${item.name} - $${item.salePrice ? item.salePrice : item.price} per`
+        });
+
+        console.log(transfer.id);
       }
+
+      console.log(cartItems);
+
+      //Email user
+      const emailBody = ReactDOMServer.renderToString(
+        OrderEmail({
+          name: "Alex",
+          orderNumber: paymentIntent.id.split("_")[1],
+          cartString: JSON.stringify(cartItems)
+        })
+      );
+
+      sendEmail({
+        to: "alexwaldmann2004@gmail.com",
+        subject: "Testing email",
+        body: emailBody
+      });
       break;
     default:
       //Don't handle other event types
