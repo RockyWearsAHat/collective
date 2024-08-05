@@ -37,7 +37,7 @@ export const Logout = (): ReactNode => {
       <Helmet>
         <title>Artist Collective | Logout</title>
       </Helmet>
-      <div className="flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
+      <div className="absolute left-0 top-0 flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
         <div className="flex h-auto w-auto flex-col justify-center self-center px-10 text-center align-middle">
           <h1 className="text-3xl">You Have Been Successfully Logged Out</h1>
           <p>
