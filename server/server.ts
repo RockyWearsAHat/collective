@@ -26,10 +26,12 @@ declare module "express-session" {
     token: string;
     user: Partial<IUser> | undefined;
     userPFP: string;
+    cart: ICartItem[];
   }
 }
 import expressSession from "express-session";
 import { MongoClient } from "mongodb";
+import { ICartItem } from "../db/models/cartItem";
 
 //Set up express session
 const client = db.getClient() as unknown as MongoClient;

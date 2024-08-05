@@ -37,7 +37,7 @@ export const SessionTimedOut = (): ReactNode => {
   return (
     <>
       <Helmet>
-        <title>The Artist Collective | Session Timed Out</title>
+        <title>Artist Collective | Session Timed Out</title>
       </Helmet>
       <div className="flex h-screen w-screen justify-center bg-slate-600 align-middle text-white">
         <div className="flex h-auto w-auto flex-col justify-center self-center px-10 text-center align-middle">

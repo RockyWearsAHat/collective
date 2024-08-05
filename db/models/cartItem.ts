@@ -2,7 +2,8 @@ import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface ICartItem extends Document {
   _id: ObjectId;
-  user: ObjectId;
+  user?: ObjectId;
+  sessionId?: string;
   item: ObjectId;
   quantity: number;
 }
@@ -10,7 +11,8 @@ export interface ICartItem extends Document {
 interface CartItemModel extends mongoose.Model<ICartItem> {}
 
 const cartItemSchema = new mongoose.Schema<ICartItem, CartItemModel>({
-  user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+  user: { type: mongoose.Types.ObjectId, ref: "User", required: false },
+  sessionId: { type: String, required: false },
   item: { type: mongoose.Types.ObjectId, ref: "Item", required: true },
   quantity: { type: Number, required: true }
 });

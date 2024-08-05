@@ -20,7 +20,7 @@ export const Checkout: FC = () => {
   return (
     <>
       <Helmet>
-        <title>The Artist Collective | Checkout</title>
+        <title>Artist Collective | Checkout</title>
       </Helmet>
       {options && (
         <Elements stripe={stripePromise} options={options}>

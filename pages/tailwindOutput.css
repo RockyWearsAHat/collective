@@ -602,6 +602,10 @@ video {
   top: 0px;
 }
 
+.top-24 {
+  top: 6rem;
+}
+
 .top-\[200px\] {
   top: 200px;
 }
@@ -1119,11 +1123,6 @@ video {
 .bg-gray-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
 
 .bg-slate-500 {

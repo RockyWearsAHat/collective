@@ -6,36 +6,59 @@ export const createPaymentIntentRouter: Router = Router();
 createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
   if (!process.env.STRIPE_SECRET_KEY)
     return res.json({ error: "No stripe key found" });
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  const { total, cart } = req.body;
+  let { total, cart, customerId } = req.body;
+
+  if (req.session.cart && !req.session.user) cart = req.session.cart;
+
+  // if (!req.session.user) {
+  //   return res.json({ error: "User is not logged in", cart });
+  // }
+
+  console.log(cart);
+
+  let cartIds = [];
+  for (let i = 0; i < cart.length; i++) {
+    cartIds.push({ i: cart[i].item._id, q: cart[i].quantity });
+  }
 
   if (!total) return res.json({ error: "No total found" });
+
+  let items = [];
+
+  for (let i = 0; i < cart.length; i++) {
+    items.push(cart[i].item.name);
+  }
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: total,
-      currency: "usd"
-      //   application_fee_amount: 123,
-      //   transfer_data: {
-      //     destination: req.session.user?.stripeId!
-      //   }
+      currency: "usd",
+      description: `Payment for ${items.join(", ")}`
     });
+
+    console.log(paymentIntent.id);
 
     // console.log(cart);
 
-    if (cart) {
+    if (cartIds) {
       await stripe.paymentIntents.update(paymentIntent.id, {
         metadata: {
-          cart: JSON.stringify(cart)
+          cart: JSON.stringify(cartIds)
         }
       });
     }
 
-    // console.log(paymentIntent);
+    if (customerId) {
+      await stripe.paymentIntents.update(paymentIntent.id, {
+        customer: customerId
+      });
+    }
 
     if (!paymentIntent.client_secret)
-      return res.json({ error: "An error occurred" });
+      return res.json({ error: "No client secret!" });
 
     return res.json({ client_secret: paymentIntent.client_secret });
   } catch (err) {

@@ -9,13 +9,13 @@ import { ObjectId } from "mongoose";
 interface CartItemProps {
   key?: Key;
   item: IItem;
-  cartUpdatedState?: any;
+  setCartUpdatedState?: any;
   quantity?: number;
 }
 
 export const CartItem: FC<CartItemProps> = ({
   item,
-  cartUpdatedState,
+  setCartUpdatedState,
   quantity
 }): ReactNode => {
   const { fn: removeItemFromCart } = useMutation({
@@ -75,16 +75,17 @@ export const CartItem: FC<CartItemProps> = ({
         />
         <button
           className="ml-auto flex h-[24px] w-[24px] items-center justify-center"
-          onClick={() => {
+          onClick={async () => {
             if (confirmRemoveProduct) {
-              removeItemFromCart({
+              console.log("removing product");
+              await removeItemFromCart({
                 productToRemove: item._id,
                 fullyRemove: true
-              }).then(() => {
-                setActive("itemAddedToCart");
-                cartUpdatedState(true);
-                setConfirmRemoveProduct(false);
               });
+
+              setActive("itemAddedToCart");
+              setCartUpdatedState(true);
+              setConfirmRemoveProduct(false);
             } else {
               setConfirmRemoveProduct(true);
             }

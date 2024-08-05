@@ -10,11 +10,13 @@ import { useNavigate } from "react-router-dom";
 export const useMutation = ({
   url,
   method = "POST",
-  credentials = "same-origin"
+  credentials = "same-origin",
+  cache = "default"
 }: {
   url: string;
   method?: string;
   credentials?: RequestCredentials;
+  cache?: RequestCache;
 }) => {
   const navigate = useNavigate();
 
@@ -46,6 +48,7 @@ export const useMutation = ({
       const res = await fetch(url, {
         method,
         credentials,
+        cache,
         ...bodyForReq
       });
 
