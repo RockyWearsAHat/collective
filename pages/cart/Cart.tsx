@@ -26,7 +26,7 @@ export const Cart: FC = () => {
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
     cache: "no-store",
-    method: "GET"
+    method: "POST"
   });
 
   const { fn: createPaymentIntent } = useMutation({
@@ -49,13 +49,13 @@ export const Cart: FC = () => {
     method: "GET"
   });
 
-  const { fn: writeCartIdToUser } = useMutation({
-    url: "/api/checkout/writeCartIdToUser",
+  const { fn: writeCheckoutSecretToUser } = useMutation({
+    url: "/api/checkout/writeCheckoutSecretToUser",
     method: "POST"
   });
 
-  const { fn: getCartIdFromUser } = useMutation({
-    url: "/api/checkout/getCartIdFromUser",
+  const { fn: getCheckoutSecretFromUser } = useMutation({
+    url: "/api/checkout/getCheckoutSecretFromUser",
     method: "GET"
   });
 
@@ -72,19 +72,45 @@ export const Cart: FC = () => {
   const createPaymentIntentAndSetOptions = async () => {
     //If saved options and the cart has not been updated since the saved options were created, return
     if (
+      //If there are saved options
       localStorage.getItem("checkoutOptions") &&
+      //And the cart has not been updated since the saved options were created
       JSON.stringify(
         JSON.parse(localStorage.getItem("checkoutOptions")!).cart
       ) == JSON.stringify(cart) &&
+      //And there is a client secret
       JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
         .clientSecret
     ) {
+      //Check if the use is logged in
+      const userLoggedIn = await checkLoggedIn();
+      if (userLoggedIn.loggedIn) {
+        //If the user is logged in, check if the user has a checkout secret
+        const loggedInUserCheckoutSecret = await getCheckoutSecretFromUser();
+        if (
+          loggedInUserCheckoutSecret &&
+          loggedInUserCheckoutSecret.id != null
+        ) {
+          //If they do, return, no updates needed, local and saved client secret found
+          return;
+        }
+
+        //If the user is logged in, but does not have a checkout secret, write the client secret to the user
+        const locallySavedClientSecret = JSON.parse(
+          localStorage.getItem("checkoutOptions")!
+        ).checkoutOptions.clientSecret;
+        await writeCheckoutSecretToUser({
+          checkoutClientSecret: locallySavedClientSecret
+        });
+      }
+      //No need to write a new client secret, return
       return;
     }
 
     //Calculate the cart total
     let cartTotal = 0;
     for (let i = 0; i < cart.length; i++) {
+      //Disgusting parsing because the sale price and price are stored as Decimal128s and outputted as strings
       cartTotal += cart[i].salePrice
         ? Number.parseFloat(cart[i].salePrice.substring(1)) *
           Number.parseInt(cart[i].quantity)
@@ -96,6 +122,7 @@ export const Cart: FC = () => {
     //Create or update the payment intent
     let client_secret;
 
+    //Get the cart with user info
     const cartWithUserInfo = await getCart({ populateUser: true });
 
     const { id: stripeCustomerId } = await getCustomerId();
@@ -121,7 +148,7 @@ export const Cart: FC = () => {
       } else {
         const userLoggedIn = await checkLoggedIn();
         if (userLoggedIn) {
-          const userCartId = await getCartIdFromUser();
+          const userCartId = await getCheckoutSecretFromUser();
           if (userCartId && userCartId.id) {
             const updatedPaymentIntent = await updatePaymentIntent({
               paymentIntentId: userCartId.id.split("_secret_")[0],
@@ -163,7 +190,8 @@ export const Cart: FC = () => {
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
-      await writeCartIdToUser({ cartId: client_secret });
+      console.log("writing client secret to user");
+      await writeCheckoutSecretToUser({ checkoutClientSecret: client_secret });
     }
 
     const checkoutOptions = {
@@ -244,7 +272,8 @@ export const Cart: FC = () => {
           });
           const userLoggedIn = await checkLoggedIn();
           if (userLoggedIn) {
-            await writeCartIdToUser({ cartId: null });
+            console.log("writing client secret to user");
+            await writeCheckoutSecretToUser({ checkoutClientSecret: null });
           } else {
             await clearSessionCart();
           }

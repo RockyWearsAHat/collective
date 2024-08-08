@@ -2,13 +2,13 @@ import { Router, Request, Response } from "express";
 import { User } from "../../db/models/user";
 import { withAuth } from "../auth/masterAuthRouter";
 
-export const writeCartIdToUserRouter: Router = Router();
+export const writeCheckoutSecretToUserRouter: Router = Router();
 
-writeCartIdToUserRouter.post(
+writeCheckoutSecretToUserRouter.post(
   "/",
   withAuth,
   async (req: Request, res: Response) => {
-    const { cartId } = req.body;
+    const { checkoutClientSecret } = req.body;
 
     if (!req.session.user) return res.status(401).json("Unauthorized");
 
@@ -16,7 +16,7 @@ writeCartIdToUserRouter.post(
 
     if (!user) return res.status(404).json("User not found");
 
-    user.cartId = cartId;
+    user.checkoutClientSecret = checkoutClientSecret;
     await user.save();
 
     return res.json("Cart ID written to user");

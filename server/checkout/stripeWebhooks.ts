@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { Item } from "../../db/models/item";
+import { User } from "../../db/models/user";
 import Stripe from "stripe";
 import { sendEmail } from "../emails/sendEmail";
 import ReactDOMServer from "react-dom/server";
@@ -19,6 +20,17 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
     //On success
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object;
+
+      const user = await User.findOne({
+        checkoutSecret: paymentIntent.client_secret
+      });
+
+      console.log(user);
+
+      if (user) {
+        user.checkoutClientSecret = null;
+        await user.save();
+      }
 
       const {
         city,
@@ -52,6 +64,8 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
           "userCreatedId",
           "stripeId"
         );
+
+        console.log(item);
 
         cartItems.push({ item, quantity: cart[i].q });
 

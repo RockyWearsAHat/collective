@@ -11,7 +11,11 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
 
   let { total, cart, customerId } = req.body;
 
-  if (req.session.cart && !req.session.user) cart = req.session.cart;
+  if (req.session && req.session.cart && !req.session.user)
+    cart = req.session.cart;
+
+  if (!(cart instanceof Array))
+    return res.json({ error: "Cart is not an array" });
 
   let cartIds = [];
   for (let i = 0; i < cart.length; i++) {

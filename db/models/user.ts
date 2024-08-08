@@ -13,7 +13,7 @@ export interface IUser extends Document {
   stripeCustomerId: string;
   isArtist: boolean;
   onboardingComplete: boolean | null;
-  cartId: string | null;
+  checkoutClientSecret: string | null;
   username: string;
   email: string;
   password: string;
@@ -27,11 +27,11 @@ export interface IUser extends Document {
 interface UserModel extends mongoose.Model<IUser> {}
 
 const userSchema = new mongoose.Schema<IUser, UserModel>({
-  stripeId: { type: String, unique: true, required: false },
+  stripeId: { type: String, unique: true, required: false, sparse: true },
   stripeCustomerId: { type: String, required: true },
   isArtist: { type: Boolean, required: true },
   onboardingComplete: { type: Boolean, required: false },
-  cartId: { type: String, required: false },
+  checkoutClientSecret: { type: String, required: false },
   username: { type: String, unique: true, trim: true, required: true },
   email: { type: String, unique: true, trim: true, required: true },
   password: String,

@@ -7,7 +7,8 @@ import { Router, Request, Response } from "express";
 export const updatePaymentIntentRouter = Router();
 
 updatePaymentIntentRouter.post("/", async (req: Request, res: Response) => {
-  const { newTotal, paymentIntentId, cart, customerId } = req.body;
+  const { newTotal, paymentIntentId, cart, customerId, customerName } =
+    req.body;
 
   if (!newTotal || !paymentIntentId) {
     return res.json({
@@ -30,6 +31,11 @@ updatePaymentIntentRouter.post("/", async (req: Request, res: Response) => {
     }
 
     if (customerId) {
+      if (customerName) {
+        await stripe.customers.update(customerId, {
+          name: customerName
+        });
+      }
       paymentIntent = await stripe.paymentIntents.update(paymentIntentId, {
         customer: customerId
       });

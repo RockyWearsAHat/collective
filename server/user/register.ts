@@ -59,7 +59,7 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       pfpId: number | string;
       isArtist: boolean;
       stripeId?: string;
-      onboardingComplete: boolean;
+      onboardingComplete?: boolean;
       stripeCustomerId: string;
     } = {
       username,
@@ -67,7 +67,7 @@ registerRouter.post("/", async (req: Request, res: Response) => {
       password,
       pfpId,
       isArtist: isArtist ? true : false,
-      onboardingComplete: false,
+      onboardingComplete: isArtist ? false : undefined,
       stripeCustomerId: ""
     };
 

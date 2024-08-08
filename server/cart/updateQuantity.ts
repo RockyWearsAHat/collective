@@ -31,7 +31,6 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
 
     let returnCart = [];
 
-    console.log(foundLink.id, cart[0]._id);
     for (let i = 0; i < cart.length; i++) {
       if (cart[i]._id.toString() === foundLink._id.toString()) {
         returnCart.push(foundLink);

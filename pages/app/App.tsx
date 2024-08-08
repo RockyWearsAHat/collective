@@ -6,6 +6,8 @@ import { ActiveContext } from "../contextProvider";
 import "../globals.css";
 
 import "../tailwindOutput.css";
+
+import "../../css/Main.css";
 import Navbar from "../../components/navbar/Navbar";
 import { Outlet } from "react-router-dom";
 

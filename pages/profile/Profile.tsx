@@ -1,7 +1,7 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { ActiveContext } from "../contextProvider";
 import { useMutation } from "../../hooks/useMutation";
-// import ImageEditor from "../../components/imageEditor/ImageEditor";
+import ImageEditor from "../../components/imageEditor/ImageEditor";
 
 export function Profile(): ReactNode {
   const [profilePhoto, setProfilePhoto] = useState<File>();
@@ -74,7 +74,7 @@ export function Profile(): ReactNode {
           }}
         />
         <button type="submit">Upload</button>
-        {/* <ImageEditor file={profilePhoto} setTarget={setProfilePhoto} /> */}
+        <ImageEditor />
       </form>
 
       {isArtist && (

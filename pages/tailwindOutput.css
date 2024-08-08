@@ -794,6 +794,14 @@ video {
   height: 100vh;
 }
 
+.h-\[22px\] {
+  height: 22px;
+}
+
+.max-h-\[500px\] {
+  max-height: 500px;
+}
+
 .max-h-\[80vh\] {
   max-height: 80vh;
 }
@@ -875,6 +883,10 @@ video {
   width: 100vw;
 }
 
+.w-\[22px\] {
+  width: 22px;
+}
+
 .min-w-\[100vw\] {
   min-width: 100vw;
 }
@@ -893,6 +905,10 @@ video {
 
 .max-w-\[20vw\] {
   max-width: 20vw;
+}
+
+.max-w-\[500px\] {
+  max-width: 500px;
 }
 
 .flex-1 {
@@ -1345,6 +1361,11 @@ video {
   line-height: 1.75rem;
 }
 
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -1418,10 +1439,6 @@ video {
 
 .brightness-50 {
   --tw-brightness: brightness(.5);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -1604,9 +1621,21 @@ video {
   width: 100%;
 }
 
+.after\:origin-center::after {
+  content: var(--tw-content);
+  transform-origin: center;
+}
+
 .after\:translate-x-\[-50\%\]::after {
   content: var(--tw-content);
   --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.after\:scale-0::after {
+  content: var(--tw-content);
+  --tw-scale-x: 0;
+  --tw-scale-y: 0;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -1675,6 +1704,28 @@ video {
   content: var(--tw-content);
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.after\:transition-transform::after {
+  content: var(--tw-content);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.after\:duration-200::after {
+  content: var(--tw-content);
+  transition-duration: 200ms;
+}
+
+.after\:duration-100::after {
+  content: var(--tw-content);
+  transition-duration: 100ms;
+}
+
+.after\:duration-\[150ms\]::after {
+  content: var(--tw-content);
+  transition-duration: 150ms;
 }
 
 .after\:content-\[attr\(cartitems\)\]::after {
