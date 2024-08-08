@@ -85,6 +85,11 @@ export const CheckoutForm: FC = () => {
     method: "POST"
   });
 
+  const { fn: getCustomerId } = useMutation({
+    url: "/api/user/getCustomerId",
+    method: "GET"
+  });
+
   const containerRef = useRef(null);
   const formRef = useRef(null);
   const testingDivRef = useRef(null);
@@ -321,11 +326,14 @@ export const CheckoutForm: FC = () => {
                       "_" +
                       checkoutOptions.clientSecret.split("_")[1];
 
+                    const { id: stripeCustomerId } = await getCustomerId();
                     await updatePaymentIntent({
                       paymentIntentId,
                       newTotal: shippingTotal
                         ? amount_total + shippingTotal + feesTotal
-                        : amount_total + feesTotal
+                        : amount_total + feesTotal,
+                      customerId: stripeCustomerId || null,
+                      customerName: addressData?.value.name
                     });
                   }}
                   className="relative mx-auto mb-4 mt-4 w-full self-center justify-self-center rounded-md bg-[#30313D] p-4 px-8 text-white"

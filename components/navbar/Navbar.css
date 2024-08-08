@@ -1,0 +1,281 @@
+:root {
+  --navbarStandardTextColor: white;
+  --navbarSelectedTextColor: #a4a4a4;
+  --navbarProfileDropdownBackgroundColor: #4940ae;
+  --navbarProfileDropdownLinkHoverBackgroundColor: #38308e;
+}
+
+.navbarWrapper {
+  position: relative;
+  z-index: 100;
+  width: 100vw;
+  user-select: none;
+}
+
+.fallbackNavbarBackground {
+  position: absolute;
+  z-index: -10;
+  height: 70px;
+  width: 100vw;
+  background-size: cover;
+  filter: brightness(0.5);
+}
+
+.navbarBackground {
+  position: absolute;
+  z-index: -10;
+  height: 100%;
+  width: 100vw;
+  background: url("/navbg.jpg");
+  background-size: cover;
+  filter: brightness(0.5);
+}
+
+.navbarSearchBar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+
+.navbarSearchBarInputBox {
+  width: 300px;
+  border-bottom: 2px solid var(--navbarStandardTextColor);
+  padding-right: 20px;
+  background-color: transparent;
+  text-align: center;
+  color: var(--navbarStandardTextColor);
+  outline: none;
+}
+
+.navbarSearchBarInputBox::placeholder {
+  color: var(--navbarStandardTextColor);
+}
+
+.navbarSearchBarInputBox:focus::placeholder {
+  visibility: hidden;
+}
+
+.navbarSearchBarIconBtn {
+  position: absolute;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-15px);
+  font-size: 30px;
+  color: var(--navbarStandardTextColor);
+}
+
+.navbarLinkWrapperList {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  overflow: visible;
+  padding-block: 8px;
+  padding-right: 16px;
+  color: var(--navbarStandardTextColor);
+}
+
+.navbarLink {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbarLink::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: var(--navbarStandardTextColor);
+  transition: all 0.3s ease-in-out;
+}
+
+.navbarLink:not(.navbarLinkActive):hover::before {
+  width: 100%;
+}
+
+.navbarLinkActive::before {
+  background-color: var(--navbarSelectedTextColor);
+  width: 100%;
+}
+
+.navbarLinkActive {
+  cursor: default;
+  color: var(--navbarSelectedTextColor);
+}
+
+.navbarProfileLink {
+  position: relative;
+}
+
+.navbarProfilePhoto {
+  /* group z-50 h-[24px] w-[24px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"} */
+  z-index: 50;
+  height: 24px;
+  width: 24px;
+  border-radius: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.navbarProfilePhoto:not(.navbarProfilePhotoActive):hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--navbarStandardTextColor);
+}
+
+.navbarProfilePhotoHover {
+  box-shadow: 0 0 0 2px var(--navbarStandardTextColor);
+}
+
+.navbarProfilePhotoActive {
+  box-shadow: 0 0 0 2px var(--navbarSelectedTextColor);
+}
+
+.navbarProfileDropdownGroup {
+  position: absolute;
+  height: 8px;
+  width: 24px;
+}
+
+.navbarProfileDropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  display: grid;
+  width: 200px;
+  height: auto;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbarProfileDropdown.navbarProfileDropdownGroupActive {
+  grid-template-rows: 1fr !important;
+}
+
+.navbarProfileDropdownBackground {
+  overflow: hidden;
+  background-color: var(--navbarProfileDropdownBackgroundColor);
+}
+
+.navbarProfileDropdownItem {
+  pointer-events: none;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbarProfileDropdownItem:hover {
+  background-color: var(--navbarProfileDropdownLinkHoverBackgroundColor);
+}
+
+.navbarProfileDropdownLink {
+  pointer-events: auto;
+  padding-right: 4px;
+  text-transform: uppercase;
+}
+
+.navbarUploadButtonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbarUploadButton {
+  /* z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}
+   */
+
+  z-index: 50;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.navbarUploadButton:not(.navbarUploadButtonActive):hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--navbarStandardTextColor);
+}
+
+.navbarUploadButtonActive {
+  cursor: default;
+  color: var(--navbarSelectedTextColor);
+  box-shadow: 0 0 0 2px var(--navbarSelectedTextColor);
+}
+
+.navbarUploadButtonIcon {
+  font-size: 24px;
+}
+
+.navbarCartWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbarCart {
+  /* z-50 flex h-[24px] w-[24px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out  */
+  z-index: 50;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+  border-radius: 100%;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 0 0 transparent;
+  position: relative;
+}
+
+.navbarCart::after {
+  /* after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:origin-center after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:transition-transform after:duration-[150ms] after:content-[attr(cartitems)] ${cartItemsLength == 0 ? "after:scale-0" : ""} ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"} */
+  content: attr(cartitems);
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  z-index: 10;
+  width: 14px;
+  height: 14px;
+  transform-origin: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  background-color: #f44336;
+  text-align: center;
+  font-size: 10px;
+  transition: all 0.15s ease-in-out;
+  color: white;
+}
+
+.navbarCart:not(.navbarCartDisplayItems)::after {
+  transform: scale(0);
+}
+
+.navbarCart:not(.navbarCartActive):hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--navbarStandardTextColor);
+}
+
+.navbarCartActive {
+  cursor: default;
+  color: var(--navbarSelectedTextColor);
+  box-shadow: 0 0 0 2px var(--navbarSelectedTextColor);
+}
