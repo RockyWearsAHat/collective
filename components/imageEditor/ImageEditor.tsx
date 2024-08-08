@@ -1,100 +1,51 @@
 import { FC, ReactNode, useState } from "react";
+import { Config, removeBackground } from "@imgly/background-removal";
 
-interface ImageEditorProps {
-  file: File | undefined;
-  setTarget: (file: File) => void;
-}
+interface ImageEditorProps {}
 
-const ImageEditor: FC<ImageEditorProps> = ({ file, setTarget }): ReactNode => {
-  const [brightness, setBrightness] = useState(100);
-  const [contrast, setContrast] = useState(100);
-  const [saturation, setSaturation] = useState(100);
+const BackgroundRemovalConfig: Config = {
+  device: "gpu",
+  model: "isnet_fp16",
+  output: {
+    format: "image/png",
+    quality: 0.8
+  }
+};
 
-  const handleBrightnessChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = parseInt(event.target.value);
-    setBrightness(value);
-  };
-
-  const handleContrastChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value);
-    setContrast(value);
-  };
-
-  const handleSaturationChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = parseInt(event.target.value);
-    setSaturation(value);
-  };
-
-  if (!file) return null;
+const ImageEditor: FC<ImageEditorProps> = (): ReactNode => {
+  const [image, setImage] = useState<File>();
 
   return (
-    <div>
-      <img
-        id="img"
-        src={URL.createObjectURL(file)}
-        alt="Image"
-        style={{
-          filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`
-        }}
-      />
-      <div>
-        <label htmlFor="brightness">Brightness:</label>
-        <input
-          type="range"
-          id="brightness"
-          min="0"
-          max="200"
-          value={brightness}
-          onChange={handleBrightnessChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="contrast">Contrast:</label>
-        <input
-          type="range"
-          id="contrast"
-          min="0"
-          max="200"
-          value={contrast}
-          onChange={handleContrastChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="saturation">Saturation:</label>
-        <input
-          type="range"
-          id="saturation"
-          min="0"
-          max="200"
-          value={saturation}
-          onChange={handleSaturationChange}
-        />
-      </div>
-      <img src="" id="modifiedImage" />
+    <>
+      <input id="imageEditorFileInput" type="file" accept="image/*" />
       <button
-        type="submit"
-        onClick={async () => {
-          const img: HTMLImageElement | null = document.getElementById(
-            "img"
-          ) as HTMLImageElement | null;
-          if (!img) return;
-          const src = await fetch(img.src);
-          const blob = await src.blob();
-          const modifiedFile = new File([blob], file.name, blob);
-
-          (document.getElementById("modifiedImage") as HTMLImageElement)!.src =
-            URL.createObjectURL(modifiedFile);
-
-          setTarget(modifiedFile);
+        onClick={() => {
+          const fileInput = document.getElementById(
+            "imageEditorFileInput"
+          ) as HTMLInputElement;
+          if (fileInput.files && fileInput.files[0]) {
+            let tempFile = fileInput.files[0];
+            removeBackground(
+              URL.createObjectURL(tempFile),
+              BackgroundRemovalConfig
+            ).then(blob => {
+              tempFile = new File([blob], tempFile.name, { type: blob.type });
+              setImage(tempFile);
+            });
+          }
         }}
       >
-        Finish Selection and Upload
+        Upload File
       </button>
-    </div>
+
+      {image && (
+        <img
+          src={URL.createObjectURL(image)}
+          alt="Uploaded Image"
+          className="max-h-[500px] max-w-[500px]"
+        />
+      )}
+    </>
   );
 };
 

@@ -1,0 +1,5 @@
+@import "../components/Components.css";
+
+* {
+  --main-bg-color: #f0f0f0;
+}

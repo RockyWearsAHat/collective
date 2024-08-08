@@ -6,8 +6,8 @@ import { clearPaymentIntentsRouter } from "./clearPaymentIntents";
 import { stripeWebhookRouter } from "./stripeWebhooks";
 import { calculateTaxRouter } from "./calculateTax";
 import { updatePaymentIntentRouter } from "./updatePaymentIntent";
-import { writeCartIdToUserRouter } from "./writeCartIdToUser";
-import { getCartIdFromUserRouter } from "./getCartIdFromUser";
+import { writeCheckoutSecretToUserRouter } from "./writeCheckoutSecretToUser";
+import { getCheckoutSecretFromUserRouter } from "./getCheckoutSecretFromUser";
 import { getBalanceOfAccountRouter } from "./getBalanceOfAccount";
 
 export const masterCheckoutRouter: Router = Router();
@@ -19,6 +19,12 @@ masterCheckoutRouter.use("/clearPaymentIntents", clearPaymentIntentsRouter);
 masterCheckoutRouter.use("/stripeWebhooks", stripeWebhookRouter);
 masterCheckoutRouter.use("/calculateTax", calculateTaxRouter);
 masterCheckoutRouter.use("/updatePaymentIntent", updatePaymentIntentRouter);
-masterCheckoutRouter.use("/writeCartIdToUser", writeCartIdToUserRouter);
-masterCheckoutRouter.use("/getCartIdFromUser", getCartIdFromUserRouter);
+masterCheckoutRouter.use(
+  "/writeCheckoutSecretToUser",
+  writeCheckoutSecretToUserRouter
+);
+masterCheckoutRouter.use(
+  "/getCheckoutSecretFromUser",
+  getCheckoutSecretFromUserRouter
+);
 masterCheckoutRouter.use("/getBalanceOfAccount", getBalanceOfAccountRouter);
