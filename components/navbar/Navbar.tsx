@@ -301,7 +301,10 @@ export default function Navbar(): ReactNode {
                     <div className="navbarProfileDropdownBackground">
                       {dropdownLinks.map(([url, title]: LinkMap) => {
                         return (
-                          <div key={url} className="navbarProfileDropdownItem">
+                          <div
+                            key={url}
+                            className={`navbarProfileDropdownItem ${extensionUrl == url ? "navbarProfileDropdownLinkActive" : ""}`}
+                          >
                             <Link
                               to={url}
                               onClick={() => {
