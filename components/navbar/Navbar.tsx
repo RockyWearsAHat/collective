@@ -122,8 +122,8 @@ export default function Navbar(): ReactNode {
     //Close the navigation menu after navigating to another page
     setMobileClicks(0);
 
-    const dropdownMenu = document.getElementById("dropdownMenuGroup");
-    const pfp = document.getElementById("userProfilePhoto");
+    // const dropdownMenu = document.getElementById("dropdownMenuGroup");
+    // const pfp = document.getElementById("userProfilePhoto");
 
     // dropdownMenu?.children[0].classList.remove(
     //   "hover:grid-rows-1",
