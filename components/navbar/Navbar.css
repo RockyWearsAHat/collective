@@ -1,8 +1,9 @@
 :root {
   --navbarStandardTextColor: white;
   --navbarSelectedTextColor: #a4a4a4;
-  --navbarProfileDropdownBackgroundColor: #4940ae;
-  --navbarProfileDropdownLinkHoverBackgroundColor: #38308e;
+  --navbarProfileDropdownBackgroundColor: #727272;
+  --navbarProfileDropdownLinkHoverBackgroundColor: #2f2f2f;
+  --navbarCartQuantityBackgroundColor: #d33d3d;
 }
 
 .navbarWrapper {
@@ -117,7 +118,6 @@
 }
 
 .navbarProfilePhoto {
-  /* group z-50 h-[24px] w-[24px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${extensionUrl == "/profile" ? "ring-2 ring-slate-300 hover:cursor-default" : "hover:cursor-pointer hover:ring-2 hover:ring-white"} */
   z-index: 50;
   height: 24px;
   width: 24px;
@@ -187,6 +187,10 @@
   text-transform: uppercase;
 }
 
+.navbarProfileDropdownLinkActive {
+  background: var(--navbarProfileDropdownLinkHoverBackgroundColor);
+}
+
 .navbarUploadButtonWrapper {
   display: flex;
   align-items: center;
@@ -194,9 +198,6 @@
 }
 
 .navbarUploadButton {
-  /* z-50 flex h-[20px] w-[20px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out ${active == "/create" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"}
-   */
-
   z-index: 50;
   height: 24px;
   width: 24px;
@@ -230,7 +231,6 @@
 }
 
 .navbarCart {
-  /* z-50 flex h-[24px] w-[24px] items-center justify-center overflow-visible rounded-full bg-transparent transition-all duration-300 ease-in-out  */
   z-index: 50;
   height: 24px;
   width: 24px;
@@ -245,7 +245,6 @@
 }
 
 .navbarCart::after {
-  /* after:absolute after:right-0 after:top-1 after:z-10 after:flex after:size-4 after:origin-center after:translate-x-[-50%] after:items-center after:justify-center after:rounded-full after:bg-red-500 after:text-center after:text-xs after:uppercase after:text-white after:transition-transform after:duration-[150ms] after:content-[attr(cartitems)] ${cartItemsLength == 0 ? "after:scale-0" : ""} ${active == "/cart" ? "text-slate-300 ring-2 ring-slate-300 hover:cursor-default" : "text-white hover:cursor-pointer hover:ring-2 hover:ring-white"} */
   content: attr(cartitems);
   position: absolute;
   right: -5px;
@@ -258,11 +257,11 @@
   justify-content: center;
   align-items: center;
   border-radius: 100%;
-  background-color: #f44336;
+  background-color: var(--navbarCartQuantityBackgroundColor);
   text-align: center;
   font-size: 10px;
   transition: all 0.15s ease-in-out;
-  color: white;
+  color: var(--navbarStandardTextColor);
 }
 
 .navbarCart:not(.navbarCartDisplayItems)::after {
