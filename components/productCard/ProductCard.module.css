@@ -1,0 +1,47 @@
+.productCardWrapper {
+  margin: 0;
+  padding: 0;
+  height: min-content;
+}
+
+.productCard {
+  position: relative;
+  aspect-ratio: 1/1;
+  height: auto;
+  width: auto;
+}
+
+.productCard::after {
+  content: attr(salelabel);
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 10;
+  display: flex;
+  height: auto;
+  width: auto;
+  align-items: center;
+  justify-content: center;
+  background-color: red;
+  color: white;
+  padding-inline: 10px;
+}
+
+.productCardImage {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.productCard ~ h2 {
+  transition:
+    color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing),
+    background-color var(--lightDarkColorSwapTime)
+      var(--lightDarkColorSwapEasing);
+  background-color: var(--productCardBackgroundColor);
+  color: var(--productCardTextColor);
+}
+
+.linethroughPrice {
+  text-decoration: line-through;
+}

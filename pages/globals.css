@@ -1,3 +1,25 @@
+/* CUSTOM COLORS CAN BE DECLARED HERE */
+:root {
+  --lightDarkColorSwapTime: 0.2s;
+  --lightDarkColorSwapEasing: ease-in-out;
+
+  --main-bg-color: #c5c5c5;
+  --main-text-color: #000000;
+
+  --productCardBackgroundColor: var(--main-bg-color);
+  --productCardTextColor: var(--main-text-color);
+}
+
+/* DARK THEME, RENAME VARIABLES TO BE CHANGED WHEN DARK MODE ENABLED */
+[theme="dark"] {
+  --main-bg-color: #2b2f3f;
+  --main-text-color: #ffffff;
+
+  --productCardBackgroundColor: var(--main-bg-color);
+  --productCardTextColor: var(--main-text-color);
+}
+
+/* RESET STYLES */
 /*
   1. Use a more-intuitive box-sizing model.
 */

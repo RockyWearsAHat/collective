@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
 import { FC, Key, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import styles from "./ProductCard.module.css";
 
 declare module "react" {
   interface HTMLAttributes<T> extends DOMAttributes<T> {
@@ -41,16 +42,16 @@ const ProductCard: FC<ProductCardProps> = ({
   }
 
   return (
-    <div className="m-0 h-[min-content] p-0">
+    <div className={styles.productCardWrapper}>
       <Link
         to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
       >
         <div
           salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
-          className={`relative aspect-square h-auto w-auto ${salePrice ? `after:absolute after:right-0 after:top-2 after:z-10 after:flex after:h-auto after:w-auto after:items-center after:justify-center after:bg-red-600 after:px-4 after:uppercase after:text-white after:content-[attr(salelabel)]` : ""}`}
+          className={styles.productCard}
         >
           <img
-            className="h-full w-full object-cover"
+            className={styles.productCardImage}
             src={`${image}`}
             alt={`Image of ${name}`}
           />
@@ -59,7 +60,9 @@ const ProductCard: FC<ProductCardProps> = ({
         {description && <p>{description}</p>}
         <p>
           Price:{" "}
-          <span className={`${salePrice ? "line-through" : ""}`}>{price}</span>
+          <span className={`${salePrice ? styles.linethroughPrice : ""}`}>
+            {price}
+          </span>
           {salePrice && <span> {salePrice}</span>}
         </p>
       </Link>
