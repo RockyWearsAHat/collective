@@ -6,6 +6,8 @@ import { ActiveContext } from "../../pages/contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import styles from "./Navbar.module.css";
+import { LightDarkModeToggle } from "../lightDarkModeToggle/LightDarkModeToggle";
 
 type LinkMap = [url: string, title: string];
 
@@ -215,11 +217,14 @@ export default function Navbar(): ReactNode {
 
   return (
     <>
-      <div className="navbarWrapper">
-        <Suspense fallback={<div className="fallbackNavbarBackground"></div>}>
-          <div className="navbarBackground" id="navBg"></div>
+      <div className={styles.navbarWrapper}>
+        <Suspense
+          fallback={<div className={styles.fallbackNavbarBackground}></div>}
+        >
+          <div className={styles.navbarBackground} id="navBg"></div>
         </Suspense>
-        <div className="navbarSearchBar">
+        <LightDarkModeToggle />
+        <div className={styles.navbarSearchBar}>
           <form
             onSubmit={handleSearchSubmit}
             onKeyDown={searchBarEnterKeyHandler}
@@ -229,20 +234,20 @@ export default function Navbar(): ReactNode {
               placeholder="Search"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className={`navbarSearchBarInputBox`}
+              className={styles.navbarSearchBarInputBox}
             />
             <button type="submit">
-              <CiSearch className="navbarSearchBarIconBtn" />
+              <CiSearch className={styles.navbarSearchBarIconBtn} />
             </button>
           </form>
         </div>
-        <ul className="navbarLinkWrapperList">
+        <ul className={styles.navbarLinkWrapperList}>
           {activeLinks.map(([url, title]: LinkMap) => {
             return (
               <li key={url}>
                 <Link
                   to={url}
-                  className={`navbarLink ${extensionUrl == url ? "navbarLinkActive" : ""}`}
+                  className={`${styles.navbarLink} ${extensionUrl == url ? styles.navbarLinkActive : ""}`}
                   onClick={() => setActive(url)}
                 >
                   {title}
@@ -252,7 +257,7 @@ export default function Navbar(): ReactNode {
           })}
           {loggedIn && (
             <>
-              <li className="navbarProfileLink">
+              <li className={styles.navbarProfileLink}>
                 <div
                   title="Go To Profile"
                   onClick={() => {
@@ -283,11 +288,11 @@ export default function Navbar(): ReactNode {
                     style={{
                       backgroundImage: `${userProfilePhoto ? `url(${userProfilePhoto})` : ""}`
                     }}
-                    className={`navbarProfilePhoto ${extensionUrl == "/profile" ? "navbarProfilePhotoActive" : ""} ${userHoveringProfilePhoto ? "navbarProfilePhotoHover" : ""}`}
+                    className={`${styles.navbarProfilePhoto}${extensionUrl == "/profile" ? " " + styles.navbarProfilePhotoActive : ""}${userHoveringProfilePhoto ? " " + styles.navbarProfilePhotoHover : ""}`}
                   ></div>
                 </div>
                 <div
-                  className="navbarProfileDropdownGroup"
+                  className={styles.navbarProfileDropdownGroup}
                   onMouseEnter={() => {
                     setUserHoveringProfilePhoto(true);
                   }}
@@ -296,14 +301,14 @@ export default function Navbar(): ReactNode {
                   }}
                 >
                   <div
-                    className={`navbarProfileDropdown${userHoveringProfilePhoto ? " navbarProfileDropdownGroupActive" : ""}`}
+                    className={`${styles.navbarProfileDropdown}${userHoveringProfilePhoto ? " " + styles.navbarProfileDropdownGroupActive : ""}`}
                   >
-                    <div className="navbarProfileDropdownBackground">
+                    <div className={styles.navbarProfileDropdownBackground}>
                       {dropdownLinks.map(([url, title]: LinkMap) => {
                         return (
                           <div
                             key={url}
-                            className={`navbarProfileDropdownItem ${extensionUrl == url ? "navbarProfileDropdownLinkActive" : ""}`}
+                            className={`${styles.navbarProfileDropdownItem}${extensionUrl == url ? " " + styles.navbarProfileDropdownLinkActive : ""}`}
                           >
                             <Link
                               to={url}
@@ -313,7 +318,7 @@ export default function Navbar(): ReactNode {
                                 }
                                 setActive(url);
                               }}
-                              className="navbarProfileDropdownLink"
+                              className={styles.navbarProfileDropdownLink}
                             >
                               {title}
                             </Link>
@@ -325,23 +330,23 @@ export default function Navbar(): ReactNode {
                 </div>
               </li>
               {userIsArtist && (
-                <li className="navbarUploadButtonWrapper">
+                <li className={styles.navbarUploadButtonWrapper}>
                   <Link
                     to="/create"
                     onClick={() => setActive("/create")}
                     title="Create New Piece"
                   >
                     <div
-                      className={`navbarUploadButton ${extensionUrl == "/create" ? "navbarUploadButtonActive" : ""}`}
+                      className={`${styles.navbarUploadButton}${extensionUrl == "/create" ? " " + styles.navbarUploadButtonActive : ""}`}
                     >
-                      <FiPlus className="navbarUploadButtonIcon" />
+                      <FiPlus className={styles.navbarUploadButtonIcon} />
                     </div>
                   </Link>
                 </li>
               )}
             </>
           )}
-          <li className="navbarCartWrapper">
+          <li className={styles.navbarCartWrapper}>
             <Link
               to="/cart"
               onClick={() => setActive("/cart")}
@@ -349,9 +354,9 @@ export default function Navbar(): ReactNode {
             >
               <div
                 cartitems={cartItemsLength.toString()}
-                className={`navbarCart ${extensionUrl == "/cart" ? "navbarCartActive" : ""} ${cartItemsLength > 0 ? "navbarCartDisplayItems" : ""}`}
+                className={`${styles.navbarCart}${extensionUrl == "/cart" ? " " + styles.navbarCartActive : ""}${cartItemsLength > 0 ? " " + styles.navbarCartDisplayItems : ""}`}
               >
-                <AiOutlineShoppingCart className="text-lg" />
+                <AiOutlineShoppingCart className={styles.navbarCartIcon} />
               </div>
             </Link>
           </li>

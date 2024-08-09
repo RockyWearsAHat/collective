@@ -224,6 +224,10 @@
   font-size: 24px;
 }
 
+.navbarCartIcon {
+  font-size: 18px;
+}
+
 .navbarCartWrapper {
   display: flex;
   align-items: center;
