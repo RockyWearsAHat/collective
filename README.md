@@ -6,6 +6,8 @@ A site for artists to share and sell their work
 
 # Contributing
 
-[Email me](mailto:alexwaldmann2004@gmail.com) or Text/Call (435) 731-7654
+[Email me](mailto:alexwaldmann2004@gmail.com)
+
+NOTE - Please use the extension "CSS Var Complete" to get autocompletion of names of variables
 
 # [Live Version](https://artistcollective.store/)
