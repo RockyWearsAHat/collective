@@ -188,6 +188,10 @@
   background: var(--navbarProfileDropdownLinkHoverBackgroundColor);
 }
 
+.navbarProfileDropdownLinkActive > a:hover {
+  cursor: default !important;
+}
+
 .navbarUploadButtonWrapper {
   display: flex;
   align-items: center;
