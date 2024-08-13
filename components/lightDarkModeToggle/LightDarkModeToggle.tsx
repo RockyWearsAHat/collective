@@ -9,7 +9,7 @@ export const LightDarkModeToggle: FC = () => {
         return "light";
       }
     }
-    return "light"; // default to light if media queries are not supported
+    return "light";
   }
 
   const [theme, setTheme] = useState(getColorSchemePreference());
@@ -19,22 +19,85 @@ export const LightDarkModeToggle: FC = () => {
     setTheme(theme == "light" ? "dark" : "light");
   }, []);
 
+  let timeout: NodeJS.Timeout;
+
+  const computedTimeoutTimeFromCSS = getComputedStyle(
+    document.querySelector(":root")!
+  ).getPropertyValue("--lightDarkColorSwapTime");
+
+  let timeoutTime: number = 0;
+
+  if (computedTimeoutTimeFromCSS.indexOf("ms") != -1) {
+    timeoutTime = parseInt(
+      computedTimeoutTimeFromCSS.substring(
+        0,
+        computedTimeoutTimeFromCSS.indexOf("ms")
+      )
+    );
+  } else {
+    timeoutTime = parseInt(
+      computedTimeoutTimeFromCSS.substring(
+        0,
+        computedTimeoutTimeFromCSS.indexOf("s")
+      )
+    );
+
+    timeoutTime *= 1000;
+  }
+
+  const style = document.createElement("style");
+  style.textContent = `
+  *,
+  *::before,
+  *::after,
+  *::placeholder {
+    transition:
+      color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
+      border var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
+      background-color var(--lightDarkColorSwapTime)
+        var(--lightDarkColorSwapEasing) 0ms,
+      box-shadow var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms !important;
+  }
+
+  *[stroke="currentColor"],
+  *[fill="currentColor"] {
+    transition:
+      color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
+      fill var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
+      stroke var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms !important;
+  }`;
+
+  style.id = "lightDarkModeTransitionStyles";
+
+  useEffect(() => {
+    timeout = setTimeout(() => {
+      document.getElementById("lightDarkModeTransitionStyles")?.remove();
+    }, timeoutTime);
+    return () => clearTimeout(timeout);
+  }, [theme]);
+
   return (
-    <div className="absolute flex">
+    <div className="flex items-center justify-end pr-1">
+      <label htmlFor="toggle" className="pr-2 text-white">
+        Dark Mode
+      </label>
       <div>
         <input
           type="checkbox"
           name="toggle"
           id="toggle"
-          onClick={() => {
+          checked={theme == "light"}
+          onChange={() => {
             document.getElementById("root")?.setAttribute("theme", theme);
             setTheme(theme == "light" ? "dark" : "light");
+            if (
+              document.getElementById("lightDarkModeTransitionStyles") == null
+            ) {
+              document.head.appendChild(style);
+            }
           }}
         />
       </div>
-      <label htmlFor="toggle" className="text-white">
-        Dark Mode
-      </label>
     </div>
   );
 };
