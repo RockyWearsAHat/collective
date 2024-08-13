@@ -5,6 +5,7 @@ import { IItem } from "../../db/models/item";
 import ProductCard from "../../components/productCard/ProductCard";
 import { ObjectId } from "mongoose";
 import { ActiveContext } from "../contextProvider";
+import { Helmet } from "react-helmet-async";
 
 export const MultipleProductSelect: FC = (): ReactNode => {
   const { productName } = useParams();
@@ -32,25 +33,32 @@ export const MultipleProductSelect: FC = (): ReactNode => {
   }, [window.location.href]);
 
   return (
-    <div className="flex h-[100vh] w-[100vw] flex-col items-center justify-center">
-      <h1>Browse Items</h1>
-      <div className="flex gap-5">
-        {foundProducts &&
-          foundProducts.map((item: IItem, index) => {
-            return (
-              <ProductCard
-                id={item._id as ObjectId}
-                key={index as Key}
-                name={item.name}
-                image={item.imageLinks![0]}
-                price={item.price as string}
-                salePrice={
-                  item.salePrice != "" ? (item.salePrice as string) : undefined
-                }
-              />
-            );
-          })}
+    <>
+      <Helmet>
+        <title>Artist Collective | Browse Products</title>
+      </Helmet>
+      <div className="flex h-[100vh] w-[100vw] flex-col items-center justify-center">
+        <h1>Browse Items</h1>
+        <div className="flex gap-5">
+          {foundProducts &&
+            foundProducts.map((item: IItem, index) => {
+              return (
+                <ProductCard
+                  id={item._id as ObjectId}
+                  key={index as Key}
+                  name={item.name}
+                  image={item.imageLinks![0]}
+                  price={item.price as string}
+                  salePrice={
+                    item.salePrice != ""
+                      ? (item.salePrice as string)
+                      : undefined
+                  }
+                />
+              );
+            })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };

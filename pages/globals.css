@@ -1,22 +1,37 @@
 /* CUSTOM COLORS CAN BE DECLARED HERE */
-:root {
-  --lightDarkColorSwapTime: 0.2s;
+:root,
+#root[theme="dark"] {
+  --primaryColor: #ffffff; /* White for backgrounds and primary elements */
+  --secondaryColor: #f0f4f8; /* Light blue-gray for secondary backgrounds */
+  --accentColor: #3a86ff; /* Bright blue for accents and interactive elements */
+  --textColorPrimary: #1f1f1f; /* Dark gray for primary text */
+  --textColorSecondary: #737373; /* Medium gray for secondary text */
+  --highlightColor: #ef476f; /* Playful pink-red for highlights and calls to action */
+  --mutedColor: #8d99ae; /* Soft gray-blue for muted elements */
+  --borderColor: #dcdcdc; /* Light gray for borders */
+
+  /* LIGHT DARK MODE SWAP TIMING */
+  --lightDarkColorSwapTime: 200ms;
   --lightDarkColorSwapEasing: ease-in-out;
 
-  --main-bg-color: #c5c5c5;
-  --main-text-color: #000000;
-
-  --productCardBackgroundColor: var(--main-bg-color);
-  --productCardTextColor: var(--main-text-color);
+  /* RULES FOR HOW THESE COLORS SHOULD BE ASSIGNED */
+  --navbarStandardTextColor: var(--textColorPrimary);
+  --navbarSelectedTextColor: var(--textColorSecondary);
+  --navbarProfileDropdownBackgroundColor: var(--accentColor);
+  --navbarProfileDropdownLinkHoverBackgroundColor: var(--highlightColor);
+  --navbarCartQuantityBackgroundColor: var(--highlightColor);
 }
 
-/* DARK THEME, RENAME VARIABLES TO BE CHANGED WHEN DARK MODE ENABLED */
-[theme="dark"] {
-  --main-bg-color: #2b2f3f;
-  --main-text-color: #ffffff;
-
-  --productCardBackgroundColor: var(--main-bg-color);
-  --productCardTextColor: var(--main-text-color);
+/* DARK THEME, SET NEW COLORS FOR DARK MODE */
+#root[theme="dark"] {
+  --primaryColor: #121212; /* Dark gray for backgrounds and primary elements */
+  --secondaryColor: #1c1c1e; /* Slightly lighter dark gray for secondary backgrounds */
+  --accentColor: #3a86ff; /* Bright blue for accents and interactive elements */
+  --textColorPrimary: #e0e0e0; /* Light gray for primary text */
+  --textColorSecondary: #a1a1a1; /* Medium gray for secondary text */
+  --highlightColor: #ef476f; /* Playful pink-red for highlights and calls to action */
+  --mutedColor: #4a4a4a; /* Soft gray-blue for muted elements */
+  --borderColor: #3a3a3c; /* Dark gray for borders */
 }
 
 /* RESET STYLES */

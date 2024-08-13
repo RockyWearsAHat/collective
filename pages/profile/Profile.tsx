@@ -2,6 +2,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { ActiveContext } from "../contextProvider";
 import { useMutation } from "../../hooks/useMutation";
 import ImageEditor from "../../components/imageEditor/ImageEditor";
+import { Helmet } from "react-helmet-async";
 
 export function Profile(): ReactNode {
   const [profilePhoto, setProfilePhoto] = useState<File>();
@@ -50,57 +51,62 @@ export function Profile(): ReactNode {
   }, []);
 
   return (
-    <div className="absolute left-0 top-0 h-[100vh] pt-nav">
-      <form
-        onSubmit={handleFileUpload}
-        encType="multipart/form-data"
-        className="pt-4"
-      >
-        <label
-          htmlFor="pfpUploadBtn"
-          className="rounded-md bg-slate-600 p-4 text-white hover:cursor-pointer"
+    <>
+      <Helmet>
+        <title>Artist Collective | Profile</title>
+      </Helmet>
+      <div className="absolute left-0 top-0 h-[100vh] pt-nav">
+        <form
+          onSubmit={handleFileUpload}
+          encType="multipart/form-data"
+          className="pt-4"
         >
-          Choose New Profile Image
-        </label>
-        <input
-          id="pfpUploadBtn"
-          className="hidden"
-          type="file"
-          accept="image/*, .heic"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files) {
-              setProfilePhoto(e.target.files[0]);
-            }
-          }}
-        />
-        <button type="submit">Upload</button>
-        <ImageEditor />
-      </form>
-
-      {isArtist && (
-        <div className="absolute left-0 top-24">
-          <button
-            onClick={async () => {
-              const onboardingUrl = await createAccountLink({
-                refreshURL:
-                  window.location.protocol +
-                  "//" +
-                  window.location.host +
-                  "/profile",
-                returnURL:
-                  window.location.protocol +
-                  "//" +
-                  window.location.host +
-                  "/profile"
-              });
-
-              window.location.href = onboardingUrl.url;
-            }}
+          <label
+            htmlFor="pfpUploadBtn"
+            className="rounded-md bg-slate-600 p-4 text-white hover:cursor-pointer"
           >
-            Edit Payment Information
-          </button>
-        </div>
-      )}
-    </div>
+            Choose New Profile Image
+          </label>
+          <input
+            id="pfpUploadBtn"
+            className="hidden"
+            type="file"
+            accept="image/*, .heic"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files) {
+                setProfilePhoto(e.target.files[0]);
+              }
+            }}
+          />
+          <button type="submit">Upload</button>
+          <ImageEditor />
+        </form>
+
+        {isArtist && (
+          <div className="absolute left-0 top-24">
+            <button
+              onClick={async () => {
+                const onboardingUrl = await createAccountLink({
+                  refreshURL:
+                    window.location.protocol +
+                    "//" +
+                    window.location.host +
+                    "/profile",
+                  returnURL:
+                    window.location.protocol +
+                    "//" +
+                    window.location.host +
+                    "/profile"
+                });
+
+                window.location.href = onboardingUrl.url;
+              }}
+            >
+              Edit Payment Information
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
