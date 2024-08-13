@@ -159,33 +159,21 @@ export default function Navbar(): ReactNode {
     //Close the navigation menu after navigating to another page
     setMobileClicks(0);
 
-    // const dropdownMenu = document.getElementById("dropdownMenuGroup");
-    // const pfp = document.getElementById("userProfilePhoto");
+    const dropdownMenu = document.getElementById("dropdownMenuGroup");
 
-    // dropdownMenu?.children[0].classList.remove(
-    //   "hover:grid-rows-1",
-    //   "group-hover:grid-rows-1"
-    // );
+    if (!dropdownMenu) return;
 
-    // pfp?.classList.remove("group");
+    const pfp = document.getElementById("userProfilePhoto");
 
-    // pfp?.addEventListener("mouseleave", () => {
-    //   dropdownMenu?.children[0].classList.add(
-    //     "hover:grid-rows-1",
-    //     "group-hover:grid-rows-1"
-    //   );
+    dropdownMenu.style.setProperty("grid-template-rows", "0fr", "important");
 
-    //   pfp?.classList.add("group");
-    // });
+    pfp?.addEventListener("mouseleave", () => {
+      dropdownMenu.style.removeProperty("grid-template-rows");
+    });
 
-    // pfp?.addEventListener("mouseenter", () => {
-    //   dropdownMenu?.children[0].classList.add(
-    //     "hover:grid-rows-1",
-    //     "group-hover:grid-rows-1"
-    //   );
-
-    //   pfp?.classList.add("group");
-    // });
+    pfp?.addEventListener("mouseenter", () => {
+      dropdownMenu.style.removeProperty("grid-template-rows");
+    });
   }, [active]);
 
   const activeLinks: Array<LinkMap> = [
@@ -334,6 +322,7 @@ export default function Navbar(): ReactNode {
                   }}
                 >
                   <div
+                    id="dropdownMenuGroup"
                     className={`${styles.navbarProfileDropdown}${userHoveringProfilePhoto ? " " + styles.navbarProfileDropdownGroupActive : ""}`}
                   >
                     <div className={styles.navbarProfileDropdownBackground}>

@@ -1415,10 +1415,6 @@ video {
   cursor: pointer;
 }
 
-.hover\:grid-rows-1:hover {
-  grid-template-rows: 1fr;
-}
-
 .hover\:bg-blue-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
@@ -1488,10 +1484,6 @@ video {
 .disabled\:text-zinc-300:disabled {
   --tw-text-opacity: 1;
   color: rgb(212 212 216 / var(--tw-text-opacity));
-}
-
-.group:hover .group-hover\:grid-rows-1 {
-  grid-template-rows: 1fr;
 }
 
 @media (min-width: 640px) {

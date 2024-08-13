@@ -97,3 +97,15 @@ h6 {
 #__next {
   isolation: isolate;
 }
+
+/* 
+  Remove rounded textboxes on mobile
+*/
+input {
+  border-radius: 0;
+}
+
+input[type="search"] {
+  appearance: none;
+  -webkit-appearance: none;
+}
