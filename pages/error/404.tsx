@@ -1,9 +1,13 @@
 import React from "react";
 import Navbar from "../../components/navbar/Navbar";
+import { Helmet } from "react-helmet-async";
 
 const NotFoundPage: React.FC = () => {
   return (
     <>
+      <Helmet>
+        <title>Artist Collective | Page Not Found</title>
+      </Helmet>
       <Navbar />
       <div className="flex h-screen flex-col items-center justify-center bg-slate-600">
         <div className="flex flex-col justify-center self-center align-middle text-white">

@@ -5,6 +5,7 @@ import { IItem } from "../../db/models/item";
 import { ActiveContext } from "../contextProvider";
 import { QuantitySelector } from "../../components/quantitySelector/QuantitySelector";
 import { cartUpdatingDelay } from "../../server/serverConfig";
+import { Helmet } from "react-helmet-async";
 
 export const Product: FC = (): ReactNode => {
   const { productName, productID } = useParams();
@@ -51,65 +52,74 @@ export const Product: FC = (): ReactNode => {
   const addRemoveProductButtonDelay = cartUpdatingDelay;
 
   return (
-    <div className="absolute left-0 top-0 grid h-[100vh] w-[100vw] px-2 pt-12 lg:grid-cols-2">
-      {foundProduct && (
-        <>
-          {foundProduct.imageLinks && foundProduct.imageLinks.length > 0 && (
-            <>
-              <div className="flex items-center justify-center">
-                <img
-                  src={`${foundProduct.imageLinks[0]}`}
-                  className="h-[calc(100vh-4rem)]"
-                />
-              </div>
-              <div>
-                <h1>{foundProduct.name}</h1>
-                <div className="flex flex-col items-start">
-                  <button
-                    disabled={addingProduct}
-                    onClick={async () => {
-                      setAddingProduct(true);
-                      await addItemToCart({
-                        productToAdd: foundProduct._id,
-                        quantity: productQuantity
-                      });
-                      setActive("itemAddedToCart");
-                      setTimeout(() => {
-                        setAddingProduct(false);
-                      }, addRemoveProductButtonDelay);
-                    }}
-                  >
-                    Add to cart
-                  </button>
-                  <button
-                    disabled={removingProduct}
-                    onClick={async () => {
-                      setRemovingProduct(true);
-                      await removeItemFromCart({
-                        productToRemove: foundProduct._id,
-                        quantity: productQuantity
-                      });
-                      setActive("itemAddedToCart");
-                      setTimeout(() => {
-                        setRemovingProduct(false);
-                      }, addRemoveProductButtonDelay);
-                    }}
-                  >
-                    Remove from cart
-                  </button>
-                  <div>
-                    <h2>Quantity: </h2>
-                    <QuantitySelector
-                      setProductQuantity={setProductQuantity}
-                      productQuantity={productQuantity}
-                    />
+    <>
+      <Helmet>
+        <title>
+          {foundProduct
+            ? `${foundProduct.name} | Artist Collective`
+            : `View Product | Artist Collective`}
+        </title>
+      </Helmet>
+      <div className="absolute left-0 top-0 grid h-[100vh] w-[100vw] px-2 pt-12 lg:grid-cols-2">
+        {foundProduct && (
+          <>
+            {foundProduct.imageLinks && foundProduct.imageLinks.length > 0 && (
+              <>
+                <div className="flex items-center justify-center">
+                  <img
+                    src={`${foundProduct.imageLinks[0]}`}
+                    className="h-[calc(100vh-4rem)]"
+                  />
+                </div>
+                <div>
+                  <h1>{foundProduct.name}</h1>
+                  <div className="flex flex-col items-start">
+                    <button
+                      disabled={addingProduct}
+                      onClick={async () => {
+                        setAddingProduct(true);
+                        await addItemToCart({
+                          productToAdd: foundProduct._id,
+                          quantity: productQuantity
+                        });
+                        setActive("itemAddedToCart");
+                        setTimeout(() => {
+                          setAddingProduct(false);
+                        }, addRemoveProductButtonDelay);
+                      }}
+                    >
+                      Add to cart
+                    </button>
+                    <button
+                      disabled={removingProduct}
+                      onClick={async () => {
+                        setRemovingProduct(true);
+                        await removeItemFromCart({
+                          productToRemove: foundProduct._id,
+                          quantity: productQuantity
+                        });
+                        setActive("itemAddedToCart");
+                        setTimeout(() => {
+                          setRemovingProduct(false);
+                        }, addRemoveProductButtonDelay);
+                      }}
+                    >
+                      Remove from cart
+                    </button>
+                    <div>
+                      <h2>Quantity: </h2>
+                      <QuantitySelector
+                        setProductQuantity={setProductQuantity}
+                        productQuantity={productQuantity}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 };

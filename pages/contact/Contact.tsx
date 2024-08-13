@@ -1,8 +1,12 @@
 import { ReactNode } from "react";
+import { Helmet } from "react-helmet-async";
 
 export function Contact(): ReactNode {
   return (
     <>
+      <Helmet>
+        <title>Artist Collective | Contact</title>
+      </Helmet>
       <div className="absolute left-0 top-0 h-[100vh] w-[100vw] bg-blue-300 pt-nav">
         <a
           href="mailto:alexwaldmann2004@gmail.com"

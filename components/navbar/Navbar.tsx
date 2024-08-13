@@ -18,6 +18,41 @@ declare module "react" {
   }
 }
 
+const DropdownLink = ({
+  title,
+  url,
+  extensionUrl,
+  mobileRendering,
+  setMobileClicks,
+  setActive
+}: {
+  title: string;
+  url: string;
+  extensionUrl: string;
+  mobileRendering: boolean;
+  setMobileClicks: (clicks: number) => any;
+  setActive: (active: string) => any;
+}) => {
+  return (
+    <div
+      className={`${styles.navbarProfileDropdownItem}${extensionUrl == url ? " " + styles.navbarProfileDropdownLinkActive : ""}`}
+    >
+      <Link
+        to={url}
+        onClick={() => {
+          if (mobileRendering) {
+            setMobileClicks(0);
+          }
+          setActive(url);
+        }}
+        className={styles.navbarProfileDropdownLink}
+      >
+        {title}
+      </Link>
+    </div>
+  );
+};
+
 export default function Navbar(): ReactNode {
   let extensionUrl = `/${window.location.href.split("/").pop()}`;
   let fullExtensionUrl = `/${window.location.href.split("/").slice(3).join("/")}`;
@@ -158,10 +193,9 @@ export default function Navbar(): ReactNode {
     ["/contact", "Contact"]
   ];
 
-  const dropdownLinks: Array<LinkMap> = [
-    ["/profile", "Profile"],
-    ["/logout", "Logout"]
-  ];
+  const dropdownLinks: Array<LinkMap> = [["/profile", "Profile"]];
+
+  const logoutLink: Array<LinkMap> = [["/logout", "Logout"]];
 
   if (!loggedIn) activeLinks.push(["/login", "Login"]);
   if (userIsArtist) dropdownLinks.splice(1, 0, ["/create", "Upload"]);
@@ -223,7 +257,6 @@ export default function Navbar(): ReactNode {
         >
           <div className={styles.navbarBackground} id="navBg"></div>
         </Suspense>
-        <LightDarkModeToggle />
         <div className={styles.navbarSearchBar}>
           <form
             onSubmit={handleSearchSubmit}
@@ -236,7 +269,7 @@ export default function Navbar(): ReactNode {
               onChange={e => setSearchTerm(e.target.value)}
               className={styles.navbarSearchBarInputBox}
             />
-            <button type="submit">
+            <button type="submit" className={styles.navbarSearchBarSubmitBtn}>
               <CiSearch className={styles.navbarSearchBarIconBtn} />
             </button>
           </form>
@@ -247,7 +280,7 @@ export default function Navbar(): ReactNode {
               <li key={url}>
                 <Link
                   to={url}
-                  className={`${styles.navbarLink} ${extensionUrl == url ? styles.navbarLinkActive : ""}`}
+                  className={`${styles.navbarLink}${extensionUrl == url ? " " + styles.navbarLinkActive : ""}`}
                   onClick={() => setActive(url)}
                 >
                   {title}
@@ -304,27 +337,36 @@ export default function Navbar(): ReactNode {
                     className={`${styles.navbarProfileDropdown}${userHoveringProfilePhoto ? " " + styles.navbarProfileDropdownGroupActive : ""}`}
                   >
                     <div className={styles.navbarProfileDropdownBackground}>
-                      {dropdownLinks.map(([url, title]: LinkMap) => {
-                        return (
-                          <div
-                            key={url}
-                            className={`${styles.navbarProfileDropdownItem}${extensionUrl == url ? " " + styles.navbarProfileDropdownLinkActive : ""}`}
-                          >
-                            <Link
-                              to={url}
-                              onClick={() => {
-                                if (mobileRendering) {
-                                  setMobileClicks(0);
-                                }
-                                setActive(url);
-                              }}
-                              className={styles.navbarProfileDropdownLink}
-                            >
-                              {title}
-                            </Link>
-                          </div>
-                        );
-                      })}
+                      {dropdownLinks.map(([url, title]: LinkMap, index) => (
+                        <DropdownLink
+                          key={index}
+                          title={title}
+                          url={url}
+                          extensionUrl={extensionUrl}
+                          mobileRendering={mobileRendering}
+                          setMobileClicks={setMobileClicks}
+                          setActive={setActive}
+                        />
+                      ))}
+                      <div
+                        className={
+                          styles.navbarProfileDropdownLightDarkModeToggleWrapper
+                        }
+                      >
+                        <LightDarkModeToggle />
+                      </div>
+                      {loggedIn &&
+                        logoutLink.map(([url, title]: LinkMap, index) => (
+                          <DropdownLink
+                            key={index}
+                            title={title}
+                            url={url}
+                            extensionUrl={extensionUrl}
+                            mobileRendering={mobileRendering}
+                            setMobileClicks={setMobileClicks}
+                            setActive={setActive}
+                          />
+                        ))}
                     </div>
                   </div>
                 </div>
