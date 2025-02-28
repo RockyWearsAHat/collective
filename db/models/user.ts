@@ -22,6 +22,7 @@ export interface IUser extends Document {
   createdItems: Array<ObjectId | IItem>;
   verifyPassword: (password: string) => boolean;
   toJSON: () => Partial<IUser>;
+  displayMode: string;
 }
 
 interface UserModel extends mongoose.Model<IUser> {}
@@ -37,7 +38,8 @@ const userSchema = new mongoose.Schema<IUser, UserModel>({
   password: String,
   pfpId: String,
   cart: [{ type: mongoose.Types.ObjectId, ref: "CartItem" }],
-  createdItems: [{ type: mongoose.Types.ObjectId, ref: "Item" }]
+  createdItems: [{ type: mongoose.Types.ObjectId, ref: "Item" }],
+  displayMode: { type: String }
 });
 
 userSchema.method("verifyPassword", function (password: string) {

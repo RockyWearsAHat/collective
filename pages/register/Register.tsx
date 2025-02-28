@@ -5,6 +5,8 @@ import { ToggleEye } from "../login/Login";
 import { Link } from "react-router-dom";
 import { ActiveContext } from "../contextProvider";
 
+import styles from "./Register.module.css";
+
 export function Register(): ReactNode {
   const { setActive } = useContext(ActiveContext);
 
@@ -126,14 +128,16 @@ export function Register(): ReactNode {
       <Helmet>
         <title>Artist Collective | Register</title>
       </Helmet>
-      <div className="absolute top-0 flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
-        <div className="bg-middle absolute -z-10 h-[100vh] w-[100vw] scale-110 flex-col justify-center bg-[url('/loginbg.jpg')] bg-cover bg-center bg-no-repeat align-middle blur-sm"></div>
-        <div className="absolute left-[50%] top-[200px] z-20 h-10 w-64 translate-x-[-50%] rounded-full bg-slate-600 text-white">
+      <div className={styles.registerPage__bgDiv__wrapper}>
+        <div className={styles.registerPage__bgDiv__image}></div>
+        <div
+          className={styles.registerPage__artistCustomerSelectButton__wrapper}
+        >
           <div
-            className={`h-10 w-32 rounded-full bg-slate-800 transition-transform duration-[500ms] ease-in-out ${customerArtistSignUp ? "translate-x-[100%]" : ""}`}
+            className={`${styles.registerPage__artistCustomerSelectButton__backgroundDiv} ${customerArtistSignUp ? "translate-x-[100%]" : ""}`}
           ></div>
           <button
-            className="absolute left-0 top-0 h-10 w-32"
+            className={styles.registerPage__artistCustomerSelectButton__button}
             onClick={() => {
               setCustomerArtistSignUp(false);
             }}
@@ -150,178 +154,182 @@ export function Register(): ReactNode {
           </button>
         </div>
 
-        {/* Customer sign up form */}
         <div
-          className={`z-10 flex w-[200vw] flex-row justify-around transition-transform duration-[400ms] ease-in-out ${customerArtistSignUp ? "translate-x-[-50%]" : ""}`}
+          className={`${styles.registerPage__form_customerArtistWrapper}${customerArtistSignUp ? " " + styles.registerPage__form__customerArtistActive : ""}`}
         >
-          <div
-            className={`flex h-[100vh] w-[100vw] items-center justify-center`}
+          {/* Customer sign up form */}
+          <form
+            onSubmit={handleSubmit}
+            className={styles.registerPage__form__wrapper}
           >
-            <form
-              onSubmit={handleSubmit}
-              className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
+            <h1 className={styles.registerPage__form__title}>Customer</h1>
+            <input
+              type="text"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              name="email"
+              autoComplete="email"
+              id="email"
+              className={styles.registerPage__form__usernameInput}
+            />
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              name="username"
+              autoComplete="off"
+              id="username"
+              className={styles.registerPage__form__usernameInput}
+            />
+            <div
+              className={styles.registerPage__form__passwordInputAndEyeWrapper}
             >
-              <h1 className="uppercase">Customer</h1>
               <input
-                type="text"
-                placeholder="Email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                name="email"
-                autoComplete="email"
-                id="email"
-                className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                name="password"
+                autoComplete="current-password"
+                id="current-password"
+                className={`${showPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
+              <ToggleEye
+                className={
+                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
+                }
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
+            </div>
+            <div
+              className={styles.registerPage__form__passwordInputAndEyeWrapper}
+            >
               <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                name="username"
-                autoComplete="off"
-                id="username"
-                className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+                type={showRptPassword ? "text" : "password"}
+                placeholder="Repeat Password"
+                value={rptPassword}
+                onChange={e => setRptPassword(e.target.value)}
+                name="rptPassword"
+                autoComplete="current-password"
+                id="repeat-current-password"
+                className={`${showRptPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
-              <div className="relative w-full">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  name="password"
-                  autoComplete="current-password"
-                  id="current-password"
-                  className={`${showPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
-                />
-                <ToggleEye
-                  className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                />
-              </div>
-              <div className="relative w-full">
-                <input
-                  type={showRptPassword ? "text" : "password"}
-                  placeholder="Repeat Password"
-                  value={rptPassword}
-                  onChange={e => setRptPassword(e.target.value)}
-                  name="rptPassword"
-                  autoComplete="current-password"
-                  id="repeat-current-password"
-                  className={`${showRptPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
-                />
-                <ToggleEye
-                  className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
-                  showPassword={showRptPassword}
-                  setShowPassword={setShowRptPassword}
-                />
-              </div>
-              <div
-                className={`relative w-full ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
-              >
-                <p
-                  className={`rounded-md text-red-500 ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
-                >
-                  {errorDisplay}
-                </p>
-              </div>
-              <button
-                type="submit"
-                className={`rounded-full border-2 border-black
-             ${loading || loginLoading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
-              >
-                Register
-              </button>
-              <Link to="/login" className="text-[12px]">
-                Already have an account? Login here
-              </Link>
-            </form>
-          </div>
+              <ToggleEye
+                className={
+                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
+                }
+                showPassword={showRptPassword}
+                setShowPassword={setShowRptPassword}
+              />
+            </div>
+            <div
+              className={`${styles.registerPage__form__errorDisplayWrapper} ${errorDisplay !== "" ? styles.registerPage__form__errorDisplayShow : styles.registerPage__form__errorDisplayHidden}`}
+            >
+              <p className={styles.registerPage__form__errorDisplayText}>
+                {errorDisplay}
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={loading || loginLoading}
+              className={`${styles.registerPage__form__registerButton}`}
+            >
+              Register
+            </button>
+            <Link to="/login" className={styles.registerPage__form__loginLink}>
+              Already have an account? Login here
+            </Link>
+          </form>
 
           {/* Artist sign up form */}
-          <div
-            className={`flex h-[100vh] w-[100vw] items-center justify-center`}
+          <form
+            onSubmit={handleArtistSubmit}
+            className={styles.registerPage__form__wrapper}
           >
-            <form
-              onSubmit={handleArtistSubmit}
-              className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
+            <h1 className={styles.registerPage__form__title}>Artist</h1>
+            <input
+              type="text"
+              placeholder="Email"
+              value={artistEmail}
+              onChange={e => setArtistEmail(e.target.value)}
+              name="email"
+              autoComplete="email"
+              id="artistEmail"
+              className={styles.registerPage__form__usernameInput}
+            />
+            <input
+              type="text"
+              placeholder="Username"
+              value={artistUsername}
+              onChange={e => setArtistUsername(e.target.value)}
+              name="username"
+              autoComplete="off"
+              id="artistUsername"
+              className={styles.registerPage__form__usernameInput}
+            />
+            <div
+              className={styles.registerPage__form__passwordInputAndEyeWrapper}
             >
-              <h1 className="uppercase">Artist</h1>
               <input
-                type="text"
-                placeholder="Email"
-                value={artistEmail}
-                onChange={e => setArtistEmail(e.target.value)}
-                name="email"
-                autoComplete="email"
-                id="artistEmail"
-                className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+                type={artistShowPassword ? "text" : "password"}
+                placeholder="Password"
+                value={artistPassword}
+                onChange={e => setArtistPassword(e.target.value)}
+                name="password"
+                autoComplete="current-password"
+                id="artistCurrent-password"
+                className={`${showPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
+              <ToggleEye
+                className={
+                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
+                }
+                showPassword={artistShowPassword}
+                setShowPassword={setArtistShowPassword}
+              />
+            </div>
+            <div
+              className={styles.registerPage__form__passwordInputAndEyeWrapper}
+            >
               <input
-                type="text"
-                placeholder="Username"
-                value={artistUsername}
-                onChange={e => setArtistUsername(e.target.value)}
-                name="username"
-                autoComplete="off"
-                id="artistUsername"
-                className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+                type={artistShowRptPassword ? "text" : "password"}
+                placeholder="Repeat Password"
+                value={artistRptPassword}
+                onChange={e => setArtistRptPassword(e.target.value)}
+                name="rptPassword"
+                autoComplete="current-password"
+                id="artistRepeat-current-password"
+                className={`${artistShowRptPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
-              <div className="relative w-full">
-                <input
-                  type={artistShowPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={artistPassword}
-                  onChange={e => setArtistPassword(e.target.value)}
-                  name="password"
-                  autoComplete="current-password"
-                  id="artistCurrent-password"
-                  className={`${artistShowPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
-                />
-                <ToggleEye
-                  className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
-                  showPassword={artistShowPassword}
-                  setShowPassword={setArtistShowPassword}
-                />
-              </div>
-              <div className="relative w-full">
-                <input
-                  type={artistShowRptPassword ? "text" : "password"}
-                  placeholder="Repeat Password"
-                  value={artistRptPassword}
-                  onChange={e => setArtistRptPassword(e.target.value)}
-                  name="rptPassword"
-                  autoComplete="current-password"
-                  id="artistRepeat-current-password"
-                  className={`${artistShowRptPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
-                />
-                <ToggleEye
-                  className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
-                  showPassword={artistShowRptPassword}
-                  setShowPassword={setArtistShowRptPassword}
-                />
-              </div>
-              <div
-                className={`relative w-full ${artistErrorDisplay !== "" ? "h-auto" : "h-[0]"}`}
-              >
-                <p
-                  className={`rounded-md text-red-500 ${artistErrorDisplay !== "" ? "h-auto" : "h-[0]"}`}
-                >
-                  {artistErrorDisplay}
-                </p>
-              </div>
-              <button
-                type="submit"
-                className={`rounded-full border-2 border-black
-             ${loading || loginLoading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
-              >
-                Register
-              </button>
-              <Link to="/login" className="text-[12px]">
-                Already have an account? Login here
-              </Link>
-            </form>
-          </div>
+              <ToggleEye
+                className={
+                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
+                }
+                showPassword={artistShowRptPassword}
+                setShowPassword={setArtistShowRptPassword}
+              />
+            </div>
+            <div
+              className={`${styles.registerPage__form__errorDisplayWrapper} ${errorDisplay !== "" ? styles.registerPage__form__errorDisplayShow : styles.registerPage__form__errorDisplayHidden}`}
+            >
+              <p className={styles.registerPage__form__errorDisplayText}>
+                {artistErrorDisplay}
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={loading || loginLoading}
+              className={`${styles.registerPage__form__registerButton}`}
+            >
+              Register
+            </button>
+            <Link to="/login" className={styles.registerPage__form__loginLink}>
+              Already have an account? Login here
+            </Link>
+          </form>
         </div>
       </div>
     </>

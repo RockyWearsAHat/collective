@@ -178,7 +178,7 @@ export const Cart: FC = () => {
         }
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       const newPaymentIntent = await createPaymentIntent({
         total: cartTotal,
         cart: cartWithUserInfo,
@@ -190,7 +190,7 @@ export const Cart: FC = () => {
 
     const userLoggedIn = await checkLoggedIn();
     if (userLoggedIn) {
-      console.log("writing client secret to user");
+      // console.log("writing client secret to user");
       await writeCheckoutSecretToUser({ checkoutClientSecret: client_secret });
     }
 
@@ -272,7 +272,7 @@ export const Cart: FC = () => {
           });
           const userLoggedIn = await checkLoggedIn();
           if (userLoggedIn) {
-            console.log("writing client secret to user");
+            // console.log("writing client secret to user");
             await writeCheckoutSecretToUser({ checkoutClientSecret: null });
           } else {
             await clearSessionCart();
