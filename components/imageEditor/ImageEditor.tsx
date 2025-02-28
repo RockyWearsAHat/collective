@@ -5,10 +5,10 @@ interface ImageEditorProps {}
 
 const BackgroundRemovalConfig: Config = {
   device: "gpu",
-  model: "isnet_fp16",
+  model: "isnet_quint8",
   output: {
     format: "image/png",
-    quality: 0.8
+    quality: 1
   }
 };
 
@@ -17,9 +17,11 @@ const ImageEditor: FC<ImageEditorProps> = (): ReactNode => {
 
   return (
     <>
-      <input id="imageEditorFileInput" type="file" accept="image/*" />
-      <button
-        onClick={() => {
+      <input
+        id="imageEditorFileInput"
+        type="file"
+        accept="image/*"
+        onChange={() => {
           const fileInput = document.getElementById(
             "imageEditorFileInput"
           ) as HTMLInputElement;
@@ -34,9 +36,7 @@ const ImageEditor: FC<ImageEditorProps> = (): ReactNode => {
             });
           }
         }}
-      >
-        Upload File
-      </button>
+      />
 
       {image && (
         <img

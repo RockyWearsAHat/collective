@@ -1,0 +1,226 @@
+:root {
+  --registerFormBgColor: #29292997;
+  --registerFormButtonBgColor: #384e7c;
+  --registerFormTitleColor: white;
+  --registerFormBorderColor: white;
+  --registerFormInputTextColor: white;
+  --registerFormPlaceholderColor: white;
+  --registerFormPasswordVisibilityToggleColor: white;
+  --registerFormErrorTextColor: red;
+  --registerFormButtonTextColor: white;
+  --registerFormButtonHoverBgColor: #37363677;
+  --registerFormButtonHoverTextColor: white;
+  --registerFormButtonDisabledBgColor: #232323;
+  --registerFormButtonDisabledTextColor: rgb(48, 48, 48);
+  --registerFormButtonBorderColor: white;
+  --registerFormButtonBorderHoverColor: rgb(48, 48, 48);
+  --registerFormButtonBorderDisabledColor: rgb(48, 48, 48);
+}
+
+.registerPage__bgDiv__wrapper {
+  position: absolute;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+.registerPage__bgDiv__image {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./loginbg.jpg");
+  position: absolute;
+  z-index: -10;
+  height: 100vh;
+  width: 100vw;
+  transform: scale(1.1);
+  flex-direction: column;
+  justify-content: center;
+  filter: blur(4px);
+}
+
+.registerPage__artistCustomerSelectButton__wrapper {
+  /* "absolute left-[50%] top-[200px] z-20 h-10 w-64 translate-x-[-50%] rounded-full bg-slate-600 text-white" */
+  position: absolute;
+  left: 50%;
+  top: 200px;
+  z-index: 20;
+  height: 40px;
+  width: 260px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background-color: var(--loginFormBgColor);
+  color: var(--loginFormTitleColor);
+}
+
+.registerPage__artistCustomerSelectButton__backgroundDiv {
+  /* h-10 w-32 rounded-full bg-slate-800 transition-transform duration-[500ms] ease-in-out */
+  height: 40px;
+  width: 130px;
+  border-radius: 9999px;
+  background-color: var(--registerFormButtonBgColor);
+  transition: transform 300ms ease-in-out;
+}
+
+.registerPage__artistCustomerSelectButton__button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 40px;
+  width: 130px;
+}
+
+.registerPage__form__wrapper {
+  display: flex;
+  width: 16rem;
+  /* user-select: none; */
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--loginFormBgColor);
+  backdrop-filter: blur(12px);
+  padding: 1rem;
+  /* box-shadow:
+      2px 2px 5px rgba(0, 0, 0, 0.5),
+      -2px -2px 5px rgba(255, 255, 255, 0.5); */
+  /* box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 6px 20px rgba(0, 0, 0, 0.15); */
+  border-radius: 12px;
+  height: fit-content;
+}
+
+.registerPage__form_customerArtistWrapper {
+  z-index: 10;
+  display: flex;
+  width: 200vw;
+  flex-direction: row;
+  justify-content: space-around;
+  transition: transform 350ms ease-in-out;
+}
+
+.registerPage__form__customerArtistActive {
+  transform: translateX(-50%) !important;
+}
+
+.registerPage__form__title {
+  color: var(--loginFormTitleColor);
+  text-transform: uppercase;
+}
+
+.registerPage__form__usernameInput {
+  background: transparent;
+  width: 100%;
+  border-bottom: 2px solid var(--loginFormBorderColor);
+  color: var(--loginFormInputTextColor);
+}
+
+.registerPage__form__usernameInput::placeholder {
+  color: var(--loginFormPlaceholderColor);
+  text-align: center;
+  user-select: none;
+}
+
+.registerPage__form__usernameInput:focus {
+  outline: none;
+}
+
+.registerPage__form__usernameInput:focus::placeholder {
+  opacity: 0;
+}
+
+.registerPage__form__passwordInputAndEyeWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.registerPage__form__passwordInput {
+  width: 100%;
+  background: transparent;
+  border-bottom: 2px solid var(--loginFormBorderColor);
+  padding-right: 1.5rem;
+  color: var(--loginFormInputTextColor);
+}
+
+.registerPage__form__passwordInput::placeholder {
+  color: var(--loginFormPlaceholderColor);
+  text-align: center;
+  letter-spacing: normal;
+  font-family: Ojuju, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  user-select: none;
+}
+
+.registerPage__form__passwordInput:focus {
+  outline: none;
+}
+
+.registerPage__form__passwordInput:focus::placeholder {
+  opacity: 0;
+}
+
+.registerPage__form__passwordInputShowingPassword {
+  letter-spacing: 0.025rem;
+  font-family: Verdana, sans-serif, ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.registerPage__form__passwordInput__ToggleVisibilityEye {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  color: var(--loginFormPasswordVisibilityToggleColor);
+}
+
+.registerPage__form__passwordInput__ToggleVisibilityEye:hover,
+.registerPage__form__passwordInput__ToggleVisibilityEye:focus {
+  cursor: pointer;
+}
+
+.registerPage__form__errorDisplayWrapper {
+  position: relative;
+  width: 100%;
+  transition: 0.2s grid-template-rows ease-in-out;
+}
+
+.registerPage__form__errorDisplayHidden {
+  grid-template-rows: 0fr;
+}
+
+.registerPage__form__errorDisplayShow {
+  grid-template-rows: 1fr !important;
+}
+
+.registerPage__form__errorDisplayText {
+  color: red;
+}
+
+.registerPage__form__registerButton {
+  border-radius: 9999px;
+  border: 2px solid var(--loginFormBorderColor);
+  color: var(--loginFormButtonTextColor);
+  background-color: var(--loginFormButtonBgColor);
+  transition: all 0.2s ease-in-out;
+  padding-block: 5px;
+}
+
+.registerPage__form__registerButton:hover {
+  background-color: var(--loginFormButtonHoverBgColor);
+  color: var(--loginFormButtonHoverTextColor);
+  border-color: var(--loginFormButtonBorderHoverColor);
+}
+
+.registerPage__form__registerButton:disabled {
+  background-color: var(--loginFormButtonDisabledBgColor);
+  color: var(--loginFormButtonDisabledTextColor);
+  border-color: var(--loginFormButtonBorderDisabledColor);
+}
+
+.registerPage__form__loginLink {
+  font-size: 12px;
+  color: white;
+}

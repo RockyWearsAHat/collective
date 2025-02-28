@@ -1,0 +1,184 @@
+:root {
+  --loginFormBgColor: #29292997;
+  --loginFormTitleColor: white;
+  --loginFormBorderColor: white;
+  --loginFormInputTextColor: white;
+  --loginFormPlaceholderColor: white;
+  --loginFormPasswordVisibilityToggleColor: white;
+  --loginFormErrorTextColor: red;
+  --loginFormButtonBgColor: transparent;
+  --loginFormButtonTextColor: white;
+  --loginFormButtonHoverBgColor: #37363677;
+  --loginFormButtonHoverTextColor: white;
+  --loginFormButtonDisabledBgColor: #232323;
+  --loginFormButtonDisabledTextColor: rgb(48, 48, 48);
+  --loginFormButtonBorderColor: white;
+  --loginFormButtonBorderHoverColor: rgb(48, 48, 48);
+  --loginFormButtonBorderDisabledColor: rgb(48, 48, 48);
+}
+
+.loginPage__bgDiv__wrapper {
+  position: absolute;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+.loginPage__bgDiv__image {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./loginbg.jpg");
+  position: absolute;
+  z-index: -10;
+  height: 100vh;
+  width: 100vw;
+  transform: scale(1.1);
+  flex-direction: column;
+  justify-content: center;
+  filter: blur(4px);
+}
+
+.loginPage__form__wrapper {
+  margin-inline: auto;
+  display: flex;
+  width: 16rem;
+  /* user-select: none; */
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--loginFormBgColor);
+  backdrop-filter: blur(12px);
+  padding: 1rem;
+  /* box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.5),
+    -2px -2px 5px rgba(255, 255, 255, 0.5); */
+  box-shadow:
+    /* Inner shadow for a subtle depth */
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    /* Soft outer shadow */ 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+}
+
+.loginPage__form__title {
+  color: var(--loginFormTitleColor);
+  text-transform: uppercase;
+}
+
+.loginPage__form__usernameInput {
+  background: transparent;
+  width: 100%;
+  border-bottom: 2px solid var(--loginFormBorderColor);
+  color: var(--loginFormInputTextColor);
+}
+
+.loginPage__form__usernameInput::placeholder {
+  color: var(--loginFormPlaceholderColor);
+  text-align: center;
+  user-select: none;
+}
+
+.loginPage__form__usernameInput:focus {
+  outline: none;
+}
+
+.loginPage__form__usernameInput:focus::placeholder {
+  opacity: 0;
+}
+
+.loginPage__form__passwordInputAndEyeWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.loginPage__form__passwordInput {
+  width: 100%;
+  background: transparent;
+  border-bottom: 2px solid var(--loginFormBorderColor);
+  padding-right: 1.5rem;
+  color: var(--loginFormInputTextColor);
+}
+
+.loginPage__form__passwordInput::placeholder {
+  color: var(--loginFormPlaceholderColor);
+  text-align: center;
+  letter-spacing: normal;
+  font-family: Ojuju, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  user-select: none;
+}
+
+.loginPage__form__passwordInput:focus {
+  outline: none;
+}
+
+.loginPage__form__passwordInput:focus::placeholder {
+  opacity: 0;
+}
+
+.loginPage__form__passwordInputShowingPassword {
+  letter-spacing: 0.025rem;
+  font-family: Verdana, sans-serif, ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.loginPage__form__passwordInput__ToggleVisibilityEye {
+  /* absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer */
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  color: var(--loginFormPasswordVisibilityToggleColor);
+}
+
+.loginPage__form__passwordInput__ToggleVisibilityEye:hover,
+.loginPage__form__passwordInput__ToggleVisibilityEye:focus {
+  cursor: pointer;
+}
+
+.loginPage__form__errorDisplayWrapper {
+  position: relative;
+  width: 100%;
+  transition: 0.2s grid-template-rows ease-in-out;
+}
+
+.loginPage__form__errorDisplayHidden {
+  grid-template-rows: 0fr;
+}
+
+.loginPage__form__errorDisplayShow {
+  grid-template-rows: 1fr !important;
+}
+
+.loginPage__form__errorDisplayText {
+  color: red;
+}
+
+.loginPage__form__loginButton {
+  border-radius: 9999px;
+  border: 2px solid var(--loginFormBorderColor);
+  color: var(--loginFormButtonTextColor);
+  background-color: var(--loginFormButtonBgColor);
+  transition: all 0.2s ease-in-out;
+  padding-block: 5px;
+}
+
+.loginPage__form__loginButton:hover {
+  background-color: var(--loginFormButtonHoverBgColor);
+  color: var(--loginFormButtonHoverTextColor);
+  border-color: var(--loginFormButtonBorderHoverColor);
+}
+
+.loginPage__form__loginButton:disabled {
+  background-color: var(--loginFormButtonDisabledBgColor);
+  color: var(--loginFormButtonDisabledTextColor);
+  border-color: var(--loginFormButtonBorderDisabledColor);
+}
+
+.loginPage__form__signupLink {
+  font-size: 12px;
+  color: white;
+}

@@ -1,7 +1,25 @@
 import { FC, useEffect, useState } from "react";
+import { useMutation } from "../../hooks/useMutation";
 
 export const LightDarkModeToggle: FC = () => {
-  function getColorSchemePreference() {
+  const { fn: fetchLoggedInUserColorScheme } = useMutation({
+    url: "/api/user/getColorSchemePreference",
+    method: "GET",
+    cache: "no-cache"
+  });
+
+  async function getColorSchemePreference() {
+    const userColorScheme = await fetchLoggedInUserColorScheme();
+    console.log(`got color scheme preference ${userColorScheme}`);
+
+    if (userColorScheme.setColorScheme) {
+      if (userColorScheme.colorScheme == "light") {
+        return "light";
+      } else {
+        return "dark";
+      }
+    }
+
     if (window.matchMedia) {
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         return "dark";
@@ -12,11 +30,18 @@ export const LightDarkModeToggle: FC = () => {
     return "light";
   }
 
-  const [theme, setTheme] = useState(getColorSchemePreference());
+  const [theme, setTheme] = useState<string>("light");
 
   useEffect(() => {
-    document.getElementById("root")?.setAttribute("theme", theme);
-    setTheme(theme == "light" ? "dark" : "light");
+    const func = async () => {
+      const userColorScheme = await getColorSchemePreference();
+      // console.log("testing " + userColorScheme);
+      setTheme(userColorScheme);
+      document.getElementById("root")?.setAttribute("theme", userColorScheme);
+      // setTheme(userColorScheme == "light" ? "dark" : "light");
+    };
+
+    func();
   }, []);
 
   let timeout: NodeJS.Timeout;
@@ -54,8 +79,7 @@ export const LightDarkModeToggle: FC = () => {
     transition:
       color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
       border var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
-      background-color var(--lightDarkColorSwapTime)
-        var(--lightDarkColorSwapEasing) 0ms,
+      background-color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms,
       box-shadow var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing) 0ms !important;
   }
 
@@ -69,10 +93,21 @@ export const LightDarkModeToggle: FC = () => {
 
   style.id = "lightDarkModeTransitionStyles";
 
+  const { fn: setColorSchemePreference } = useMutation({
+    url: "/api/user/setColorSchemePreference",
+    method: "POST",
+    cache: "no-cache"
+  });
+
   useEffect(() => {
+    // console.log("Theme changed");
     timeout = setTimeout(() => {
       document.getElementById("lightDarkModeTransitionStyles")?.remove();
     }, timeoutTime);
+
+    // console.log(`setting color scheme preference to ${theme}`);
+    setColorSchemePreference({ colorScheme: theme });
+
     return () => clearTimeout(timeout);
   }, [theme]);
 
@@ -86,8 +121,10 @@ export const LightDarkModeToggle: FC = () => {
           type="checkbox"
           name="toggle"
           id="toggle"
-          checked={theme == "light"}
-          onChange={() => {
+          checked={theme == "light" ? false : true}
+          onChange={async function () {
+            // console.log(theme);
+            setColorSchemePreference({ colorScheme: theme });
             document.getElementById("root")?.setAttribute("theme", theme);
             setTheme(theme == "light" ? "dark" : "light");
             if (

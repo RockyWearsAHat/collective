@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useMutation } from "../../hooks/useMutation";
 import { Link } from "react-router-dom";
+import styles from "./Login.module.css";
 
 export const ToggleEye = ({
   className,
@@ -54,13 +55,13 @@ export function Login(): ReactNode {
       <Helmet>
         <title>Artist Collective | Login</title>
       </Helmet>
-      <div className="absolute top-0 flex h-[100vh] w-[100vw] flex-col justify-center overflow-hidden text-center">
-        <div className="bg-middle absolute -z-10 h-[100vh] w-[100vw] scale-110 flex-col justify-center bg-[url('/loginbg.jpg')] bg-cover bg-center bg-no-repeat align-middle blur-sm"></div>
+      <div className={styles.loginPage__bgDiv__wrapper}>
+        <div className={styles.loginPage__bgDiv__image}></div>
         <form
           onSubmit={handleSubmit}
-          className="mx-auto flex w-64 select-none flex-col gap-2 rounded-md bg-gray-200 p-4 shadow-md"
+          className={styles.loginPage__form__wrapper}
         >
-          <h1 className="uppercase">Login</h1>
+          <h1 className={styles.loginPage__form__title}>Login</h1>
           <input
             type="text"
             placeholder="Username / Email"
@@ -69,9 +70,9 @@ export function Login(): ReactNode {
             name="username"
             autoComplete="username"
             id="username"
-            className="selected:outline-none border-2 border-slate-700 placeholder:text-center focus:outline-none focus:placeholder:opacity-0"
+            className={styles.loginPage__form__usernameInput}
           />
-          <div className="relative w-full">
+          <div className={styles.loginPage__form__passwordInputAndEyeWrapper}>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
@@ -80,31 +81,37 @@ export function Login(): ReactNode {
               name="password"
               autoComplete="current-password"
               id="current-password"
-              className={`${showPassword ? "" : "font-password tracking-wide "}w-full border-2 border-slate-700 pr-6 placeholder:text-center focus:outline-none focus:placeholder:opacity-0`}
+              onFocus={e => {
+                setTimeout(() => {
+                  e.target.selectionStart = e.target.selectionEnd = 10000;
+                  e.target.scrollLeft = e.target.scrollWidth;
+                }, 0);
+              }}
+              className={`${showPassword ? "" : styles.loginPage__form__passwordInputShowingPassword + " "}${styles.loginPage__form__passwordInput}`}
             />
             <ToggleEye
-              className="absolute right-2 top-[7px] hover:cursor-pointer focus:cursor-pointer"
+              className={
+                styles.loginPage__form__passwordInput__ToggleVisibilityEye
+              }
               showPassword={showPassword}
               setShowPassword={setShowPassword}
             />
           </div>
           <div
-            className={`relative w-full ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
+            className={`${styles.loginPage__form__errorDisplayWrapper} ${errorDisplay !== "" ? styles.loginPage__form__errorDisplayHidden : styles.loginPage__form__errorDisplayShow}`}
           >
-            <p
-              className={`rounded-md text-red-500 ${errorDisplay !== "" ? "h-auto" : "h-[0]"}`}
-            >
+            <p className={`${styles.loginPage__form__errorDisplayText}`}>
               {errorDisplay}
             </p>
           </div>
           <button
             type="submit"
-            className={`rounded-full border-2 border-black
-             ${loading ? "cursor-default border-white bg-slate-600 text-white" : "transition-all duration-300 ease-in-out hover:bg-slate-700 hover:text-white"}`}
+            disabled={loading}
+            className={`${styles.loginPage__form__loginButton}`}
           >
             Login
           </button>
-          <Link to="/register" className="text-[12px]">
+          <Link to="/register" className={styles.loginPage__form__signupLink}>
             Don't have an account? Sign up here
           </Link>
         </form>
