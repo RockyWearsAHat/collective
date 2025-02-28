@@ -931,9 +931,9 @@ const Editor: React.FC = () => {
     const padding = 100;
 
     const boundingLeft = x + halfW - halfW * z;
-    const boundingRight = boundingLeft + w * z;
+    // const boundingRight = boundingLeft + w * z;
     const boundingTop = y + halfH - halfH * z;
-    const boundingBottom = boundingTop + h * z;
+    // const boundingBottom = boundingTop + h * z;
 
     let newLeft = boundingLeft;
     const minLeft = padding - w * z;
