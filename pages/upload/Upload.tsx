@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from "react";
 import { useMutation } from "../../hooks/useMutation";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import ImageEditor from "../../components/imageEditor/ImageEditor";
 import Editor from "../../components/imageEditor/Editor";
 
 export const Upload: FC = () => {
@@ -22,26 +21,17 @@ export const Upload: FC = () => {
     method: "GET"
   });
 
-  const [userAllowedToViewPage, setUserAllowedToViewPage] = useState<
+  const [userAllowedToViewPage, setUserAllowedToViewPage] = useState<boolean | null>(null);
+  const [userIsArtistButHasNotCompletedOnboarding, setUserIsArtistButHasNotCompletedOnboarding] = useState<
     boolean | null
   >(null);
-  const [
-    userIsArtistButHasNotCompletedOnboarding,
-    setUserIsArtistButHasNotCompletedOnboarding
-  ] = useState<boolean | null>(null);
 
   useEffect(() => {
     checkLoggedIn().then(async res => {
       const onboardingCompleteRes = await checkUserCompletedOnboarding();
-      if (
-        res.isArtist &&
-        (res.onboardingComplete || onboardingCompleteRes.completed)
-      ) {
+      if (res.isArtist && (res.onboardingComplete || onboardingCompleteRes.completed)) {
         setUserAllowedToViewPage(true);
-      } else if (
-        res.isArtist &&
-        (!res.onboardingComplete || !onboardingCompleteRes.completed)
-      ) {
+      } else if (res.isArtist && (!res.onboardingComplete || !onboardingCompleteRes.completed)) {
         setUserAllowedToViewPage(true);
         setUserIsArtistButHasNotCompletedOnboarding(true);
       } else {
@@ -66,9 +56,8 @@ export const Upload: FC = () => {
           <h1>Please complete payout details before uploading any products</h1>
         ) : (
           <h1>
-            You cannot view this page yet, please complete the{" "}
-            <Link to="/onboarding">onboarding process</Link> so we can pay you
-            before trying to upload any products
+            You cannot view this page yet, please complete the <Link to="/onboarding">onboarding process</Link> so we
+            can pay you before trying to upload any products
           </h1>
         )}
       </div>
