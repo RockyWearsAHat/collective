@@ -31,7 +31,6 @@ itemSchema.method("toJSON", function () {
       currency: "USD"
     });
   }
-  delete obj.__v;
   return obj;
 });
 
