@@ -12,6 +12,8 @@ import { checkLoggedInRouter } from "./checkLoggedIn";
 import { createAccountLinkRouter } from "./createAccountLink";
 import { checkUserCompletedOnboardingRouter } from "./checkUserCompletedOnboarding";
 import { getCustomerIdRouter } from "./getCustomerId";
+import { getColorSchemePreferenceRouter } from "./getColorSchemePreference";
+import { setColorSchemePreferenceRouter } from "./setColorSchemePreference";
 
 export const masterUserRouter = Router();
 
@@ -29,4 +31,12 @@ masterUserRouter.use(
   checkUserCompletedOnboardingRouter
 );
 masterUserRouter.use("/getCustomerId", getCustomerIdRouter);
+masterUserRouter.use(
+  "/getColorSchemePreference",
+  getColorSchemePreferenceRouter
+);
+masterUserRouter.use(
+  "/setColorSchemePreference",
+  setColorSchemePreferenceRouter
+);
 masterUserRouter.use("/*", logRouteNotFound);

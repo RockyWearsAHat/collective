@@ -78,12 +78,12 @@ app.use("/api", masterAPIRouter);
 
 if (process.env !== undefined && process.env["VITE"]) {
   //If running in dev, just run the server from vite, vite plugin to run express is used (SEE vite.config.ts)
-  console.log("Running in dev mode");
+  // console.log("Running in dev mode");
 } else {
   //If not running in dev, check how many threads and spawn workers
   if (cluster.isPrimary) {
     const numWorkers = cpus().length;
-    console.log(`Master cluster setting up ${numWorkers} workers...`);
+    // console.log(`Master cluster setting up ${numWorkers} workers...`);
 
     for (let i = 0; i < numWorkers; i++) {
       cluster.fork();

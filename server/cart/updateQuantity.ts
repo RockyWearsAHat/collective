@@ -20,7 +20,7 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
       item: productToUpdate
     });
 
-    console.log(foundLink);
+    // console.log(foundLink);
 
     if (!foundLink) return res.json({ message: "Item not found in cart" });
 
