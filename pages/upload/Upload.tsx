@@ -31,7 +31,7 @@ export const Upload: FC = () => {
       const onboardingCompleteRes = await checkUserCompletedOnboarding();
       if (res.isArtist && (res.onboardingComplete || onboardingCompleteRes.completed)) {
         setUserAllowedToViewPage(true);
-      } else if (res.isArtist && (!res.onboardingComplete || !onboardingCompleteRes.completed)) {
+      } else if (res.isArtist && !res.onboardingComplete && !onboardingCompleteRes.completed) {
         setUserAllowedToViewPage(true);
         setUserIsArtistButHasNotCompletedOnboarding(true);
       } else {
