@@ -20,8 +20,7 @@ export const Cart: FC = () => {
 
   const urlParams = new URLSearchParams(window.location.search);
 
-  const [gettingCheckoutPage, _setGettingCheckoutPage] =
-    useState<boolean>(false);
+  const [gettingCheckoutPage, _setGettingCheckoutPage] = useState<boolean>(false);
 
   const { fn: getCart } = useMutation({
     url: "/api/cart/getCart",
@@ -29,12 +28,12 @@ export const Cart: FC = () => {
     method: "POST"
   });
 
-  const { fn: createPaymentIntent } = useMutation({
+  const { fn: createPaymentIntent, loading: createPaymentLoading } = useMutation({
     url: "/api/checkout/createPaymentIntent",
     method: "POST"
   });
 
-  const { fn: updatePaymentIntent } = useMutation({
+  const { fn: updatePaymentIntent, loading: updatePaymentLoading } = useMutation({
     url: "/api/checkout/updatePaymentIntent",
     method: "POST"
   });
@@ -75,30 +74,23 @@ export const Cart: FC = () => {
       //If there are saved options
       localStorage.getItem("checkoutOptions") &&
       //And the cart has not been updated since the saved options were created
-      JSON.stringify(
-        JSON.parse(localStorage.getItem("checkoutOptions")!).cart
-      ) == JSON.stringify(cart) &&
+      JSON.stringify(JSON.parse(localStorage.getItem("checkoutOptions")!).cart) == JSON.stringify(cart) &&
       //And there is a client secret
-      JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
-        .clientSecret
+      JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions.clientSecret
     ) {
       //Check if the use is logged in
       const userLoggedIn = await checkLoggedIn();
       if (userLoggedIn.loggedIn) {
         //If the user is logged in, check if the user has a checkout secret
         const loggedInUserCheckoutSecret = await getCheckoutSecretFromUser();
-        if (
-          loggedInUserCheckoutSecret &&
-          loggedInUserCheckoutSecret.id != null
-        ) {
+        if (loggedInUserCheckoutSecret && loggedInUserCheckoutSecret.id != null) {
           //If they do, return, no updates needed, local and saved client secret found
           return;
         }
 
         //If the user is logged in, but does not have a checkout secret, write the client secret to the user
-        const locallySavedClientSecret = JSON.parse(
-          localStorage.getItem("checkoutOptions")!
-        ).checkoutOptions.clientSecret;
+        const locallySavedClientSecret = JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
+          .clientSecret;
         await writeCheckoutSecretToUser({
           checkoutClientSecret: locallySavedClientSecret
         });
@@ -112,10 +104,8 @@ export const Cart: FC = () => {
     for (let i = 0; i < cart.length; i++) {
       //Disgusting parsing because the sale price and price are stored as Decimal128s and outputted as strings
       cartTotal += cart[i].salePrice
-        ? Number.parseFloat(cart[i].salePrice.substring(1)) *
-          Number.parseInt(cart[i].quantity)
-        : Number.parseFloat(cart[i].price.substring(1)) *
-          Number.parseInt(cart[i].quantity);
+        ? Number.parseFloat(cart[i].salePrice.substring(1)) * Number.parseInt(cart[i].quantity)
+        : Number.parseFloat(cart[i].price.substring(1)) * Number.parseInt(cart[i].quantity);
     }
     cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
 
@@ -130,12 +120,9 @@ export const Cart: FC = () => {
     try {
       if (
         localStorage.getItem("checkoutOptions") &&
-        JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
-          .clientSecret
+        JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions.clientSecret
       ) {
-        const checkoutOptions = JSON.parse(
-          localStorage.getItem("checkoutOptions")!
-        ).checkoutOptions;
+        const checkoutOptions = JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions;
 
         const updatedPaymentIntent = await updatePaymentIntent({
           paymentIntentId: checkoutOptions.clientSecret.split("_secret_")[0],
@@ -206,10 +193,7 @@ export const Cart: FC = () => {
       }
     };
 
-    localStorage.setItem(
-      "checkoutOptions",
-      JSON.stringify({ checkoutOptions, cart })
-    );
+    localStorage.setItem("checkoutOptions", JSON.stringify({ checkoutOptions, cart }));
   };
 
   useEffect(() => {
@@ -233,12 +217,9 @@ export const Cart: FC = () => {
           let item = res[i];
 
           if (item.item.salePrice) {
-            runningTotal +=
-              Number.parseFloat(item.item.salePrice.substring(1)) *
-              item.quantity;
+            runningTotal += Number.parseFloat(item.item.salePrice.substring(1)) * item.quantity;
           } else {
-            runningTotal +=
-              Number.parseFloat(item.item.price.substring(1)) * item.quantity;
+            runningTotal += Number.parseFloat(item.item.price.substring(1)) * item.quantity;
           }
           cartItems.push(item.item);
           cartItems[i].quantity = item.quantity;
@@ -252,13 +233,10 @@ export const Cart: FC = () => {
   }, [cartUpdated, active]);
 
   useEffect(() => {
-    if (
-      urlParams.get("payment_intent_client_secret") &&
-      localStorage.getItem("checkoutOptions")
-    ) {
+    if (urlParams.get("payment_intent_client_secret") && localStorage.getItem("checkoutOptions")) {
       if (
-        JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions
-          .clientSecret == urlParams.get("payment_intent_client_secret")
+        JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions.clientSecret ==
+        urlParams.get("payment_intent_client_secret")
       ) {
         localStorage.removeItem("checkoutOptions");
 
@@ -292,21 +270,20 @@ export const Cart: FC = () => {
       <div className="absolute top-0 flex min-h-screen w-screen flex-row gap-3 bg-slate-600 px-5 pb-5 pt-[3.75rem] first-line:left-0">
         <div className="flex grow flex-col gap-3">
           {cart.map((item, index) => {
-            return (
-              <CartItem
-                item={item}
-                key={index}
-                setCartUpdatedState={setCartUpdated}
-                quantity={item.quantity}
-              />
-            );
+            return <CartItem item={item} key={index} setCartUpdatedState={setCartUpdated} quantity={item.quantity} />;
           })}
         </div>
         <div className="flex min-h-[calc(100vh-7.5rem)] min-w-[200px] max-w-[20vw] grow flex-col gap-3 rounded-md bg-zinc-800 bg-opacity-60 p-5 text-white">
           <h1>Subtotal: {cartPrice ? cartPrice : "$0.00"}</h1>
           <button
-            disabled={gettingCheckoutPage}
-            className="mt-5 w-[70%] self-center justify-self-center rounded-full bg-zinc-900 py-2 transition-all duration-200 ease-in-out hover:bg-zinc-500 active:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-300"
+            disabled={
+              gettingCheckoutPage ||
+              createPaymentLoading ||
+              cartPrice == "$0.00" ||
+              cartPrice == 0 ||
+              updatePaymentLoading
+            }
+            className="mt-5 w-[70%] self-center justify-self-center rounded-full bg-zinc-900 py-2 transition-all duration-200 ease-in-out hover:bg-zinc-500 active:bg-zinc-600 disabled:bg-red-400 disabled:text-zinc-300"
             onClick={async () => {
               if (cartPrice == "$0.00" || cartPrice == 0) return;
               await createPaymentIntentAndSetOptions();
