@@ -8,10 +8,7 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
   if (!req.session.user) {
     const { productToUpdate, quantity } = await req.body;
 
-    if (
-      mongoose.Types.ObjectId.isValid(productToUpdate) === false ||
-      typeof quantity !== "number"
-    ) {
+    if (mongoose.Types.ObjectId.isValid(productToUpdate) === false || typeof quantity !== "number") {
       return res.json({ message: "Invalid input" });
     }
 
@@ -19,8 +16,6 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
       sessionId: req.sessionID,
       item: productToUpdate
     });
-
-    // console.log(foundLink);
 
     if (!foundLink) return res.json({ message: "Item not found in cart" });
 
@@ -32,7 +27,7 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
     let returnCart = [];
 
     for (let i = 0; i < cart.length; i++) {
-      if (cart[i]._id.toString() === foundLink._id.toString()) {
+      if (cart[i].item.toString() == foundLink.item.toString()) {
         returnCart.push(foundLink);
       } else {
         returnCart.push(cart[i]);
@@ -42,6 +37,8 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
     req.session.cart = returnCart;
     req.session.save();
 
+    console.log(returnCart);
+
     return res.json("Successfully updated quantity");
   } else {
     const { productToUpdate, quantity } = await req.body;
@@ -49,10 +46,7 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
 
     if (!userId) return res.json({ message: "User not found" });
 
-    if (
-      mongoose.Types.ObjectId.isValid(productToUpdate) === false ||
-      typeof quantity !== "number"
-    ) {
+    if (mongoose.Types.ObjectId.isValid(productToUpdate) === false || typeof quantity !== "number") {
       return res.json({ message: "Invalid input" });
     }
 
