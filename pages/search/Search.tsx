@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet-async";
 export const Search: FC = () => {
   const { productName } = useParams();
   const [products, setProducts] = useState([]);
-  let tempProducts: any = [];
+  let tempProducts: Object = [];
   const { setActive } = useContext(ActiveContext);
 
   const { fn: searchProducts, loading } = useMutation({
@@ -19,9 +19,9 @@ export const Search: FC = () => {
 
   const findAndSetProducts = async () => {
     setProducts([]);
-    tempProducts = null;
+
     const data = await searchProducts();
-    tempProducts = data.foundProducts;
+    tempProducts = data.foundProducts && data.foundProducts.length ? data.foundProducts : [];
     setProducts(data.foundProducts);
   };
 
@@ -33,11 +33,7 @@ export const Search: FC = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {productName
-            ? `Search ${productName} | Artist Collective`
-            : `Search | Artist Collective`}
-        </title>
+        <title>{productName ? `Search ${productName} | Artist Collective` : `Search | Artist Collective`}</title>
       </Helmet>
       <div className="absolute left-0 top-0 z-10 pb-2 pt-12">
         {/* Loading */}
@@ -49,12 +45,8 @@ export const Search: FC = () => {
       if there are products, it will display, if not, it flashes "No Products Found!" before displaying the found products 
       without tempProducts check */}
         {!loading &&
-          (tempProducts == null ||
-            (tempProducts instanceof Array && tempProducts.length == 0)) &&
-          (!products ||
-            (products.length == 0 && (
-              <div className="text-center">No Products Found!</div>
-            )))}
+          (tempProducts == null || (tempProducts instanceof Array && tempProducts.length == 0)) &&
+          (!products || (products.length == 0 && <div className="text-center">No Products Found!</div>))}
 
         {/* Display Found Products */}
         {tempProducts && !loading && products && products.length > 0 && (
