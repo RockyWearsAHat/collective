@@ -1,10 +1,5 @@
 import { FC, FormEvent, Key, useEffect, useRef, useState } from "react";
-import {
-  useStripe,
-  useElements,
-  PaymentElement,
-  AddressElement
-} from "@stripe/react-stripe-js";
+import { useStripe, useElements, PaymentElement, AddressElement } from "@stripe/react-stripe-js";
 import { useMutation } from "../../hooks/useMutation";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { CheckoutPageCartItem } from "../checkoutPageCartItem/CheckoutPageCartItem";
@@ -13,9 +8,7 @@ export const CheckoutForm: FC = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [_errorMessage, setErrorMessage] = useState<string | undefined | null>(
-    null
-  );
+  const [_errorMessage, setErrorMessage] = useState<string | undefined | null>(null);
 
   const [isAddressOpen, setIsAddressOpen] = useState(false);
 
@@ -40,15 +33,7 @@ export const CheckoutForm: FC = () => {
     // which would refresh the page.
     event.preventDefault();
 
-    if (
-      !stripe ||
-      !elements ||
-      !tax ||
-      !shipping ||
-      !total ||
-      !clientName ||
-      !address
-    ) {
+    if (!stripe || !elements || !tax || !shipping || !total || !clientName || !address) {
       // Stripe.js hasn't yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
@@ -58,8 +43,7 @@ export const CheckoutForm: FC = () => {
       //`Elements` instance that was used to create the Payment Element
       elements,
       confirmParams: {
-        return_url:
-          window.location.protocol + "//" + window.location.host + "/cart"
+        return_url: window.location.protocol + "//" + window.location.host + "/cart"
       }
     });
 
@@ -97,8 +81,7 @@ export const CheckoutForm: FC = () => {
 
   //Resize item display to size of form
   useEffect(() => {
-    if (!containerRef.current || !formRef.current || !testingDivRef.current)
-      return;
+    if (!containerRef.current || !formRef.current || !testingDivRef.current) return;
 
     const resizeObserver = new ResizeObserver(entries => {
       for (let entry of entries) {
@@ -143,18 +126,14 @@ export const CheckoutForm: FC = () => {
 
   useEffect(() => {
     if (JSON.parse(localStorage.getItem("checkoutOptions")!).cart) {
-      const passedCart = JSON.parse(
-        localStorage.getItem("checkoutOptions")!
-      ).cart;
+      const passedCart = JSON.parse(localStorage.getItem("checkoutOptions")!).cart;
 
       //Calculate the cart total
       let cartTotal = 0;
       for (let i = 0; i < passedCart.length; i++) {
         cartTotal += passedCart[i].salePrice
-          ? Number.parseFloat(passedCart[i].salePrice.substring(1)) *
-            Number.parseInt(passedCart[i].quantity)
-          : Number.parseFloat(passedCart[i].price.substring(1)) *
-            Number.parseInt(passedCart[i].quantity);
+          ? Number.parseFloat(passedCart[i].salePrice.substring(1)) * Number.parseInt(passedCart[i].quantity)
+          : Number.parseFloat(passedCart[i].price.substring(1)) * Number.parseInt(passedCart[i].quantity);
       }
       cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
 
@@ -179,10 +158,7 @@ export const CheckoutForm: FC = () => {
           className={`absolute left-0 top-0 h-[100vh] w-[100vw] scale-110 bg-[url('/checkoutBg.jpg')] ${/*bg-[#313237]*/ ""} bg-[center_-150rem] blur-sm`}
         ></div>
         <div className="relative h-auto w-[clamp(400px,_80vw,_100vw)] overflow-hidden">
-          <div
-            ref={containerRef}
-            className="grid max-h-[80vh] w-[200%] grid-cols-2 grid-rows-1"
-          >
+          <div ref={containerRef} className="grid max-h-[80vh] w-[200%] grid-cols-2 grid-rows-1">
             <div
               id="paymentFormWrapper"
               className={`flex w-[100%] gap-4 transition-all duration-300 ease-in-out ${isAddressOpen ? "translate-x-[calc(-100%-0.25rem)]" : ""}`}
@@ -193,11 +169,7 @@ export const CheckoutForm: FC = () => {
                 style={{ height: formHeight }}
               >
                 {cart.map((item, index) => (
-                  <CheckoutPageCartItem
-                    item={item}
-                    key={index as Key}
-                    quantity={item.quantity}
-                  />
+                  <CheckoutPageCartItem item={item} key={index as Key} quantity={item.quantity} />
                 ))}
               </div>
               <form
@@ -216,16 +188,8 @@ export const CheckoutForm: FC = () => {
                 </button>
                 <div className="order-summary">
                   <h3>Order Summary</h3>
-                  <p>
-                    Subtotal:{" "}
-                    {subtotal ? `$${(subtotal / 100).toFixed(2)}` : "N/A"}
-                  </p>
-                  <p>
-                    Tax:{" "}
-                    {tax
-                      ? `$${(tax / 100).toFixed(2)}`
-                      : "Enter Shipping Address to Calculate"}
-                  </p>
+                  <p>Subtotal: {subtotal ? `$${(subtotal / 100).toFixed(2)}` : "N/A"}</p>
+                  <p>Tax: {tax ? `$${(tax / 100).toFixed(2)}` : "Enter Shipping Address to Calculate"}</p>
                   <p>
                     Shipping + Fees:{" "}
                     {shipping || fees
@@ -233,9 +197,7 @@ export const CheckoutForm: FC = () => {
                       : "Enter Shipping Address to Calculate"}
                   </p>
                   <p>
-                    <strong>
-                      Total: {total ? `$${(total / 100).toFixed(2)}` : "N/A"}
-                    </strong>
+                    <strong>Total: {total ? `$${(total / 100).toFixed(2)}` : "N/A"}</strong>
                   </p>
                 </div>
                 <button
@@ -283,14 +245,8 @@ export const CheckoutForm: FC = () => {
                       return null;
                     }
 
-                    setAddress(
-                      addressData?.value.address
-                        ? addressData?.value.address
-                        : null
-                    );
-                    setClientName(
-                      addressData?.value?.name ? addressData?.value?.name : null
-                    );
+                    setAddress(addressData?.value.address ? addressData?.value.address : null);
+                    setClientName(addressData?.value?.name ? addressData?.value?.name : null);
 
                     const res = await calculateTaxes({
                       amount: subtotal,
@@ -305,9 +261,7 @@ export const CheckoutForm: FC = () => {
                       setTax(tax_amount_exclusive);
                       setShipping(shippingTotal);
                       if (shippingTotal) {
-                        feesTotal = Math.round(
-                          (amount_total + shippingTotal) * 0.029 + 30
-                        );
+                        feesTotal = Math.round((amount_total + shippingTotal) * 0.029 + 30);
                         setFees(feesTotal);
                         setTotal(amount_total + shippingTotal + feesTotal);
                       } else {
@@ -317,21 +271,15 @@ export const CheckoutForm: FC = () => {
                       }
                     }
 
-                    const checkoutOptions = JSON.parse(
-                      localStorage.getItem("checkoutOptions")!
-                    ).checkoutOptions;
+                    const checkoutOptions = JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions;
 
                     const paymentIntentId =
-                      checkoutOptions.clientSecret.split("_")[0] +
-                      "_" +
-                      checkoutOptions.clientSecret.split("_")[1];
+                      checkoutOptions.clientSecret.split("_")[0] + "_" + checkoutOptions.clientSecret.split("_")[1];
 
                     const { id: stripeCustomerId } = await getCustomerId();
                     await updatePaymentIntent({
                       paymentIntentId,
-                      newTotal: shippingTotal
-                        ? amount_total + shippingTotal + feesTotal
-                        : amount_total + feesTotal,
+                      newTotal: shippingTotal ? amount_total + shippingTotal + feesTotal : amount_total + feesTotal,
                       customerId: stripeCustomerId || null,
                       customerName: addressData?.value.name
                     });

@@ -33,7 +33,7 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url("./loginbg.jpg");
+  background-image: url("/loginbg.jpg");
   position: absolute;
   z-index: -10;
   height: 100vh;
@@ -107,8 +107,9 @@
   color: var(--loginFormPlaceholderColor);
   text-align: center;
   letter-spacing: normal;
-  font-family: Ojuju, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    Ojuju, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
   user-select: none;
 }
 
@@ -122,8 +123,9 @@
 
 .loginPage__form__passwordInputShowingPassword {
   letter-spacing: 0.025rem;
-  font-family: Verdana, sans-serif, ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    Verdana, sans-serif, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
 }
 
 .loginPage__form__passwordInput__ToggleVisibilityEye {
