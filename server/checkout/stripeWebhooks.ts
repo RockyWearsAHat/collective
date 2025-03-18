@@ -7,7 +7,7 @@ import ReactDOMServer from "react-dom/server";
 import { OrderEmail } from "../../emails/OrderEmail";
 
 //In percent, 0-100
-const artistCollectiveCut = 20;
+const artistCollectiveCut = 80;
 
 export const stripeWebhookRouter = Router();
 
@@ -16,9 +16,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
   const event = req.body;
 
+  console.log(event);
+
   switch (event.type) {
     //On success
     case "payment_intent.succeeded":
+      console.log("payment intent success");
       const paymentIntent = event.data.object;
 
       const user = await User.findOne({
@@ -50,6 +53,7 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
       const fullName: string = paymentIntent.shipping.name;
       const firstName: string = fullName.split(" ")[0];
       const lastName: string = fullName.split(" ")[1];
+
       const cart: any[] = JSON.parse(paymentIntent.metadata.cart);
 
       console.log(
@@ -60,10 +64,25 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
 
       //Calculate artist cut
       for (let i = 0; i < cart.length; i++) {
-        const item = await Item.findById(cart[i].i).populate(
-          "userCreatedId",
-          "stripeId"
-        );
+        if (!cart[i].q) {
+          cart[i].q = 1;
+        }
+
+        let item = await Item.findById(cart[i].i).populate("userCreatedId", "stripeId");
+        if (!item) continue; //Should never hit but ts errors??
+
+        console.log(item);
+        item.timesPurchased =
+          Number.isNaN(item.timesPurchased) || item.timesPurchased == null ? 0 : item.timesPurchased;
+        await item.save();
+
+        console.log(item, cart);
+
+        item = await Item.findById(cart[i].i).populate("userCreatedId", "stripeId");
+        if (!item) continue; //Should never hit because item must exist for it to be purchased, but ts errors??
+
+        item.timesPurchased = item.timesPurchased ? item.timesPurchased + cart[i].q : cart[i].q;
+        await item.save();
 
         console.log(item);
 
@@ -71,9 +90,7 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
 
         if (!item) continue;
         const artistCut =
-          Number.parseFloat(
-            item.salePrice ? item.salePrice.toString() : item.price.toString()
-          ) *
+          Number.parseFloat(item.salePrice ? item.salePrice.toString() : item.price.toString()) *
           Number.parseInt(cart[i].q) *
           (100 - artistCollectiveCut);
 

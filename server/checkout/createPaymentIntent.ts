@@ -1,6 +1,10 @@
 import { Request, Response, Router } from "express";
 import Stripe from "stripe";
 
+export const calculateStripeFee = (amount: number) => {
+  return Math.ceil(amount * 0.03 + 0.3);
+};
+
 export const createPaymentIntentRouter: Router = Router();
 
 createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
@@ -33,7 +37,7 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: total,
+      amount: total + calculateStripeFee(total),
       currency: "usd",
       description: `Payment for ${items.join(", ")}`
     });

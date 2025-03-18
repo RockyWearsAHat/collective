@@ -31,13 +31,13 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
+  user-select: none;
 }
 
 .productCard ~ h2 {
   transition:
     color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing),
-    background-color var(--lightDarkColorSwapTime)
-      var(--lightDarkColorSwapEasing);
+    background-color var(--lightDarkColorSwapTime) var(--lightDarkColorSwapEasing);
   background-color: var(--productCardBackgroundColor);
   color: var(--productCardTextColor);
 }
