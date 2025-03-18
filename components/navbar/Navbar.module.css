@@ -1,5 +1,5 @@
 .navbarWrapper {
-  position: relative;
+  position: fixed;
   z-index: 100;
   width: 100vw;
   user-select: none;

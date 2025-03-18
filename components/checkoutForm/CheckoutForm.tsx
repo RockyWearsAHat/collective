@@ -4,7 +4,13 @@ import { useMutation } from "../../hooks/useMutation";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { CheckoutPageCartItem } from "../checkoutPageCartItem/CheckoutPageCartItem";
 
+const calculateStripeFee = (amount: number) => {
+  return Math.ceil(amount * 0.03 + 30);
+};
+
 export const CheckoutForm: FC = () => {
+  const successRedirect = window.location.protocol + "//" + window.location.host + "/cart";
+
   const stripe = useStripe();
   const elements = useElements();
 
@@ -17,6 +23,7 @@ export const CheckoutForm: FC = () => {
   const [shipping, setShipping] = useState<number | null>(null);
   const [total, setTotal] = useState<number | null>(null);
   const [fees, setFees] = useState<number | null>(null);
+  const [customerName, setCustomerName] = useState<string | null>(null);
 
   const [clientName, setClientName] = useState<string | null>(null);
   const [address, setAddress] = useState<any | null>(null);
@@ -43,7 +50,7 @@ export const CheckoutForm: FC = () => {
       //`Elements` instance that was used to create the Payment Element
       elements,
       confirmParams: {
-        return_url: window.location.protocol + "//" + window.location.host + "/cart"
+        return_url: successRedirect
       }
     });
 
@@ -125,6 +132,25 @@ export const CheckoutForm: FC = () => {
   }, []);
 
   useEffect(() => {
+    const updatePaymentIntentOnTotalChange = async () => {
+      const checkoutOptions = JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions;
+
+      const paymentIntentId =
+        checkoutOptions.clientSecret.split("_")[0] + "_" + checkoutOptions.clientSecret.split("_")[1];
+
+      const { id: stripeCustomerId } = await getCustomerId();
+      await updatePaymentIntent({
+        paymentIntentId,
+        newTotal: total,
+        customerId: stripeCustomerId || null,
+        customerName: customerName
+      });
+    };
+
+    updatePaymentIntentOnTotalChange();
+  }, [total]);
+
+  useEffect(() => {
     if (JSON.parse(localStorage.getItem("checkoutOptions")!).cart) {
       const passedCart = JSON.parse(localStorage.getItem("checkoutOptions")!).cart;
 
@@ -191,11 +217,12 @@ export const CheckoutForm: FC = () => {
                   <p>Subtotal: {subtotal ? `$${(subtotal / 100).toFixed(2)}` : "N/A"}</p>
                   <p>Tax: {tax ? `$${(tax / 100).toFixed(2)}` : "Enter Shipping Address to Calculate"}</p>
                   <p>
-                    Shipping + Fees:{" "}
-                    {shipping || fees
-                      ? `$${((shipping ? shipping + (fees ? fees : 0) : fees!) / 100).toFixed(2)}`
+                    Shipping:{" "}
+                    {shipping || shipping == 0
+                      ? `$${(shipping / 100).toFixed(2)}`
                       : "Enter Shipping Address to Calculate"}
                   </p>
+                  <p>Fees: {fees ? `$${(fees / 100).toFixed(2)}` : ``}</p>
                   <p>
                     <strong>Total: {total ? `$${(total / 100).toFixed(2)}` : "N/A"}</strong>
                   </p>
@@ -254,21 +281,21 @@ export const CheckoutForm: FC = () => {
                     });
                     const { amount_total, tax_amount_exclusive } = res.tax;
 
-                    let shippingTotal = 500;
-                    let feesTotal = 0;
+                    let shippingTotal = 1;
 
                     if (amount_total && tax_amount_exclusive) {
                       setTax(tax_amount_exclusive);
                       setShipping(shippingTotal);
+                      let stripeFee = calculateStripeFee(amount_total + tax_amount_exclusive + shippingTotal); //Calculate stripe fees
+                      setFees(stripeFee);
+
                       if (shippingTotal) {
-                        feesTotal = Math.round((amount_total + shippingTotal) * 0.029 + 30);
-                        setFees(feesTotal);
-                        setTotal(amount_total + shippingTotal + feesTotal);
+                        setTotal(amount_total + shippingTotal + stripeFee);
                       } else {
-                        feesTotal = Math.round(amount_total * 0.029 + 30);
-                        setFees(feesTotal);
-                        setTotal(amount_total + feesTotal);
+                        setTotal(amount_total + stripeFee);
                       }
+                    } else {
+                      return;
                     }
 
                     const checkoutOptions = JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions;
@@ -277,9 +304,10 @@ export const CheckoutForm: FC = () => {
                       checkoutOptions.clientSecret.split("_")[0] + "_" + checkoutOptions.clientSecret.split("_")[1];
 
                     const { id: stripeCustomerId } = await getCustomerId();
+                    setCustomerName(addressData?.value.name);
                     await updatePaymentIntent({
                       paymentIntentId,
-                      newTotal: shippingTotal ? amount_total + shippingTotal + feesTotal : amount_total + feesTotal,
+                      newTotal: total,
                       customerId: stripeCustomerId || null,
                       customerName: addressData?.value.name
                     });

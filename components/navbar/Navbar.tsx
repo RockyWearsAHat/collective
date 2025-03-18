@@ -66,8 +66,7 @@ export default function Navbar(): ReactNode {
   const [mobileClicks, setMobileClicks] = useState<number>(0);
   const [cartItemsLength, setCartItemsLength] = useState<number>(0);
   const [userIsArtist, setUserIsArtist] = useState<boolean>(false);
-  const [userHoveringProfilePhoto, setUserHoveringProfilePhoto] =
-    useState<boolean>(false);
+  const [userHoveringProfilePhoto, setUserHoveringProfilePhoto] = useState<boolean>(false);
 
   const { fn: checkLoggedIn } = useMutation({
     url: "/api/user/checkLoggedIn",
@@ -93,6 +92,13 @@ export default function Navbar(): ReactNode {
     method: "GET"
   });
 
+  const allowedRoutes = {
+    // Allowed routes to check on fullExtensionUrl (using .includes)
+    full: ["/product", "/search", "/browse"],
+    // Allowed routes to check on extensionUrl (using .includes)
+    extension: ["/login", "/contact", "/logout", "/register", "/cart", "/checkout"]
+  };
+
   useEffect(() => {
     if (active == "itemAddedToCart") {
       setActive(extensionUrl);
@@ -100,21 +106,20 @@ export default function Navbar(): ReactNode {
     let timeout;
     //Check if the user is logged in, on every page change, if so update nav to render logged in state
     checkLoggedIn().then(res => {
-      setUserIsArtist(res.isArtist ? res.isArtist : false);
-      validateToken().then(res => {
-        if (res && !res.tokenValidated) {
+      setUserIsArtist(!!res.isArtist);
+
+      validateToken().then(tokenRes => {
+        if (tokenRes && !tokenRes.tokenValidated) {
+          // Only navigate if:
+          // - fullExtensionUrl is not exactly "/" (i.e. the homepage is allowed)
+          // - AND extensionUrl does not include any allowed extension routes
+          // - AND fullExtensionUrl does not include any allowed full routes
           if (
-            !fullExtensionUrl.match(/^\/$/) &&
-            extensionUrl.indexOf("/login") == -1 &&
-            extensionUrl.indexOf("/contact") == -1 &&
-            extensionUrl.indexOf("/logout") == -1 &&
-            extensionUrl.indexOf("/register") == -1 &&
-            fullExtensionUrl.indexOf("/product") == -1 &&
-            fullExtensionUrl.indexOf("/search") == -1 &&
-            extensionUrl.indexOf("/cart") == -1 &&
-            extensionUrl.indexOf("/checkout") == -1
+            fullExtensionUrl !== "/" &&
+            !allowedRoutes.extension.some(route => extensionUrl.includes(route)) &&
+            !allowedRoutes.full.some(route => fullExtensionUrl.includes(route))
           ) {
-            return navigate("/session-timed-out");
+            navigate("/session-timed-out");
           }
         }
       });
@@ -141,10 +146,7 @@ export default function Navbar(): ReactNode {
       }
 
       //If user is logged in, get their profile photo
-      if (
-        (!userProfilePhoto || active == "/profilePhotoChanged") &&
-        res.loggedIn
-      ) {
+      if ((!userProfilePhoto || active == "/profilePhotoChanged") && res.loggedIn) {
         fetchUserProfilePhoto().then(res => {
           if (res && res.link) {
             if (userProfilePhoto != res.link) setUserProfilePhoto(res.link);
@@ -209,12 +211,8 @@ export default function Navbar(): ReactNode {
       window.addEventListener("click", e => {
         if (!e.target) return;
         if (
-          !document
-            .getElementById("dropdownMenuGroup")
-            ?.contains(e.target as Node) &&
-          !document
-            .getElementById("userProfilePhoto")
-            ?.contains(e.target as Node)
+          !document.getElementById("dropdownMenuGroup")?.contains(e.target as Node) &&
+          !document.getElementById("userProfilePhoto")?.contains(e.target as Node)
         ) {
           setMobileClicks(0);
         }
@@ -240,16 +238,11 @@ export default function Navbar(): ReactNode {
   return (
     <>
       <div className={styles.navbarWrapper}>
-        <Suspense
-          fallback={<div className={styles.fallbackNavbarBackground}></div>}
-        >
+        <Suspense fallback={<div className={styles.fallbackNavbarBackground}></div>}>
           <div className={styles.navbarBackground} id="navBg"></div>
         </Suspense>
         <div className={styles.navbarSearchBar}>
-          <form
-            onSubmit={handleSearchSubmit}
-            onKeyDown={searchBarEnterKeyHandler}
-          >
+          <form onSubmit={handleSearchSubmit} onKeyDown={searchBarEnterKeyHandler}>
             <input
               type="text"
               placeholder="Search"
@@ -285,11 +278,7 @@ export default function Navbar(): ReactNode {
                     if (!mobileRendering) {
                       navigate("/profile");
                       setActive("/profile");
-                    } else if (
-                      mobileRendering &&
-                      mobileClicks == 1 &&
-                      extensionUrl != "/profile"
-                    ) {
+                    } else if (mobileRendering && mobileClicks == 1 && extensionUrl != "/profile") {
                       setMobileClicks(2);
                       navigate("/profile");
                       setActive("/profile");
@@ -337,11 +326,7 @@ export default function Navbar(): ReactNode {
                           setActive={setActive}
                         />
                       ))}
-                      <div
-                        className={
-                          styles.navbarProfileDropdownLightDarkModeToggleWrapper
-                        }
-                      >
+                      <div className={styles.navbarProfileDropdownLightDarkModeToggleWrapper}>
                         <LightDarkModeToggle />
                       </div>
                       {loggedIn &&
@@ -362,11 +347,7 @@ export default function Navbar(): ReactNode {
               </li>
               {userIsArtist && (
                 <li className={styles.navbarUploadButtonWrapper}>
-                  <Link
-                    to="/create"
-                    onClick={() => setActive("/create")}
-                    title="Create New Piece"
-                  >
+                  <Link to="/create" onClick={() => setActive("/create")} title="Create New Piece">
                     <div
                       className={`${styles.navbarUploadButton}${extensionUrl == "/create" ? " " + styles.navbarUploadButtonActive : ""}`}
                     >
@@ -378,11 +359,7 @@ export default function Navbar(): ReactNode {
             </>
           )}
           <li className={styles.navbarCartWrapper}>
-            <Link
-              to="/cart"
-              onClick={() => setActive("/cart")}
-              title="View Cart"
-            >
+            <Link to="/cart" onClick={() => setActive("/cart")} title="View Cart">
               <div
                 cartitems={cartItemsLength.toString()}
                 className={`${styles.navbarCart}${extensionUrl == "/cart" ? " " + styles.navbarCartActive : ""}${cartItemsLength > 0 ? " " + styles.navbarCartDisplayItems : ""}`}
