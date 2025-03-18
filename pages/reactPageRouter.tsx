@@ -28,6 +28,7 @@ import { SessionTimedOut } from "./timeout/SessionTimedOut";
 import { Search } from "./search/Search";
 import { Cart } from "./cart/Cart";
 import { Checkout } from "./checkout/Checkout";
+import { Browse } from "./browse/Browse";
 
 const PageRouter = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const PageRouter = createBrowserRouter([
       {
         path: "/products/browse/:productName",
         element: <MultipleProductSelect />
+      },
+      {
+        path: "/browse/:sort",
+        element: <Browse />
       },
       {
         path: "/products/:productName",

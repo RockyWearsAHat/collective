@@ -10,7 +10,7 @@ export const LightDarkModeToggle: FC = () => {
 
   async function getColorSchemePreference() {
     const userColorScheme = await fetchLoggedInUserColorScheme();
-    console.log(`got color scheme preference ${userColorScheme}`);
+    // console.log(`got color scheme preference ${userColorScheme}`);
 
     if (userColorScheme.setColorScheme) {
       if (userColorScheme.colorScheme == "light") {
@@ -46,26 +46,16 @@ export const LightDarkModeToggle: FC = () => {
 
   let timeout: NodeJS.Timeout;
 
-  const computedTimeoutTimeFromCSS = getComputedStyle(
-    document.querySelector(":root")!
-  ).getPropertyValue("--lightDarkColorSwapTime");
+  const computedTimeoutTimeFromCSS = getComputedStyle(document.querySelector(":root")!).getPropertyValue(
+    "--lightDarkColorSwapTime"
+  );
 
   let timeoutTime: number = 0;
 
   if (computedTimeoutTimeFromCSS.indexOf("ms") != -1) {
-    timeoutTime = parseInt(
-      computedTimeoutTimeFromCSS.substring(
-        0,
-        computedTimeoutTimeFromCSS.indexOf("ms")
-      )
-    );
+    timeoutTime = parseInt(computedTimeoutTimeFromCSS.substring(0, computedTimeoutTimeFromCSS.indexOf("ms")));
   } else {
-    timeoutTime = parseInt(
-      computedTimeoutTimeFromCSS.substring(
-        0,
-        computedTimeoutTimeFromCSS.indexOf("s")
-      )
-    );
+    timeoutTime = parseInt(computedTimeoutTimeFromCSS.substring(0, computedTimeoutTimeFromCSS.indexOf("s")));
 
     timeoutTime *= 1000;
   }
@@ -127,9 +117,7 @@ export const LightDarkModeToggle: FC = () => {
             setColorSchemePreference({ colorScheme: theme });
             document.getElementById("root")?.setAttribute("theme", theme);
             setTheme(theme == "light" ? "dark" : "light");
-            if (
-              document.getElementById("lightDarkModeTransitionStyles") == null
-            ) {
+            if (document.getElementById("lightDarkModeTransitionStyles") == null) {
               document.head.appendChild(style);
             }
           }}

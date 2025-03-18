@@ -5,8 +5,12 @@ export interface IItem extends Document {
   name: string;
   price: Decimal128 | string;
   salePrice?: Decimal128 | string;
+  productionCost: Decimal128 | string;
   imageLinks?: string[];
   toJSON: () => IItem;
+  timesViewed?: number;
+  timesAddedToCart?: number;
+  timesPurchased?: number;
 }
 
 interface ItemModel extends mongoose.Model<IItem> {}
@@ -16,7 +20,11 @@ const itemSchema = new mongoose.Schema<IItem, ItemModel>({
   name: { type: String, required: true },
   price: { type: mongoose.Schema.Types.Decimal128, required: true },
   salePrice: { type: mongoose.Schema.Types.Decimal128 },
-  imageLinks: { type: Array<String> }
+  productionCost: { type: mongoose.Schema.Types.Decimal128, required: true },
+  imageLinks: { type: Array<String> },
+  timesViewed: { type: Number, default: 0 },
+  timesAddedToCart: { type: Number, default: 0 },
+  timesPurchased: { type: Number, default: 0 }
 });
 
 itemSchema.method("toJSON", function () {
