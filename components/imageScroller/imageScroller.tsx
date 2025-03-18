@@ -52,7 +52,7 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
   const [itemWidth, setItemWidth] = useState(400);
 
   // Our fetch function
-  const { fn: searchProducts } = useMutation({
+  const { fn: searchProducts, loading } = useMutation({
     url: "/api/products/getProducts",
     method: "POST"
   });
@@ -306,6 +306,17 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
                 </div>
               </div>
             ))}
+
+            {loading && (
+              <div className="carousel-item mx-2 inline-block min-h-[400px] min-w-[400px]">
+                <div
+                  className="flex h-full w-full animate-pulse items-center
+      justify-center border border-gray-300 bg-gray-100"
+                >
+                  <p className="text-gray-500">Loading...</p>
+                </div>
+              </div>
+            )}
 
             {productList.length >= maximumItems && (
               <Link to="/browse/popular" className="pointer-events-auto">
