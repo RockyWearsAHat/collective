@@ -131,7 +131,7 @@ export const uploadProductImagesToS3 = async (files: any[], itemId: ObjectId): P
   });
 };
 
-export const getProductImages = async (productId: ObjectId, imagesToGet?: Number) => {
+export const getProductImages = async (productId: ObjectId, _imagesToGet?: Number) => {
   try {
     const foundProduct = await Item.findById(productId);
 
