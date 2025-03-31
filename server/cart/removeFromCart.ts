@@ -33,29 +33,23 @@ removeFromCartRouter.post("/", async (req: Request, res: Response) => {
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
-      if (!productLink)
-        return res.json({ message: "error finding product link" });
-      if (
-        productLink.quantity == 1 ||
-        productLink.quantity <= quantity ||
-        fullyRemove
-      ) {
+      if (!productLink) return res.json({ message: "error finding product link" });
+      if (productLink.quantity == 1 || productLink.quantity <= quantity || fullyRemove) {
         await CartItem.findByIdAndDelete(linkId!);
         cart = cart.filter(item => item._id.toString() != linkId.toString());
       } else {
         productLink.quantity -= quantity ? quantity : 1;
         await productLink.save();
 
-        cart = [
-          productLink,
-          ...cart.filter(item => item._id.toString() != linkId.toString())
-        ];
+        cart = [productLink, ...cart.filter(item => item._id.toString() != linkId.toString())];
       }
     } else {
       return res.json({ message: "item not found in cart" });
     }
 
     req.session.cart = cart;
+
+    // console.log(cart);
     req.session.save(() => {
       return res.json("successfully removed item from cart");
     });
@@ -66,9 +60,7 @@ removeFromCartRouter.post("/", async (req: Request, res: Response) => {
       return res;
     }
 
-    const loggedInUser = await User.findById(req.session.user!._id).populate(
-      "cart"
-    );
+    const loggedInUser = await User.findById(req.session.user!._id).populate("cart");
 
     if (!loggedInUser) return res.status(404).json("User not found");
 
@@ -85,13 +77,8 @@ removeFromCartRouter.post("/", async (req: Request, res: Response) => {
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
-      if (!productLink)
-        return res.json({ message: "error finding product link" });
-      if (
-        productLink.quantity == 1 ||
-        productLink.quantity <= quantity ||
-        fullyRemove
-      ) {
+      if (!productLink) return res.json({ message: "error finding product link" });
+      if (productLink.quantity == 1 || productLink.quantity <= quantity || fullyRemove) {
         await CartItem.findByIdAndDelete(linkId!);
       } else {
         productLink.quantity -= quantity ? quantity : 1;

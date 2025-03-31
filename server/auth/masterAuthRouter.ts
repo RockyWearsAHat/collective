@@ -7,15 +7,11 @@ export const masterAuthRouter: Router = Router();
 
 masterAuthRouter.use("/validateToken", validateTokenHandler);
 
-export const withAuth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const withAuth = async (req: Request, res: Response, next: NextFunction) => {
   let tokenValidated: boolean = false;
 
   if (!req.session || !req.session.token) {
-    console.log("No session or token");
+    // console.log("No session or token");
     return res.json({ tokenValidated: false });
   }
 
@@ -26,8 +22,7 @@ export const withAuth = async (
 
   const loggedInUser = await User.findById(req.session.user?._id);
 
-  if (!loggedInUser)
-    return res.json({ ok: false, message: "Error finding user" });
+  if (!loggedInUser) return res.json({ ok: false, message: "Error finding user" });
 
   const refreshedToken = await signToken(loggedInUser);
 

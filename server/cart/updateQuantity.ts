@@ -37,7 +37,7 @@ updateQuantityRouter.post("/", async (req: Request, res: Response) => {
     req.session.cart = returnCart;
     req.session.save();
 
-    console.log(returnCart);
+    // console.log(returnCart);
 
     return res.json("Successfully updated quantity");
   } else {

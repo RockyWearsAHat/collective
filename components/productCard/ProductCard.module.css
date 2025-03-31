@@ -1,14 +1,18 @@
 .productCardWrapper {
   margin: 0;
   padding: 0;
-  height: min-content;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  pointer-events: none;
 }
 
 .productCard {
   position: relative;
   aspect-ratio: 1/1;
-  height: auto;
-  width: auto;
+  height: 100%;
+  width: 100%;
 }
 
 .productCard::after {
@@ -32,6 +36,7 @@
   width: 100%;
   object-fit: cover;
   user-select: none;
+  z-index: 30;
 }
 
 .productCard ~ h2 {
@@ -44,4 +49,16 @@
 
 .linethroughPrice {
   text-decoration: line-through;
+}
+
+.productCardText {
+  font-size: var(--productCardTextSize);
+  font-weight: var(--productCardTextWeight);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: white;
+  z-index: 40;
 }

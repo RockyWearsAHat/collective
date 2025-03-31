@@ -120,3 +120,7 @@ input[type="search"] {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.safe-padding-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

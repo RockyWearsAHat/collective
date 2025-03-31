@@ -5,62 +5,82 @@ import { CartItem, ICartItem } from "../../db/models/cartItem";
 export const getCartRouter: Router = Router();
 
 getCartRouter.get("/", async (req: Request, res: Response) => {
-  //Don't initialize a session if there isn't one
-  if (!req.session) return res.json([]);
-
   //If the user is not logged in
   if (!req.session.user) {
-    if (!req.session.cart || req.session.cart.length == 0) return res.json([]);
+    //If no cart but session id, find all items with session id, set the cart and return
+    if (req.session.id) {
+      // console.log("No user found, checking for cart with session id", req.session.id);
+      const populateItems = req.query.populateItems;
+      const foundLinks = populateItems
+        ? await CartItem.find({ sessionId: req.session.id }).populate("item")
+        : ((await CartItem.find({ sessionId: req.session.id })) ?? []);
 
-    let cart: any[] = req.session.cart ? req.session.cart : [];
+      console.log("Found cart in get cart router:", foundLinks);
 
+      req.session.cart = foundLinks;
+      req.session.save();
+      // console.log("Found links: ", foundLinks);
+      return res.json(foundLinks);
+    }
+
+    //There will be a cart due to the above check
+    let cart: any[] = req.session.cart!;
+
+    //Filter out nulls
     cart = cart.filter(n => n);
-    req.session.cart = cart ? cart : [];
+
+    //If no cart, return
     if (!cart || cart.length == 0) {
       return req.session.save();
     }
 
     const { populateUser } = req.query;
-
     let foundCart = [];
-
     for (let i = 0; i < cart.length; i++) {
-      const foundItem = await CartItem.findById(cart[i]._id);
-      if (foundItem == null) continue;
       let item = await CartItem.findById(cart[i]._id).populate("item");
-
       //It should be there?
       if (!item) return res.json("Item not found");
-
       if (populateUser) {
-        // item = await item.populate("user", ["stripeId", "username"]);
+        item = await item.populate("user", ["stripeId", "username"]);
       }
       foundCart.push(item);
     }
+    let sessionCart: Array<ICartItem> = [];
+    for (let i = 0; i < foundCart.length; i++) {
+      sessionCart.push({
+        _id: foundCart[i]._id,
+        sessionId: req.session.id,
+        item: (foundCart[i].item as any)._id ? (foundCart[i].item as any)._id : (foundCart[i].item as any),
+        quantity: foundCart[i].quantity
+      } as ICartItem);
+      for (let j = 0; j < foundCart.length; j++) {
+        if (i == j) continue;
+        if ((foundCart[i].item as any)._id.toString() == (foundCart[j].item as any)._id.toString()) {
+          if (foundCart[i].quantity > foundCart[j].quantity) {
+            foundCart.splice(j, 1);
+          } else {
+            foundCart.splice(i, 1);
+          }
+        }
+      }
+    }
 
-    foundCart = [...new Set(foundCart)];
-
+    console.log("Session cart:", sessionCart);
+    // console.log("Found cart, set session cart to: ", foundCart);
     req.session.cart = foundCart;
     req.session.save();
-
     return res.json(foundCart);
   } else {
-    const loggedInUser = await User.findById(req.session.user!._id).populate(
-      "cart"
-    );
+    const loggedInUser = await User.findById(req.session.user!._id).populate("cart");
     if (!loggedInUser) return res.json("User not found");
-
     const cart: ICartItem[] = loggedInUser.cart as ICartItem[];
-
     const { populateUser } = req.query;
-
     for (let i = 0; i < cart.length; i++) {
       cart[i] = await cart[i].populate("item");
       if (populateUser) {
         cart[i] = await cart[i].populate("user", ["stripeId", "username"]);
       }
     }
-
     return res.json(cart);
   }
 });
@@ -91,9 +111,7 @@ getCartRouter.post("/", async (req: Request, res: Response) => {
 
     return res.json(cart);
   } else {
-    const loggedInUser = await User.findById(req.session.user!._id).populate(
-      "cart"
-    );
+    const loggedInUser = await User.findById(req.session.user!._id).populate("cart");
     if (!loggedInUser) return res.json("User not found");
 
     const cart: ICartItem[] = loggedInUser.cart as ICartItem[];
@@ -102,9 +120,7 @@ getCartRouter.post("/", async (req: Request, res: Response) => {
 
     for (let i = 0; i < cart.length; i++) {
       if (populateUser) {
-        cart[i] = await (
-          await cart[i].populate("item")
-        ).populate("user", ["stripeId", "username"]);
+        cart[i] = await (await cart[i].populate("item")).populate("user", ["stripeId", "username"]);
       } else {
         cart[i] = await cart[i].populate("item");
       }

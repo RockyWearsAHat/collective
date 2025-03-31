@@ -3,6 +3,7 @@ import { useStripe, useElements, PaymentElement, AddressElement } from "@stripe/
 import { useMutation } from "../../hooks/useMutation";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { CheckoutPageCartItem } from "../checkoutPageCartItem/CheckoutPageCartItem";
+import { useNavigate } from "react-router-dom";
 
 const calculateStripeFee = (amount: number) => {
   return Math.ceil(amount * 0.03 + 30);
@@ -13,6 +14,8 @@ export const CheckoutForm: FC = () => {
 
   const stripe = useStripe();
   const elements = useElements();
+
+  const navigate = useNavigate();
 
   const [_errorMessage, setErrorMessage] = useState<string | undefined | null>(null);
 
@@ -86,7 +89,7 @@ export const CheckoutForm: FC = () => {
   const testingDivRef = useRef(null);
   const [formHeight, setFormHeight] = useState("0px");
 
-  //Resize item display to size of form
+  //Resize item display to size of form, ensure they are always the same height
   useEffect(() => {
     if (!containerRef.current || !formRef.current || !testingDivRef.current) return;
 
@@ -103,30 +106,58 @@ export const CheckoutForm: FC = () => {
     return () => resizeObserver.disconnect();
   }, []);
 
-  //Get the cart items to display
+  //Set up the get cart function to get the user's cart
   const { fn: getCart } = useMutation({
-    url: "/api/cart/getCart",
+    url: "/api/cart/getCart?populateItems=true",
     cache: "no-store",
     method: "GET"
   });
 
+  //Get users cart on page load
   useEffect(() => {
-    getCart().then(res => {
+    getCart().then(async res => {
+      // console.log(res);
+      //If the cart isn't an array or is empty, set the cart to an empty array and return
       if (!(res instanceof Array) || res.length == 0) {
         setCart([]);
 
         return;
       }
 
+      //Temporary array to hold the cart items
       let cartItems: any[] = [];
+
+      //This check should pass always because of the check above, but just in case
       if (res && res.length > 0) {
+        //Run through the whole cart
         for (let i = 0; i < res.length; i++) {
+          //Get each item
           let item = res[i];
+          //Add item to cart under item key
           cartItems.push(item.item);
+
+          //Add quantity to the item (mirror CartItem)
           cartItems[i].quantity = item.quantity;
         }
 
+        // console.log("cartItems: ", cartItems);
+
+        //Set the cart to the cart items
         setCart(cartItems);
+
+        //Calculate the cart total, absolutely disgusting but prices are strings when sent back to the user, should make that an optional
+        //function but that requires reworking alot of code and I'm lazy
+        let cartTotal = 0;
+        for (let i = 0; i < cartItems.length; i++) {
+          cartTotal += cartItems[i].salePrice
+            ? Number.parseFloat(cartItems[i].salePrice.substring(1)) * Number.parseInt(cartItems[i].quantity)
+            : Number.parseFloat(cartItems[i].price.substring(1)) * Number.parseInt(cartItems[i].quantity);
+        }
+        //Convert to cents
+        cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
+
+        //Set the subtotal
+        setSubtotal(cartTotal);
       }
     });
   }, []);
@@ -139,43 +170,27 @@ export const CheckoutForm: FC = () => {
         checkoutOptions.clientSecret.split("_")[0] + "_" + checkoutOptions.clientSecret.split("_")[1];
 
       const { id: stripeCustomerId } = await getCustomerId();
-      await updatePaymentIntent({
+
+      console.log(
+        `Payment for: \n${cart.map((item: any) => `${item.name} x${item.quantity} | ${item.salePrice ? item.salePrice : item.price} per | $${item.salePrice ? (Number.parseFloat(item.salePrice.substring(1)) * item.quantity).toFixed(2) : (Number.parseFloat(item.price.substring(1)) * item.quantity).toFixed(2)} total | https://artistcollective.store/products/${item.name.toLowerCase().replaceAll(" ", "_")}/${item._id}\n`)}`
+      );
+
+      const res = await updatePaymentIntent({
         paymentIntentId,
         newTotal: total,
         customerId: stripeCustomerId || null,
-        customerName: customerName
+        customerName: customerName,
+        newDescription: `Payment for: \n\n${cart.map((item: any) => `${item.name} x${item.quantity} | ${item.salePrice ? item.salePrice : item.price} per | $${item.salePrice ? (Number.parseFloat(item.salePrice.substring(1)) * item.quantity).toFixed(2) : (Number.parseFloat(item.price.substring(1)) * item.quantity).toFixed(2)} total | https://artistcollective.store/products/${item.name.toLowerCase().replaceAll(" ", "_")}/${item._id}\n`).join("\n")}`
       });
+
+      if (res.clearClientSecret) {
+        localStorage.clear();
+        return navigate(res.redirect);
+      }
     };
 
     updatePaymentIntentOnTotalChange();
-  }, [total]);
-
-  useEffect(() => {
-    if (JSON.parse(localStorage.getItem("checkoutOptions")!).cart) {
-      const passedCart = JSON.parse(localStorage.getItem("checkoutOptions")!).cart;
-
-      //Calculate the cart total
-      let cartTotal = 0;
-      for (let i = 0; i < passedCart.length; i++) {
-        cartTotal += passedCart[i].salePrice
-          ? Number.parseFloat(passedCart[i].salePrice.substring(1)) * Number.parseInt(passedCart[i].quantity)
-          : Number.parseFloat(passedCart[i].price.substring(1)) * Number.parseInt(passedCart[i].quantity);
-      }
-      cartTotal = Number.parseInt((cartTotal * 100).toFixed(0));
-
-      setSubtotal(cartTotal);
-    }
-  }, []);
-
-  useEffect(() => {
-    const paymentFormWrapper = document.getElementById("paymentFormWrapper");
-    paymentFormWrapper?.classList.remove("overflow-y-hidden");
-    setTimeout(() => {
-      if (isAddressOpen) {
-        paymentFormWrapper?.classList.add("overflow-y-hidden");
-      }
-    }, 300);
-  }, [isAddressOpen]);
+  }, [total, cart]);
 
   return (
     <>
@@ -191,7 +206,7 @@ export const CheckoutForm: FC = () => {
             >
               <div
                 ref={testingDivRef}
-                className="m-auto w-1/3 min-w-[300px] overflow-y-auto"
+                className="no-scrollbar m-auto w-1/3 min-w-[300px] overflow-y-auto"
                 style={{ height: formHeight }}
               >
                 {cart.map((item, index) => (
@@ -201,7 +216,7 @@ export const CheckoutForm: FC = () => {
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
-                className="my-auto flex max-h-[80vh] flex-1 flex-col overflow-y-auto pr-4"
+                className="no-scrollbar my-auto flex max-h-[80vh] flex-1 flex-col overflow-y-auto pr-4"
               >
                 <PaymentElement />
                 <button
@@ -305,12 +320,16 @@ export const CheckoutForm: FC = () => {
 
                     const { id: stripeCustomerId } = await getCustomerId();
                     setCustomerName(addressData?.value.name);
-                    await updatePaymentIntent({
+                    const res2 = await updatePaymentIntent({
                       paymentIntentId,
                       newTotal: total,
                       customerId: stripeCustomerId || null,
                       customerName: addressData?.value.name
                     });
+                    if (res2.clearClientSecret) {
+                      localStorage.clear();
+                      return navigate(res2.redirect);
+                    }
                   }}
                   className="relative mx-auto mb-4 mt-4 w-full self-center justify-self-center rounded-md bg-[#30313D] p-4 px-8 text-white"
                 >

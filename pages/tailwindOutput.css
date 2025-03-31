@@ -672,10 +672,6 @@ video {
   top: 50%;
 }
 
-.-z-50 {
-  z-index: -50;
-}
-
 .z-10 {
   z-index: 10;
 }
@@ -791,10 +787,6 @@ video {
   height: 24px;
 }
 
-.h-\[500px\] {
-  height: 500px;
-}
-
 .h-\[50px\] {
   height: 50px;
 }
@@ -831,6 +823,14 @@ video {
   height: 100vh;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
+.max-h-\[200px\] {
+  max-height: 200px;
+}
+
 .max-h-\[500px\] {
   max-height: 500px;
 }
@@ -839,8 +839,8 @@ video {
   max-height: 80vh;
 }
 
-.min-h-\[400px\] {
-  min-height: 400px;
+.min-h-\[200px\] {
+  min-height: 200px;
 }
 
 .min-h-\[calc\(100vh-7\.5rem\)\] {
@@ -932,8 +932,8 @@ video {
   min-width: 300px;
 }
 
-.min-w-\[400px\] {
-  min-width: 400px;
+.max-w-\[200px\] {
+  max-width: 200px;
 }
 
 .max-w-\[20vw\] {
@@ -942,10 +942,6 @@ video {
 
 .max-w-\[500px\] {
   max-width: 500px;
-}
-
-.max-w-\[95\%\] {
-  max-width: 95%;
 }
 
 .flex-1 {
@@ -1004,16 +1000,20 @@ video {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.cursor-default {
-  cursor: default;
-}
-
 .cursor-not-allowed {
   cursor: not-allowed;
 }
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.cursor-move {
+  cursor: move;
+}
+
+.cursor-grab {
+  cursor: grab;
 }
 
 .touch-none {
@@ -1108,10 +1108,6 @@ video {
 
 .overflow-x-hidden {
   overflow-x: hidden;
-}
-
-.overflow-y-hidden {
-  overflow-y: hidden;
 }
 
 .overflow-x-scroll {
@@ -1239,10 +1235,6 @@ video {
 
 .bg-opacity-60 {
   --tw-bg-opacity: 0.6;
-}
-
-.bg-\[url\(\'\/bg\.jpg\'\)\] {
-  background-image: url('/bg.jpg');
 }
 
 .bg-\[url\(\'\/checkoutBg\.jpg\'\)\] {
@@ -1415,6 +1407,10 @@ video {
 
 .font-semibold {
   font-weight: 600;
+}
+
+.leading-\[10rem\] {
+  line-height: 10rem;
 }
 
 .text-blue-600 {
@@ -1657,6 +1653,22 @@ video {
 }
 
 @media (min-width: 1024px) {
+  .lg\:max-h-\[400px\] {
+    max-height: 400px;
+  }
+
+  .lg\:min-h-\[400px\] {
+    min-height: 400px;
+  }
+
+  .lg\:min-w-\[400px\] {
+    min-width: 400px;
+  }
+
+  .lg\:max-w-\[400px\] {
+    max-width: 400px;
+  }
+
   .lg\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

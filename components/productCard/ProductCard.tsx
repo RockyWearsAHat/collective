@@ -19,19 +19,11 @@ interface ProductCardProps {
   description?: string;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
-  name,
-  id,
-  image,
-  price,
-  description,
-  salePrice
-}): ReactNode => {
+const ProductCard: FC<ProductCardProps> = ({ name, id, image, price, description, salePrice }): ReactNode => {
   let salePricePercentage;
   if (salePrice) {
     salePricePercentage = (
-      ((Number(price.split("$")[1]) - Number(salePrice.split("$")[1])) /
-        Number(price.split("$")[1])) *
+      ((Number(price.split("$")[1]) - Number(salePrice.split("$")[1])) / Number(price.split("$")[1])) *
       100
     ).toFixed(0);
 
@@ -43,28 +35,18 @@ const ProductCard: FC<ProductCardProps> = ({
 
   return (
     <div className={styles.productCardWrapper}>
-      <Link
-        to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}
-      >
-        <div
-          salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""}
-          className={styles.productCard}
-        >
-          <img
-            className={styles.productCardImage}
-            src={`${image}`}
-            alt={`Image of ${name}`}
-          />
+      <Link to={`/products/${name.toLocaleLowerCase().replaceAll(" ", "_")}/${id}`}>
+        <div salelabel={salePrice ? `Sale: ${salePricePercentage} off` : ""} className={styles.productCard}>
+          <img className={styles.productCardImage} src={`${image}`} alt={`Image of ${name}`} />
         </div>
-        <h2>{name}</h2>
-        {description && <p>{description}</p>}
-        <p>
-          Price:{" "}
-          <span className={`${salePrice ? styles.linethroughPrice : ""}`}>
-            {price}
-          </span>
-          {salePrice && <span> {salePrice}</span>}
-        </p>
+        <div className={styles.productCardText}>
+          <h2>{name}</h2>
+          {description && <p>{description}</p>}
+          <p>
+            <span className={`${salePrice ? styles.linethroughPrice : ""}`}>{price}</span>
+            {salePrice && <span> {salePrice}</span>}
+          </p>
+        </div>
       </Link>
     </div>
   );
