@@ -733,10 +733,6 @@ video {
   margin-top: 1.5rem;
 }
 
-.block {
-  display: block;
-}
-
 .inline-block {
   display: inline-block;
 }
@@ -771,6 +767,10 @@ video {
   height: 2.5rem;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -799,10 +799,6 @@ video {
   height: 80vh;
 }
 
-.h-\[calc\(100vh-2\.5rem\)\] {
-  height: calc(100vh - 2.5rem);
-}
-
 .h-\[calc\(100vh-4rem\)\] {
   height: calc(100vh - 4rem);
 }
@@ -821,10 +817,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-40 {
-  height: 10rem;
 }
 
 .max-h-\[200px\] {
@@ -1008,14 +1000,6 @@ video {
   cursor: pointer;
 }
 
-.cursor-move {
-  cursor: move;
-}
-
-.cursor-grab {
-  cursor: grab;
-}
-
 .touch-none {
   touch-action: none;
 }
@@ -1112,10 +1096,6 @@ video {
 
 .overflow-x-scroll {
   overflow-x: scroll;
-}
-
-.overflow-y-scroll {
-  overflow-y: scroll;
 }
 
 .overscroll-none {

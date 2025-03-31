@@ -33,31 +33,35 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
   const [itemsMap, setItemsMap] = useState<Map<string, IItem>>(new Map());
   const productList = Array.from(itemsMap.values());
 
+  // Control infinite loading
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
+  // Main ref to the scroller wrapper (or vertical container)
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // For pointer dragging (horizontal only)
+  // Horizontal dragging state
   const [pointerDown, setPointerDown] = useState(false);
   const isDraggingRef = useRef(false);
-  const [dragAxis, setDragAxis] = useState<"" | "horizontal" | "vertical">("");
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const pageScrollTopRef = useRef(0);
-  const clickedElementRef = useRef<HTMLElement | null>(null);
 
-  // For measuring item width if horizontal
+  // Item width (for horizontal scroller)
   const [itemWidth, setItemWidth] = useState(400);
 
+  // Data loading function
   const { fn: searchProducts, loading } = useMutation({
     url: "/api/products/getProducts",
     method: "POST"
   });
 
-  // 1. Wrap fetchMore in useCallback so it’s stable:
+  // -------------------------------------------------------------------------
+  // 1) fetchMore with stable reference
+  // -------------------------------------------------------------------------
   const fetchMore = useCallback(async () => {
+    // Don’t fetch if we’re done or already fetching
     if (!hasMore || isFetching || productList.length >= maximumItems) return;
 
     setIsFetching(true);
@@ -73,31 +77,63 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
         return;
       }
 
-      // Append new items
       const newMap = new Map(itemsMap);
       for (const item of serverData) {
-        const idStr = String(item._id); // ensure a unique string key
+        // Use string version of _id as the key
+        const idStr = String(item._id);
         newMap.set(idStr, item);
       }
-      // If we hit maximum
+
+      // If we reach maximum
       if (newMap.size >= maximumItems) {
         setHasMore(false);
       }
       setItemsMap(newMap);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setHasMore(false);
     } finally {
       setIsFetching(false);
     }
   }, [hasMore, isFetching, productList.length, maximumItems, searchProducts, searchQuery, chunkSize, itemsMap]);
 
-  // 2. Fetch initial chunk on mount
+  // -------------------------------------------------------------------------
+  // 2) Load first batch on mount
+  // -------------------------------------------------------------------------
   useEffect(() => {
-    void fetchMore(); // fetch the first batch
+    void fetchMore();
   }, [fetchMore]);
 
-  // ------------------- HORIZONTAL SCROLL LOGIC -------------------
+  // -------------------------------------------------------------------------
+  // 3) Global mousemove => dynamic cursor
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    function handleMouseMove(e: MouseEvent) {
+      const wrapper = carouselRef.current;
+      if (!wrapper) return;
+
+      if (pointerDown) {
+        // If we’re dragging => "grabbing"
+        wrapper.style.cursor = "grabbing";
+      } else {
+        // If hovered over .carousel-item => pointer
+        const hoveredEl = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+        if (hoveredEl && (hoveredEl.classList.contains("carousel-item") || hoveredEl.closest(".carousel-item"))) {
+          wrapper.style.cursor = "pointer";
+        } else {
+          // horizontal => "grab", vertical => "default"
+          wrapper.style.cursor = horizontal ? "grab" : "default";
+        }
+      }
+    }
+
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => document.removeEventListener("mousemove", handleMouseMove);
+  }, [pointerDown, horizontal]);
+
+  // -------------------------------------------------------------------------
+  // (A) If horizontal, measure item width for scroller
+  // -------------------------------------------------------------------------
   useEffect(() => {
     if (!horizontal || !carouselRef.current) return;
     const firstItem = carouselRef.current.querySelector<HTMLElement>(".carousel-item");
@@ -111,22 +147,23 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     }
   }, [productList, horizontal]);
 
-  // For horizontal trackpad scroll
+  // -------------------------------------------------------------------------
+  // (B) Horizontal trackpad scroll
+  // -------------------------------------------------------------------------
   useEffect(() => {
     if (!horizontal) return;
     const el = carouselRef.current;
     if (!el) return;
 
     function handleWheel(e: WheelEvent) {
-      // We want to allow vertical scroll of the page, but do a custom horizontal
       const scroller = e.currentTarget as HTMLElement;
+      // Let vertical scroll go to the page container
       const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
 
-      // vertical => pass to page
       if (pageContent && e.deltaY !== 0) {
         pageContent.scrollTop += e.deltaY;
       }
-      // horizontal => block default & manually move scroller
+      // For horizontal deltas => prevent default & scroll manually
       if (e.deltaX !== 0) {
         e.preventDefault();
         scroller.scrollLeft += e.deltaX;
@@ -137,17 +174,21 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     return () => el.removeEventListener("wheel", handleWheel);
   }, [horizontal]);
 
-  // Horizontal scroll event for infinite load
+  // -------------------------------------------------------------------------
+  // (C) Horizontal infinite load near the end
+  // -------------------------------------------------------------------------
   function handleHorizontalScroll(e: React.UIEvent<HTMLDivElement>) {
     const el = e.currentTarget;
     const pos = el.scrollLeft + el.clientWidth;
     const max = el.scrollWidth;
-    // If near the right edge => fetch
     if (max - pos < itemWidth) {
       void fetchMore();
     }
   }
 
+  // -------------------------------------------------------------------------
+  // (D) Horizontal next/prev arrows
+  // -------------------------------------------------------------------------
   function handleNextClick() {
     if (!carouselRef.current || !horizontal) return;
     const el = carouselRef.current;
@@ -156,7 +197,6 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     const finalStop = Math.min(nextIndex * itemWidth, el.scrollWidth - el.clientWidth);
     el.scrollTo({ left: finalStop, behavior: "smooth" });
 
-    // Preload next chunk if we're near the right edge
     setTimeout(() => {
       const pos = el.scrollLeft + el.clientWidth;
       const max = el.scrollWidth;
@@ -175,113 +215,150 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     el.scrollTo({ left: finalStop, behavior: "smooth" });
   }
 
-  // Horizontal pointer/drag logic
+  // -------------------------------------------------------------------------
+  // (E) Horizontal pointer drag logic
+  // -------------------------------------------------------------------------
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
     if (e.button !== 0) return;
-    clickedElementRef.current = e.target as HTMLElement;
+
     setPointerDown(true);
     isDraggingRef.current = false;
-    setDragAxis("");
     setStartX(e.clientX);
     setStartY(e.clientY);
     setScrollLeft(e.currentTarget.scrollLeft);
 
-    // For vertical scroll fallback
     const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
     pageScrollTopRef.current = pageContent?.scrollTop ?? 0;
+
+    e.currentTarget.setPointerCapture(e.pointerId);
   }
 
   function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal || !pointerDown) return;
+
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
+    const distance = Math.abs(dx) + Math.abs(dy);
 
-    // Lock axis after crossing DRAG_THRESHOLD
-    if (!isDraggingRef.current) {
-      if (Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD) {
-        isDraggingRef.current = true;
-        setDragAxis(Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical");
-      }
-      return;
+    // If we exceed threshold => dragging
+    if (!isDraggingRef.current && distance > DRAG_THRESHOLD) {
+      isDraggingRef.current = true;
     }
 
-    // Once locked in, we do manual scrolling in that axis
-    e.preventDefault();
-    if (dragAxis === "horizontal") {
-      e.currentTarget.scrollLeft = scrollLeft - dx;
-    } else if (dragAxis === "vertical") {
-      // fallback: scroll the main page
-      const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
-      if (pageContent) {
-        pageContent.scrollTop = pageScrollTopRef.current - dy;
+    // If dragging => decide axis
+    if (isDraggingRef.current) {
+      if (Math.abs(dx) > Math.abs(dy)) {
+        // mostly horizontal
+        e.preventDefault();
+        e.currentTarget.scrollLeft = scrollLeft - dx;
       }
+      // else => let vertical pass
     }
   }
 
   function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
+
+    // If not dragged => treat as a tap
     if (!isDraggingRef.current) {
-      // No real drag => simulate click
-      const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
-      let link: HTMLElement | null = null;
-      if (el.parentElement?.tagName === "A") {
-        link = el.parentElement as HTMLElement;
-      } else {
-        link = el.querySelector("a");
-      }
-      link?.click();
-    } else {
-      if (dragAxis === "horizontal") {
-        e.currentTarget.releasePointerCapture(e.pointerId);
+      const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      console.log(el);
+      if (el) {
+        // If user directly tapped an <a>, let normal browser click happen
+        if (el.tagName === "A") {
+          // Do nothing => default link navigation
+        } else {
+          // Otherwise, see if there's an <a> inside
+          let link = el.querySelector("a") as HTMLAnchorElement | null;
+
+          if (!link) {
+            // If not, see if there's a parent <a>
+            link = el.closest("a") as HTMLAnchorElement | null;
+          }
+
+          if (link) link.click();
+        }
       }
     }
+
+    e.currentTarget.releasePointerCapture(e.pointerId);
     setPointerDown(false);
     isDraggingRef.current = false;
-    setDragAxis("");
-    clickedElementRef.current = null;
   }
 
   function handlePointerLeave(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
-    if (pointerDown && isDraggingRef.current && dragAxis === "horizontal") {
+    if (pointerDown && isDraggingRef.current) {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
     setPointerDown(false);
     isDraggingRef.current = false;
-    setDragAxis("");
-    clickedElementRef.current = null;
   }
 
   function handleDragStart(e: React.DragEvent) {
-    // Prevent default browser image-drag
-    e.preventDefault();
+    e.preventDefault(); // prevent image-drag
   }
 
-  // ------------------ VERTICAL SCROLL LOGIC VIA WINDOW ------------------
+  // -------------------------------------------------------------------------
+  // (F) Vertical: watch window scroll; doc click but only if inside scroller
+  // -------------------------------------------------------------------------
   useEffect(() => {
     if (!horizontal) {
       const handleWindowScroll = () => {
         const scrollY = window.scrollY;
         const viewportHeight = window.innerHeight;
         const fullHeight = document.documentElement.scrollHeight;
-
         if (fullHeight - (scrollY + viewportHeight) < 300) {
-          void fetchMore(); // always call the stable fetchMore
+          void fetchMore();
         }
       };
 
       window.addEventListener("scroll", handleWindowScroll);
+
+      // Only intercept clicks that occur inside the scroller.
+      const handleDocClick = (e: MouseEvent) => {
+        if (!carouselRef.current) return;
+
+        // Figure out where the user clicked
+        const clickedEl = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+        if (!clickedEl) return;
+
+        // If the scroller doesn't contain the clickedEl => do nothing
+        if (!carouselRef.current.contains(clickedEl)) {
+          return; // let normal links (like navbar) work
+        }
+
+        // Within scroller => see if there's an anchor
+        if (clickedEl.tagName === "A") {
+          // If directly an <a>, let normal link happen
+          return;
+        }
+        // otherwise, find a nested <a>
+        const link = clickedEl.querySelector("a");
+        if (link) {
+          // Force the link click
+          document.removeEventListener("click", handleDocClick);
+          link.click();
+        }
+      };
+
+      document.addEventListener("click", handleDocClick);
+
       return () => {
         window.removeEventListener("scroll", handleWindowScroll);
+        document.removeEventListener("click", handleDocClick);
       };
     }
-  }, [horizontal, hasMore, isFetching, productList.length, maximumItems, fetchMore]);
+  }, [horizontal, fetchMore]);
 
+  // -------------------------------------------------------------------------
+  // RENDER
+  // -------------------------------------------------------------------------
   return (
     <div className="relative flex w-full flex-col items-center">
       {horizontal ? (
-        // -------------------- HORIZONTAL MODE --------------------
+        /* ================== HORIZONTAL MODE ================== */
         <>
           <div
             className="relative w-full overflow-hidden"
@@ -302,13 +379,13 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
               onPointerUp={handlePointerUp}
               onPointerLeave={handlePointerLeave}
               onDragStart={handleDragStart}
-              className="no-scrollbar pointer-events-auto relative m-0 flex select-none overflow-x-scroll px-10"
               style={{
-                cursor: pointerDown ? "grabbing" : "grab",
                 userSelect: "none",
                 width: "100%"
               }}
+              className="no-scrollbar pointer-events-auto relative m-0 flex select-none overflow-x-scroll px-10"
             >
+              {/* Render products */}
               {productList.map(item => (
                 <div
                   key={String(item._id)}
@@ -326,6 +403,7 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
                 </div>
               ))}
 
+              {/* Loading placeholder */}
               {loading && (
                 <div
                   className="carousel-item inline-block max-h-[200px] min-h-[200px]
@@ -338,10 +416,11 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
                 </div>
               )}
 
+              {/* If we're at max, show "View More" link */}
               {productList.length >= maximumItems && (
                 <Link to={`/browse/${sortToPath(searchQuery)}`} className="pointer-events-auto">
                   <div
-                    className="pointer-events-auto mx-2 flex min-h-[200px] min-w-[200px]
+                    className="carousel-item pointer-events-auto mx-2 flex min-h-[200px] min-w-[200px]
                                items-center justify-center border border-gray-300 p-4 text-gray-600
                                lg:min-h-[400px] lg:min-w-[400px]"
                   >
@@ -369,10 +448,11 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
           </button>
         </>
       ) : (
-        // --------------------- VERTICAL MODE ---------------------
-        <div className="grid w-full grid-cols-3 gap-4 p-4 pb-6 pt-5">
+        /* ================== VERTICAL MODE ================== */
+        <div className="grid w-full grid-cols-3 gap-4 p-4 pb-6 pt-5" ref={carouselRef}>
+          {/* Render products */}
           {productList.map(item => (
-            <div key={String(item._id)}>
+            <div key={String(item._id)} className="carousel-item pointer-events-auto">
               <ProductCard
                 name={item.name}
                 id={item._id as ObjectId}
@@ -383,16 +463,18 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
             </div>
           ))}
 
+          {/* Loading placeholder */}
           {loading && (
-            <div className="h-40 w-full animate-pulse border border-gray-300 bg-gray-100 text-center leading-[10rem] text-gray-500">
+            <div className="carousel-item h-40 w-full animate-pulse border border-gray-300 bg-gray-100 text-center leading-[10rem] text-gray-500">
               Loading...
             </div>
           )}
 
+          {/* If at max, show "View More" */}
           {productList.length >= maximumItems && (
             <Link
               to={`/browse/${sortToPath(searchQuery)}`}
-              className="flex h-40 items-center justify-center border border-gray-300 text-gray-600"
+              className="carousel-item flex h-40 items-center justify-center border border-gray-300 text-gray-600"
             >
               <p className="text-lg font-semibold">View More</p>
             </Link>
