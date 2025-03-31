@@ -18,14 +18,21 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
 
   if (!(cart instanceof Array) || !cart || !cart.length) return res.json({ error: "Cart is not an array" });
 
-  console.log(cart);
+  // console.log(cart);
   let cartIds = [];
   for (let i = 0; i < cart.length; i++) {
+    // console.log(cart[i]);
     cartIds.push({
       i: cart[i].item && cart[i].item._id ? cart[i].item._id : cart[i]._doc.item._id,
-      q: cart[i].quantity
+      q: cart[i].quantity ? cart[i].quantity : cart[i]._doc.quantity
     });
+
+    if (cartIds[i].i == null) {
+      return res.json({ error: "Item ID is null" });
+    }
   }
+
+  // console.log(cartIds);
 
   if (!total) return res.json({ error: "No total found" });
 
@@ -43,6 +50,8 @@ createPaymentIntentRouter.post("/", async (req: Request, res: Response) => {
     });
 
     if (cartIds) {
+      console.log("Creating payment intent with ", JSON.stringify(cartIds, null, 2));
+
       await stripe.paymentIntents.update(paymentIntent.id, {
         metadata: {
           cart: JSON.stringify(cartIds)

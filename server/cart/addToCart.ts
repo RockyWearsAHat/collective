@@ -16,8 +16,6 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
 
     let cart = req.session.cart ? req.session.cart : [];
 
-    cart = cart.filter(n => n);
-
     let userHasItemInCart: boolean = false;
     let linkId: ObjectId;
     for (let i = 0; i < cart.length; i++) {
@@ -31,8 +29,7 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
-      if (!productLink)
-        return res.json({ message: "error finding product link" });
+      if (!productLink) return res.json({ message: "error finding product link" });
       productLink.quantity += quantity ? quantity : 1;
       await productLink.save();
       cart = [productLink, ...cart.filter(item => item._id != linkId)];
@@ -43,13 +40,14 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
         quantity: quantity ? quantity : 1
       });
 
-      if (!productLink)
-        return res.json({ message: "error adding product to cart" });
+      if (!productLink) return res.json({ message: "error adding product to cart" });
 
       cart = [...cart, productLink];
     }
 
     req.session.cart = cart;
+
+    // console.log("Added item to cart: ", cart);
     req.session.save(() => {
       return res.json("successfully added item to cart");
     });
@@ -61,9 +59,7 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
       return res;
     }
 
-    const loggedInUser = await User.findById(req.session.user!._id).populate(
-      "cart"
-    );
+    const loggedInUser = await User.findById(req.session.user!._id).populate("cart");
 
     if (!loggedInUser) return res.status(404).json("User not found");
 
@@ -80,8 +76,7 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
     let productLink: ICartItem | null;
     if (userHasItemInCart) {
       productLink = await CartItem.findById(linkId!);
-      if (!productLink)
-        return res.json({ message: "error finding product link" });
+      if (!productLink) return res.json({ message: "error finding product link" });
       productLink.quantity += quantity ? quantity : 1;
       productLink.save();
 
@@ -93,8 +88,7 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
         item: productToAdd,
         quantity: quantity ? quantity : 1
       });
-      if (!productLink)
-        return res.json({ message: "error adding product to cart" });
+      if (!productLink) return res.json({ message: "error adding product to cart" });
 
       loggedInUser.cart = [...loggedInUser.cart, productLink._id];
       await loggedInUser.save();
@@ -102,7 +96,15 @@ addToCartRouter.post("/", async (req: Request, res: Response) => {
 
     const updatedUser = await User.findById(req.session.user?._id);
     if (!updatedUser) return res.json({ message: "error finding user" });
+
+    let foundCart = await CartItem.find({
+      _id: { $in: updatedUser.cart }
+    });
+
+    req.session.cart = foundCart;
     req.session.user = updatedUser;
+
+    // console.log("Req.session.cart set to: ", foundCart);
     req.session.save(() => {
       return res.json("successfully added item to cart");
     });

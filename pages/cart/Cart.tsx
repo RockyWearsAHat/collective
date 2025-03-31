@@ -23,10 +23,16 @@ export const Cart: FC = () => {
   const [gettingCheckoutPage, _setGettingCheckoutPage] = useState<boolean>(false);
 
   const { fn: getCart } = useMutation({
-    url: "/api/cart/getCart",
+    url: "/api/cart/getCart?populateItem=true",
     cache: "no-store",
     method: "POST"
   });
+
+  // const { fn: generateCart } = useMutation({
+  //   url: "/api/cart/generateCart",
+  //   cache: "no-store",
+  //   method: "POST"
+  // });
 
   const { fn: createPaymentIntent, loading: createPaymentLoading } = useMutation({
     url: "/api/checkout/createPaymentIntent",
@@ -73,8 +79,6 @@ export const Cart: FC = () => {
     if (
       //If there are saved options
       localStorage.getItem("checkoutOptions") &&
-      //And the cart has not been updated since the saved options were created
-      JSON.stringify(JSON.parse(localStorage.getItem("checkoutOptions")!).cart) == JSON.stringify(cart) &&
       //And there is a client secret
       JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions.clientSecret
     ) {
@@ -131,6 +135,11 @@ export const Cart: FC = () => {
           customerId: stripeCustomerId || null
         });
 
+        if (updatedPaymentIntent.clearClientSecret) {
+          localStorage.clear();
+          return navigate(updatedPaymentIntent.redirect);
+        }
+
         client_secret = updatedPaymentIntent.paymentIntent.client_secret;
       } else {
         const userLoggedIn = await checkLoggedIn();
@@ -143,6 +152,11 @@ export const Cart: FC = () => {
               cart: cartWithUserInfo,
               customerId: stripeCustomerId || null
             });
+
+            if (updatedPaymentIntent.clearClientSecret) {
+              localStorage.clear();
+              return navigate(updatedPaymentIntent.redirect);
+            }
 
             client_secret = updatedPaymentIntent.paymentIntent.client_secret;
           } else {
@@ -214,15 +228,16 @@ export const Cart: FC = () => {
       let cartItems: any[] = [];
       if (res && res.length > 0) {
         for (let i = 0; i < res.length; i++) {
-          let item = res[i];
+          let item = res[i].item;
+          // console.log(item);
 
-          if (item.item.salePrice) {
-            runningTotal += Number.parseFloat(item.item.salePrice.substring(1)) * item.quantity;
+          if (item.salePrice) {
+            runningTotal += Number.parseFloat(item.salePrice.toString().substring(1)) * res[i].quantity;
           } else {
-            runningTotal += Number.parseFloat(item.item.price.substring(1)) * item.quantity;
+            runningTotal += Number.parseFloat(item.price.toString().substring(1)) * res[i].quantity;
           }
-          cartItems.push(item.item);
-          cartItems[i].quantity = item.quantity;
+          cartItems.push(item);
+          cartItems[i].quantity = res[i].quantity;
         }
 
         setCart(cartItems);
@@ -232,8 +247,67 @@ export const Cart: FC = () => {
     });
   }, [cartUpdated, active]);
 
+  // useEffect(() => {
+  //   if (!localStorage.getItem("checkoutOptions")) return;
+
+  //   const cart = JSON.parse(localStorage.getItem("checkoutOptions") ?? "{cart: null}").cart;
+  //   // console.log(cart);
+
+  //   if (cart == null) return;
+
+  //   let newCart: any[] = [];
+  //   for (let i = 0; i < cart.length; i++) {
+  //     newCart.push({ item: cart[i]._id, quantity: cart[i].quantity });
+  //   }
+
+  //   const handle = (res: any) => {
+  //     runningTotal = 0;
+  //     if (!(res instanceof Array) || res.length == 0) {
+  //       setCart([]);
+
+  //       setCartPrice(`$${runningTotal.toFixed(2)}`);
+
+  //       return;
+  //     }
+
+  //     let cartItems: any[] = [];
+  //     if (res && res.length > 0) {
+  //       for (let i = 0; i < res.length; i++) {
+  //         let item = res[i];
+
+  //         if (item.item.salePrice) {
+  //           runningTotal += Number.parseFloat(item.item.salePrice.substring(1)) * item.quantity;
+  //         } else {
+  //           runningTotal += Number.parseFloat(item.item.price.substring(1)) * item.quantity;
+  //         }
+  //         cartItems.push(item.item);
+  //         cartItems[i].quantity = item.quantity;
+  //       }
+
+  //       const opts = JSON.parse(localStorage.getItem("checkoutOptions")!);
+  //       opts.cart = cartItems;
+  //       localStorage.setItem("checkoutOptions", JSON.stringify(opts));
+
+  //       setCart(cartItems);
+
+  //       setCartPrice(`$${runningTotal.toFixed(2)}`);
+  //     }
+  //   };
+
+  //   getCart().then(res => {
+  //     console.log(res);
+  //     if (!(res instanceof Array) || res.length == 0)
+  //       generateCart({ cartIdsAndQuantites: newCart }).then(res => handle(res));
+  //     else handle(res);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    if (urlParams.get("payment_intent_client_secret") && localStorage.getItem("checkoutOptions")) {
+    // console.log(
+    //   urlParams.get("payment_intent_client_secret"),
+    //   JSON.parse(localStorage.getItem("checkoutOptions") || "{}")
+    // );
+    if (urlParams.get("payment_intent_client_secret") != "" && localStorage.getItem("checkoutOptions")) {
       if (
         JSON.parse(localStorage.getItem("checkoutOptions")!).checkoutOptions.clientSecret ==
         urlParams.get("payment_intent_client_secret")
@@ -252,11 +326,15 @@ export const Cart: FC = () => {
           if (userLoggedIn) {
             // console.log("writing client secret to user");
             await writeCheckoutSecretToUser({ checkoutClientSecret: null });
-          } else {
-            await clearSessionCart();
           }
-          setActive("itemAddedToCart");
+
+          await clearSessionCart();
+
+          setCart([]);
+          setCartUpdated(true);
+          setActive("/cart");
           navigate("/cart");
+          setCartPrice(0);
         });
       }
     }

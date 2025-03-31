@@ -5,7 +5,7 @@ import { masterAPIRouter } from "./masterAPIRouter";
 import cluster from "cluster";
 import { cpus } from "os";
 
-import cors from "cors";
+// import cors from "cors";
 
 //Import connection code from mongoose, self contained so no need to call it, just handle errors and log when server opens
 import { db } from "../db/connectToMongo";
@@ -23,10 +23,10 @@ import { sessionTimeout } from "./serverConfig";
 //Set up session store for cookies and storing JWTs and auth
 declare module "express-session" {
   export interface SessionData {
-    token: string;
+    token: string | undefined;
     user: Partial<IUser> | undefined;
-    userPFP: string;
-    cart: ICartItem[];
+    userPFP: string | undefined;
+    cart?: ICartItem[] | undefined;
   }
 }
 import expressSession from "express-session";
@@ -67,7 +67,7 @@ app.use(
 );
 
 //Use Cors
-app.use(cors({ origin: true, credentials: true }));
+// app.use(cors({ origin: true, credentials: true }));
 
 //Parse JSON and FormData
 app.use(express.json());
@@ -78,7 +78,7 @@ app.use("/api", masterAPIRouter);
 
 if (process.env !== undefined && process.env["VITE"]) {
   //If running in dev, just run the server from vite, vite plugin to run express is used (SEE vite.config.ts)
-  // console.log("Running in dev mode");
+  console.log("Running in dev mode");
 } else {
   //If not running in dev, check how many threads and spawn workers
   if (cluster.isPrimary) {
@@ -90,9 +90,7 @@ if (process.env !== undefined && process.env["VITE"]) {
     }
 
     cluster.on("exit", (worker, code, signal) => {
-      console.log(
-        `Worker ${worker.process.pid} died with code: ${code}, and signal: ${signal}`
-      );
+      console.log(`Worker ${worker.process.pid} died with code: ${code}, and signal: ${signal}`);
       console.log("Starting a new worker");
       cluster.fork();
     });
@@ -108,11 +106,7 @@ if (process.env !== undefined && process.env["VITE"]) {
       //If running on netlify, server is ran via lamda functions created by serverless-http
       if (!process.env.NETLIFY) {
         app.listen(process.env["PORT"] ? process.env["PORT"] : 4000, () => {
-          console.log(
-            !process.env["PORT"]
-              ? "Server started on http://localhost:4000"
-              : ""
-          );
+          console.log(!process.env["PORT"] ? "Server started on http://localhost:4000" : "");
         });
       }
     }

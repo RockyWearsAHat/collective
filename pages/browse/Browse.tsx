@@ -3,27 +3,48 @@ import { useParams } from "react-router-dom";
 import { ActiveContext } from "../contextProvider";
 import { Helmet } from "react-helmet-async";
 import { ImageScroller } from "../../components/imageScroller/imageScroller";
+import { SortOrder } from "mongoose";
+
+export const initialSearchQuery = (path?: string) => {
+  switch (path) {
+    case "popular":
+      return { timesPurchased: -1 };
+    case "money":
+      return { price: -1 };
+    case "recent":
+      return { dateAdded: -1 };
+    default:
+      return {};
+  }
+};
+
+export const sortToPath = (
+  sort?:
+    | string
+    | {
+        [key: string]: SortOrder | { $meta: any };
+      }
+    | [string, SortOrder][]
+    | null
+) => {
+  switch (JSON.stringify(sort)) {
+    case JSON.stringify({ timesPurchased: -1 }):
+      return "popular";
+    case JSON.stringify({ price: -1 }):
+      return "money";
+    case JSON.stringify({ dateAdded: -1 }):
+      return "recent";
+    default:
+      return "";
+  }
+};
 
 export const Browse: FC = () => {
   const { sort } = useParams();
   const { setActive } = useContext(ActiveContext);
 
-  // Compute the initial search query based on the sort parameter
-  const initialSearchQuery = () => {
-    switch (sort) {
-      case "popular":
-        return { timesAddedToCart: -1 };
-      case "money":
-        return { price: -1 };
-      case "recent":
-        return { dateAdded: -1 };
-      default:
-        return {};
-    }
-  };
-
   // Initialize state with the computed value
-  const [searchQuery, setSearchQuery] = useState<any>(initialSearchQuery());
+  const [searchQuery, setSearchQuery] = useState<any>(initialSearchQuery(sort));
 
   useEffect(() => {
     setActive("browse");
