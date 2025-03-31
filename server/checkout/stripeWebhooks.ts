@@ -2,11 +2,11 @@ import { Router, Request, Response } from "express";
 import { Item } from "../../db/models/item";
 import { User } from "../../db/models/user";
 import Stripe from "stripe";
-import { sendEmail } from "../emails/sendEmail";
-import ReactDOMServer from "react-dom/server";
-import { OrderEmail } from "../../emails/OrderEmail";
-import { CartItem, ICartItem } from "../../db/models/cartItem";
-import { ObjectId } from "mongoose";
+// import { sendEmail } from "../emails/sendEmail";
+// import ReactDOMServer from "react-dom/server";
+// import { OrderEmail } from "../../emails/OrderEmail";
+// import { CartItem, ICartItem } from "../../db/models/cartItem";
+// import { ObjectId } from "mongoose";
 // import { CartItem } from "../../db/models/cartItem";
 
 //In percent, 0-100
