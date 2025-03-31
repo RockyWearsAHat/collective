@@ -54,10 +54,10 @@ export const uploadToS3 = async (file: any, userId: ObjectId) => {
   }
 };
 
-const getAllUsersImages = async (userId: ObjectId) => {
+const getAllImages = async (id: ObjectId) => {
   const command = new ListObjectsV2Command({
     Bucket: bucket,
-    Prefix: userId.toString()
+    Prefix: id.toString()
   });
 
   let { Contents = [] } = await s3.send(command);
@@ -75,16 +75,15 @@ export const getUserPFP = async (userId: ObjectId) => {
       return `/defaultPFPs/default${foundUser.pfpId}.jpg`;
     }
 
-    const imageKeys = await getAllUsersImages(userId);
+    const imageKeys = await getAllImages(userId);
 
     if (!imageKeys.length) return { error: "No images found" };
 
-    let currentKey: Array<string | undefined> | string | undefined =
-      await Promise.all(
-        imageKeys.filter(key => {
-          if (foundUser?.pfpId === key) return key;
-        })
-      );
+    let currentKey: Array<string | undefined> | string | undefined = await Promise.all(
+      imageKeys.filter(key => {
+        if (foundUser?.pfpId === key) return key;
+      })
+    );
 
     if (currentKey.length > 1)
       return {
@@ -111,14 +110,7 @@ export const getUserPFP = async (userId: ObjectId) => {
   }
 };
 
-export const uploadProductImagesToS3 = async (
-  files: any[],
-  itemId: ObjectId
-) => {
-  const item = await Item.findById(itemId);
-
-  if (!item) return;
-
+export const uploadProductImagesToS3 = async (files: any[], itemId: ObjectId): Promise<any> => {
   files.forEach(async file => {
     const key = `${itemId.toString()}/${Date.now()}-${file.originalname.replaceAll("/", "")}`;
 
@@ -137,4 +129,33 @@ export const uploadProductImagesToS3 = async (
       return { error };
     }
   });
+};
+
+export const getProductImages = async (productId: ObjectId, imagesToGet?: Number) => {
+  try {
+    const foundProduct = await Item.findById(productId);
+
+    if (!foundProduct) return { error: "Product not found" };
+
+    const imageKeys = await getAllImages(productId);
+
+    if (!imageKeys.length) return { error: "No images found" };
+
+    let currentKey: Array<string | undefined> | string | undefined = await Promise.all(
+      imageKeys.filter(key => {
+        if (key && foundProduct?.imageLinks?.includes(key)) return key;
+      })
+    );
+
+    const command = new GetObjectCommand({
+      Bucket: bucket,
+      Key: currentKey[0]
+    });
+
+    //Signed URL expires in 48 hours (prevents unnecessary fetching ideally)
+    return getSignedUrl(s3, command, { expiresIn: 2 * 24 * 60 * 60 });
+  } catch (error) {
+    console.log(error);
+    return { error };
+  }
 };

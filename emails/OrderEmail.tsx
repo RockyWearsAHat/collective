@@ -20,9 +20,7 @@ export function OrderEmail({
 
   return (
     <Html>
-      <h1 style={{ textAlign: "center" }}>
-        Thank you {name} for your purchase from the artist collective!
-      </h1>
+      <h1 style={{ textAlign: "center" }}>Thank you {name} for your purchase from the artist collective!</h1>
       <h2
         style={{
           textAlign: "center",

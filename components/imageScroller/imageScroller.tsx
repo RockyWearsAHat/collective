@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ObjectId, SortOrder } from "mongoose";
 import ProductCard from "../productCard/ProductCard";
 import { useMutation } from "../../hooks/useMutation";
 import { IItem } from "../../db/models/item";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { sortToPath } from "../../pages/browse/Browse";
 
 interface ImageScrollerProps {
   searchQuery?:
@@ -32,41 +33,31 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
   const [itemsMap, setItemsMap] = useState<Map<string, IItem>>(new Map());
   const productList = Array.from(itemsMap.values());
 
-  // Pagination / state
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
-  // Ref for the container
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // For horizontal pointer-drag
+  // For pointer dragging (horizontal only)
   const [pointerDown, setPointerDown] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
+  const [dragAxis, setDragAxis] = useState<"" | "horizontal" | "vertical">("");
   const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-
-  // If user doesn’t drag horizontally, re-dispatch click
+  const pageScrollTopRef = useRef(0);
   const clickedElementRef = useRef<HTMLElement | null>(null);
 
-  // For horizontal measurement
+  // For measuring item width if horizontal
   const [itemWidth, setItemWidth] = useState(400);
 
-  // Our fetch function
   const { fn: searchProducts, loading } = useMutation({
     url: "/api/products/getProducts",
     method: "POST"
   });
 
-  // On mount => fetch initial chunk
-  useEffect(() => {
-    void fetchMore();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /**
-   * fetchMore(): get next chunk if hasMore and not at maximum
-   */
-  async function fetchMore() {
+  // 1. Wrap fetchMore in useCallback so it’s stable:
+  const fetchMore = useCallback(async () => {
     if (!hasMore || isFetching || productList.length >= maximumItems) return;
 
     setIsFetching(true);
@@ -78,58 +69,67 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
       });
 
       if (!Array.isArray(serverData) || serverData.length === 0) {
-        // The server returned zero => no more
         setHasMore(false);
         return;
       }
 
-      // Merge items
+      // Append new items
       const newMap = new Map(itemsMap);
       for (const item of serverData) {
-        const idStr = (item._id as ObjectId).toString();
+        const idStr = String(item._id); // ensure a unique string key
         newMap.set(idStr, item);
       }
-
-      // If we've reached maximum
+      // If we hit maximum
       if (newMap.size >= maximumItems) {
         setHasMore(false);
       }
-
       setItemsMap(newMap);
     } catch (err) {
+      console.error(err);
       setHasMore(false);
     } finally {
       setIsFetching(false);
     }
-  }
+  }, [hasMore, isFetching, productList.length, maximumItems, searchProducts, searchQuery, chunkSize, itemsMap]);
 
-  // Measure item width for horizontal
+  // 2. Fetch initial chunk on mount
+  useEffect(() => {
+    void fetchMore(); // fetch the first batch
+  }, [fetchMore]);
+
+  // ------------------- HORIZONTAL SCROLL LOGIC -------------------
   useEffect(() => {
     if (!horizontal || !carouselRef.current) return;
     const firstItem = carouselRef.current.querySelector<HTMLElement>(".carousel-item");
     if (firstItem) {
-      const rect = firstItem.getBoundingClientRect();
-      setItemWidth(rect.width + 16); // e.g. "mx-2" => 16px margin
+      const style = window.getComputedStyle(firstItem);
+      const marginLeft = parseFloat(style.marginLeft) || 0;
+      const marginRight = parseFloat(style.marginRight) || 0;
+      let totalWidth = firstItem.offsetWidth;
+      totalWidth += marginLeft + marginRight;
+      setItemWidth(totalWidth);
     }
   }, [productList, horizontal]);
 
-  // If horizontal => block two-finger nav
+  // For horizontal trackpad scroll
   useEffect(() => {
     if (!horizontal) return;
     const el = carouselRef.current;
     if (!el) return;
 
     function handleWheel(e: WheelEvent) {
-      // only horizontal movement
-      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-      const el = carouselRef.current;
-      if (!el) return;
+      // We want to allow vertical scroll of the page, but do a custom horizontal
+      const scroller = e.currentTarget as HTMLElement;
+      const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
 
-      const { scrollLeft, clientWidth, scrollWidth } = el;
-      const atLeftEdge = scrollLeft <= 0 && e.deltaX < 0;
-      const atRightEdge = scrollLeft + clientWidth >= scrollWidth && e.deltaX > 0;
-      if (atLeftEdge || atRightEdge) {
+      // vertical => pass to page
+      if (pageContent && e.deltaY !== 0) {
+        pageContent.scrollTop += e.deltaY;
+      }
+      // horizontal => block default & manually move scroller
+      if (e.deltaX !== 0) {
         e.preventDefault();
+        scroller.scrollLeft += e.deltaX;
       }
     }
 
@@ -137,45 +137,26 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     return () => el.removeEventListener("wheel", handleWheel);
   }, [horizontal]);
 
-  /**
-   * handleScroll:
-   * If horizontal => check near the right edge
-   * If vertical => check near the bottom
-   */
-  function handleScroll(e: React.UIEvent<HTMLDivElement>) {
+  // Horizontal scroll event for infinite load
+  function handleHorizontalScroll(e: React.UIEvent<HTMLDivElement>) {
     const el = e.currentTarget;
-    if (horizontal) {
-      const pos = el.scrollLeft + el.clientWidth;
-      const max = el.scrollWidth;
-      // If near right edge => fetch more
-      if (max - pos < itemWidth) {
-        void fetchMore();
-      }
-    } else {
-      const pos = el.scrollTop + el.clientHeight;
-      const max = el.scrollHeight;
-      // If near bottom => fetch more
-      if (max - pos < 300) {
-        void fetchMore();
-      }
+    const pos = el.scrollLeft + el.clientWidth;
+    const max = el.scrollWidth;
+    // If near the right edge => fetch
+    if (max - pos < itemWidth) {
+      void fetchMore();
     }
   }
 
-  // Next => skip partial
   function handleNextClick() {
     if (!carouselRef.current || !horizontal) return;
     const el = carouselRef.current;
-    const currentScroll = el.scrollLeft;
-    const fraction = currentScroll / itemWidth;
-
-    let nextIndex = Math.ceil(fraction);
-    if (Number.isInteger(fraction)) {
-      nextIndex = fraction + 1;
-    }
+    const currentIndex = Math.round(el.scrollLeft / itemWidth);
+    const nextIndex = currentIndex + 1;
     const finalStop = Math.min(nextIndex * itemWidth, el.scrollWidth - el.clientWidth);
     el.scrollTo({ left: finalStop, behavior: "smooth" });
 
-    // Possibly fetch
+    // Preload next chunk if we're near the right edge
     setTimeout(() => {
       const pos = el.scrollLeft + el.clientWidth;
       const max = el.scrollWidth;
@@ -185,117 +166,156 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
     }, 300);
   }
 
-  // Prev => skip partial
   function handlePrevClick() {
     if (!carouselRef.current || !horizontal) return;
     const el = carouselRef.current;
-    const fraction = el.scrollLeft / itemWidth;
-    let prevIndex = Math.floor(fraction);
-    if (Number.isInteger(fraction)) {
-      prevIndex = fraction - 1;
-    }
-    if (prevIndex < 0) prevIndex = 0;
-    el.scrollTo({ left: prevIndex * itemWidth, behavior: "smooth" });
+    const currentIndex = Math.round(el.scrollLeft / itemWidth);
+    const prevIndex = Math.max(currentIndex - 1, 0);
+    const finalStop = Math.max(prevIndex * itemWidth, 0);
+    el.scrollTo({ left: finalStop, behavior: "smooth" });
   }
 
-  // Horizontal pointer drag
+  // Horizontal pointer/drag logic
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
     if (e.button !== 0) return;
     clickedElementRef.current = e.target as HTMLElement;
     setPointerDown(true);
-    setIsDragging(false);
+    isDraggingRef.current = false;
+    setDragAxis("");
     setStartX(e.clientX);
+    setStartY(e.clientY);
     setScrollLeft(e.currentTarget.scrollLeft);
-  }
-  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
-    if (!horizontal) return;
-    if (!pointerDown) return;
 
-    const dist = e.clientX - startX;
-    if (!isDragging && Math.abs(dist) > DRAG_THRESHOLD) {
-      setIsDragging(true);
-      e.currentTarget.setPointerCapture(e.pointerId);
+    // For vertical scroll fallback
+    const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
+    pageScrollTopRef.current = pageContent?.scrollTop ?? 0;
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!horizontal || !pointerDown) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // Lock axis after crossing DRAG_THRESHOLD
+    if (!isDraggingRef.current) {
+      if (Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD) {
+        isDraggingRef.current = true;
+        setDragAxis(Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical");
+      }
+      return;
     }
-    if (isDragging) {
-      e.preventDefault();
-      e.currentTarget.scrollLeft = scrollLeft - dist;
+
+    // Once locked in, we do manual scrolling in that axis
+    e.preventDefault();
+    if (dragAxis === "horizontal") {
+      e.currentTarget.scrollLeft = scrollLeft - dx;
+    } else if (dragAxis === "vertical") {
+      // fallback: scroll the main page
+      const pageContent = document.getElementById("root")?.children[1] as HTMLElement | null;
+      if (pageContent) {
+        pageContent.scrollTop = pageScrollTopRef.current - dy;
+      }
     }
   }
+
   function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
-    if (isDragging) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
+    if (!isDraggingRef.current) {
+      // No real drag => simulate click
+      const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
+      let link: HTMLElement | null = null;
+      if (el.parentElement?.tagName === "A") {
+        link = el.parentElement as HTMLElement;
+      } else {
+        link = el.querySelector("a");
+      }
+      link?.click();
     } else {
-      // no drag => pass click
-      const el = clickedElementRef.current;
-      if (el) {
-        const clickEvent = new MouseEvent("click", {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        el.dispatchEvent(clickEvent);
+      if (dragAxis === "horizontal") {
+        e.currentTarget.releasePointerCapture(e.pointerId);
       }
     }
     setPointerDown(false);
-    setIsDragging(false);
+    isDraggingRef.current = false;
+    setDragAxis("");
     clickedElementRef.current = null;
   }
+
   function handlePointerLeave(e: React.PointerEvent<HTMLDivElement>) {
     if (!horizontal) return;
-    if (pointerDown && isDragging) {
+    if (pointerDown && isDraggingRef.current && dragAxis === "horizontal") {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
     setPointerDown(false);
-    setIsDragging(false);
+    isDraggingRef.current = false;
+    setDragAxis("");
     clickedElementRef.current = null;
   }
+
   function handleDragStart(e: React.DragEvent) {
+    // Prevent default browser image-drag
     e.preventDefault();
   }
 
-  // Rendering
+  // ------------------ VERTICAL SCROLL LOGIC VIA WINDOW ------------------
+  useEffect(() => {
+    if (!horizontal) {
+      const handleWindowScroll = () => {
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const fullHeight = document.documentElement.scrollHeight;
+
+        if (fullHeight - (scrollY + viewportHeight) < 300) {
+          void fetchMore(); // always call the stable fetchMore
+        }
+      };
+
+      window.addEventListener("scroll", handleWindowScroll);
+      return () => {
+        window.removeEventListener("scroll", handleWindowScroll);
+      };
+    }
+  }, [horizontal, hasMore, isFetching, productList.length, maximumItems, fetchMore]);
+
   return (
     <div className="relative flex w-full flex-col items-center">
       {horizontal ? (
-        /* HORIZONTAL MODE */
-        <div
-          className="relative w-full overflow-hidden"
-          style={{
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
-            maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
-            WebkitMaskSize: "100% 100%",
-            maskSize: "100% 100%",
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat"
-          }}
-        >
+        // -------------------- HORIZONTAL MODE --------------------
+        <>
           <div
-            ref={carouselRef}
-            onScroll={handleScroll}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerLeave}
-            onDragStart={handleDragStart}
-            className="no-scrollbar relative m-0 flex h-[500px] select-none overflow-x-scroll px-10"
+            className="relative w-full overflow-hidden"
             style={{
-              touchAction: "pan-x",
-              overscrollBehaviorX: "none",
-              overscrollBehaviorY: "none",
-              cursor: isDragging ? "grabbing" : "grab",
-              userSelect: "none",
-              width: "100%"
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+              maskImage: "linear-gradient(to right, transparent 1%, black 2%, black 98%, transparent 99%)",
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat"
             }}
           >
-            {productList.map(item => (
-              <div
-                key={(item._id as ObjectId).toString()}
-                className="carousel-item mx-2 inline-block min-h-[400px] min-w-[400px]"
-                style={{ pointerEvents: "none" }}
-              >
-                <div style={{ pointerEvents: "auto" }}>
+            <div
+              ref={carouselRef}
+              onScroll={handleHorizontalScroll}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerLeave}
+              onDragStart={handleDragStart}
+              className="no-scrollbar pointer-events-auto relative m-0 flex select-none overflow-x-scroll px-10"
+              style={{
+                cursor: pointerDown ? "grabbing" : "grab",
+                userSelect: "none",
+                width: "100%"
+              }}
+            >
+              {productList.map(item => (
+                <div
+                  key={String(item._id)}
+                  className="carousel-item pointer-events-auto mx-2 inline-block aspect-square
+                             max-h-[200px] min-h-[200px] min-w-[200px] max-w-[200px]
+                             lg:max-h-[400px] lg:min-h-[400px] lg:min-w-[400px] lg:max-w-[400px]"
+                >
                   <ProductCard
                     name={item.name}
                     id={item._id as ObjectId}
@@ -304,31 +324,32 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
                     salePrice={item.salePrice as string}
                   />
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {loading && (
-              <div className="carousel-item mx-2 inline-block min-h-[400px] min-w-[400px]">
+              {loading && (
                 <div
-                  className="flex h-full w-full animate-pulse items-center
-      justify-center border border-gray-300 bg-gray-100"
+                  className="carousel-item inline-block max-h-[200px] min-h-[200px]
+                             min-w-[200px] max-w-[200px] px-2
+                             lg:max-h-[400px] lg:min-h-[400px] lg:min-w-[400px] lg:max-w-[400px]"
                 >
-                  <p className="text-gray-500">Loading...</p>
+                  <div className="flex h-full w-full animate-pulse items-center justify-center border border-gray-300 bg-gray-100">
+                    <p className="text-gray-500">Loading...</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {productList.length >= maximumItems && (
-              <Link to="/browse/popular" className="pointer-events-auto">
-                <div
-                  className="pointer-events-auto mx-2
-                    flex min-h-[400px] min-w-[400px] items-center
-                    justify-center border border-gray-300 p-4 text-gray-600"
-                >
-                  <p className="text-lg font-semibold">View More</p>
-                </div>
-              </Link>
-            )}
+              {productList.length >= maximumItems && (
+                <Link to={`/browse/${sortToPath(searchQuery)}`} className="pointer-events-auto">
+                  <div
+                    className="pointer-events-auto mx-2 flex min-h-[200px] min-w-[200px]
+                               items-center justify-center border border-gray-300 p-4 text-gray-600
+                               lg:min-h-[400px] lg:min-w-[400px]"
+                  >
+                    <p className="text-lg font-semibold">View More</p>
+                  </div>
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Prev/Next Buttons */}
@@ -346,16 +367,12 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
           >
             <FaChevronRight />
           </button>
-        </div>
+        </>
       ) : (
-        /* VERTICAL MODE */
-        <div
-          ref={carouselRef}
-          onScroll={handleScroll}
-          className="no-scrollbar grid h-[calc(100vh-2.5rem)] w-full grid-cols-3 gap-4 overflow-y-scroll p-4 pb-6 pt-5"
-        >
+        // --------------------- VERTICAL MODE ---------------------
+        <div className="grid w-full grid-cols-3 gap-4 p-4 pb-6 pt-5">
           {productList.map(item => (
-            <div key={(item._id as ObjectId).toString()} className="carousel-item">
+            <div key={String(item._id)}>
               <ProductCard
                 name={item.name}
                 id={item._id as ObjectId}
@@ -365,6 +382,21 @@ const ImageScroller: React.FC<ImageScrollerProps> = ({
               />
             </div>
           ))}
+
+          {loading && (
+            <div className="h-40 w-full animate-pulse border border-gray-300 bg-gray-100 text-center leading-[10rem] text-gray-500">
+              Loading...
+            </div>
+          )}
+
+          {productList.length >= maximumItems && (
+            <Link
+              to={`/browse/${sortToPath(searchQuery)}`}
+              className="flex h-40 items-center justify-center border border-gray-300 text-gray-600"
+            >
+              <p className="text-lg font-semibold">View More</p>
+            </Link>
+          )}
         </div>
       )}
     </div>

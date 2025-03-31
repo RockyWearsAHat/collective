@@ -5,9 +5,12 @@ import Stripe from "stripe";
 import { sendEmail } from "../emails/sendEmail";
 import ReactDOMServer from "react-dom/server";
 import { OrderEmail } from "../../emails/OrderEmail";
+import { CartItem, ICartItem } from "../../db/models/cartItem";
+import { ObjectId } from "mongoose";
+// import { CartItem } from "../../db/models/cartItem";
 
 //In percent, 0-100
-const artistCollectiveCut = 80;
+const artistCollectiveCut = 10;
 
 export const stripeWebhookRouter = Router();
 
@@ -16,25 +19,28 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
   const event = req.body;
 
-  console.log(event);
+  // console.log(event);
 
   switch (event.type) {
     //On success
     case "payment_intent.succeeded":
-      console.log("payment intent success");
+      // console.log("payment intent success");
       const paymentIntent = event.data.object;
 
-      const user = await User.findOne({
-        checkoutSecret: paymentIntent.client_secret
-      });
+      //Clear payment intent from user if logged in
+      const userId = paymentIntent.metadata.userId;
+      if (userId) {
+        const user = await User.findOne({
+          checkoutSecret: paymentIntent.client_secret
+        });
 
-      console.log(user);
-
-      if (user) {
-        user.checkoutClientSecret = null;
-        await user.save();
+        if (user) {
+          user.checkoutClientSecret = null;
+          await user.save();
+        }
       }
 
+      //Get all the address/name data
       const {
         city,
         country,
@@ -54,45 +60,28 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
       const firstName: string = fullName.split(" ")[0];
       const lastName: string = fullName.split(" ")[1];
 
-      const cart: any[] = JSON.parse(paymentIntent.metadata.cart);
-
+      //Use them for the time being so no TS errors
       console.log(
         `Address: ${line1}, ${line2 ? `(${line2}), ` : ""}${city} ${state}, ${country}, ${postal_code}, First Name: ${firstName}, Last Name: ${lastName}`
       );
 
-      let cartItems = [];
+      const cart = JSON.parse(paymentIntent.metadata.cart);
 
-      //Calculate artist cut
+      // //Calculate artist cut
       for (let i = 0; i < cart.length; i++) {
-        if (!cart[i].q) {
-          cart[i].q = 1;
-        }
-
-        let item = await Item.findById(cart[i].i).populate("userCreatedId", "stripeId");
-        if (!item) continue; //Should never hit but ts errors??
-
-        console.log(item);
-        item.timesPurchased =
-          Number.isNaN(item.timesPurchased) || item.timesPurchased == null ? 0 : item.timesPurchased;
-        await item.save();
-
-        console.log(item, cart);
-
-        item = await Item.findById(cart[i].i).populate("userCreatedId", "stripeId");
-        if (!item) continue; //Should never hit because item must exist for it to be purchased, but ts errors??
+        let item = await Item.findById(cart[i].i).populate("userCreatedId");
+        if (!item) continue; //Should never hit???? Item must exist for it to be purchased, but ts errors??
 
         item.timesPurchased = item.timesPurchased ? item.timesPurchased + cart[i].q : cart[i].q;
         await item.save();
 
         console.log(item);
 
-        cartItems.push({ item, quantity: cart[i].q });
-
-        if (!item) continue;
-        const artistCut =
+        const artistCutPerItem =
           Number.parseFloat(item.salePrice ? item.salePrice.toString() : item.price.toString()) *
-          Number.parseInt(cart[i].q) *
           (100 - artistCollectiveCut);
+
+        const artistCut = artistCutPerItem * (typeof cart[i].q === "number" ? cart[i].q : 1);
 
         const artistId = (item.userCreatedId as any).stripeId;
 
@@ -102,24 +91,31 @@ stripeWebhookRouter.post("/", async (req: Request, res: Response) => {
           currency: "usd",
           source_transaction: paymentIntent.latest_charge,
           destination: artistId,
-          description: `Payment for ${cart[i].q}x ${item.name} - $${item.salePrice ? item.salePrice : item.price} per`
+          description: `Payment for ${cart[i].q}x ${item.name} - $${(artistCutPerItem / 100).toFixed(2)} per`
         });
       }
+      break;
+    case "StripeCardError":
+      console.log(`A payment error occurred.`);
+      break;
+    case "StripeInvalidRequestError":
+      console.log("An invalid request occurred.");
 
-      //Email user
-      const emailBody = ReactDOMServer.renderToString(
-        OrderEmail({
-          name: "Alex",
-          orderNumber: paymentIntent.id.split("_")[1],
-          cartString: JSON.stringify(cartItems)
-        })
-      );
+      if (req.session.user) {
+        const user = await User.findOne({
+          checkoutSecret: paymentIntent.client_secret
+        });
 
-      sendEmail({
-        to: "alexwaldmann2004@gmail.com",
-        subject: "Testing email",
-        body: emailBody
-      });
+        console.log(user);
+
+        if (user) {
+          user.checkoutClientSecret = null;
+          await user.save();
+        }
+      }
+
+      console.log(req.session);
+      req.session.cart = [];
       break;
     default:
       //Don't handle other event types

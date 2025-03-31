@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "email": "email dev",
-    "dev": "concurrently -r \"npm run build-css\" \"vite --host\" \"npm run stripe\"",
+    "dev": "concurrently -r \"npm run build-css\" \"vite --host\"",
     "stripe": "stripe listen --forward-to localhost:4000/api/checkout/stripeWebhooks",
     "build": "tsc && vite build && rollup -c rollup.config.mjs",
     "build-css": "tailwindcss -c tailwind.config.mjs -i ./pages/tailwindInput.css -o ./pages/tailwindOutput.css --watch",

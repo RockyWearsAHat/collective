@@ -32,11 +32,9 @@ export function Register(): ReactNode {
   const [artistErrorDisplay, setArtistErrorDisplay] = useState<string>("");
 
   const [artistShowPassword, setArtistShowPassword] = useState<boolean>(false);
-  const [artistShowRptPassword, setArtistShowRptPassword] =
-    useState<boolean>(false);
+  const [artistShowRptPassword, setArtistShowRptPassword] = useState<boolean>(false);
 
-  const [customerArtistSignUp, setCustomerArtistSignUp] =
-    useState<boolean>(false);
+  const [customerArtistSignUp, setCustomerArtistSignUp] = useState<boolean>(false);
 
   const {
     loading,
@@ -65,8 +63,7 @@ export function Register(): ReactNode {
     setErrorDisplay("");
     e.preventDefault();
 
-    if (password !== rptPassword)
-      return setErrorDisplay("Passwords do not match");
+    if (password !== rptPassword) return setErrorDisplay("Passwords do not match");
 
     const data = await registerUser({ username, email, password });
 
@@ -87,8 +84,7 @@ export function Register(): ReactNode {
     setArtistErrorDisplay("");
     e.preventDefault();
 
-    if (artistPassword !== artistRptPassword)
-      return setArtistErrorDisplay("Passwords do not match");
+    if (artistPassword !== artistRptPassword) return setArtistErrorDisplay("Passwords do not match");
 
     const data = await registerUser({
       username: artistUsername,
@@ -107,11 +103,7 @@ export function Register(): ReactNode {
 
       const onboardingUrl = await createAccountLink({
         accountId: data.registerRes.stripeId,
-        refreshURL:
-          window.location.protocol +
-          "//" +
-          window.location.host +
-          "/onboarding",
+        refreshURL: window.location.protocol + "//" + window.location.host + "/onboarding",
         returnURL: window.location.protocol + "//" + window.location.host + "/"
       });
 
@@ -130,9 +122,7 @@ export function Register(): ReactNode {
       </Helmet>
       <div className={styles.registerPage__bgDiv__wrapper}>
         <div className={styles.registerPage__bgDiv__image}></div>
-        <div
-          className={styles.registerPage__artistCustomerSelectButton__wrapper}
-        >
+        <div className={styles.registerPage__artistCustomerSelectButton__wrapper}>
           <div
             className={`${styles.registerPage__artistCustomerSelectButton__backgroundDiv} ${customerArtistSignUp ? "translate-x-[100%]" : ""}`}
           ></div>
@@ -158,10 +148,7 @@ export function Register(): ReactNode {
           className={`${styles.registerPage__form_customerArtistWrapper}${customerArtistSignUp ? " " + styles.registerPage__form__customerArtistActive : ""}`}
         >
           {/* Customer sign up form */}
-          <form
-            onSubmit={handleSubmit}
-            className={styles.registerPage__form__wrapper}
-          >
+          <form onSubmit={handleSubmit} className={styles.registerPage__form__wrapper}>
             <h1 className={styles.registerPage__form__title}>Customer</h1>
             <input
               type="text"
@@ -183,9 +170,7 @@ export function Register(): ReactNode {
               id="username"
               className={styles.registerPage__form__usernameInput}
             />
-            <div
-              className={styles.registerPage__form__passwordInputAndEyeWrapper}
-            >
+            <div className={styles.registerPage__form__passwordInputAndEyeWrapper}>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
@@ -197,16 +182,12 @@ export function Register(): ReactNode {
                 className={`${showPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
               <ToggleEye
-                className={
-                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
-                }
+                className={styles.registerPage__form__passwordInput__ToggleVisibilityEye}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
               />
             </div>
-            <div
-              className={styles.registerPage__form__passwordInputAndEyeWrapper}
-            >
+            <div className={styles.registerPage__form__passwordInputAndEyeWrapper}>
               <input
                 type={showRptPassword ? "text" : "password"}
                 placeholder="Repeat Password"
@@ -218,9 +199,7 @@ export function Register(): ReactNode {
                 className={`${showRptPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
               <ToggleEye
-                className={
-                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
-                }
+                className={styles.registerPage__form__passwordInput__ToggleVisibilityEye}
                 showPassword={showRptPassword}
                 setShowPassword={setShowRptPassword}
               />
@@ -228,9 +207,7 @@ export function Register(): ReactNode {
             <div
               className={`${styles.registerPage__form__errorDisplayWrapper} ${errorDisplay !== "" ? styles.registerPage__form__errorDisplayShow : styles.registerPage__form__errorDisplayHidden}`}
             >
-              <p className={styles.registerPage__form__errorDisplayText}>
-                {errorDisplay}
-              </p>
+              <p className={styles.registerPage__form__errorDisplayText}>{errorDisplay}</p>
             </div>
             <button
               type="submit"
@@ -245,10 +222,7 @@ export function Register(): ReactNode {
           </form>
 
           {/* Artist sign up form */}
-          <form
-            onSubmit={handleArtistSubmit}
-            className={styles.registerPage__form__wrapper}
-          >
+          <form onSubmit={handleArtistSubmit} className={styles.registerPage__form__wrapper}>
             <h1 className={styles.registerPage__form__title}>Artist</h1>
             <input
               type="text"
@@ -270,9 +244,7 @@ export function Register(): ReactNode {
               id="artistUsername"
               className={styles.registerPage__form__usernameInput}
             />
-            <div
-              className={styles.registerPage__form__passwordInputAndEyeWrapper}
-            >
+            <div className={styles.registerPage__form__passwordInputAndEyeWrapper}>
               <input
                 type={artistShowPassword ? "text" : "password"}
                 placeholder="Password"
@@ -284,16 +256,12 @@ export function Register(): ReactNode {
                 className={`${showPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
               <ToggleEye
-                className={
-                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
-                }
+                className={styles.registerPage__form__passwordInput__ToggleVisibilityEye}
                 showPassword={artistShowPassword}
                 setShowPassword={setArtistShowPassword}
               />
             </div>
-            <div
-              className={styles.registerPage__form__passwordInputAndEyeWrapper}
-            >
+            <div className={styles.registerPage__form__passwordInputAndEyeWrapper}>
               <input
                 type={artistShowRptPassword ? "text" : "password"}
                 placeholder="Repeat Password"
@@ -305,9 +273,7 @@ export function Register(): ReactNode {
                 className={`${artistShowRptPassword ? "" : styles.registerPage__form__passwordInputShowingPassword + " "}${styles.registerPage__form__passwordInput}`}
               />
               <ToggleEye
-                className={
-                  styles.registerPage__form__passwordInput__ToggleVisibilityEye
-                }
+                className={styles.registerPage__form__passwordInput__ToggleVisibilityEye}
                 showPassword={artistShowRptPassword}
                 setShowPassword={setArtistShowRptPassword}
               />
@@ -315,9 +281,7 @@ export function Register(): ReactNode {
             <div
               className={`${styles.registerPage__form__errorDisplayWrapper} ${errorDisplay !== "" ? styles.registerPage__form__errorDisplayShow : styles.registerPage__form__errorDisplayHidden}`}
             >
-              <p className={styles.registerPage__form__errorDisplayText}>
-                {artistErrorDisplay}
-              </p>
+              <p className={styles.registerPage__form__errorDisplayText}>{artistErrorDisplay}</p>
             </div>
             <button
               type="submit"
