@@ -13,14 +13,13 @@ const upload = multer({ storage });
 const savePFP = async (req: Request, res: Response) => {
   let { file } = req;
 
-  if (!file || !req.session.user?._id)
-    return res.status(400).json({ error: "No file uploaded" });
+  console.log(file);
+
+  if (!file || !req.session.user?._id) return res.status(400).json({ error: "No file uploaded" });
 
   //Convert image to jpeg if not already
   if (file.mimetype != "image/jpeg") {
-    const convertedImageBuffer = await sharp(file.buffer)
-      .toFormat("jpg")
-      .toBuffer();
+    const convertedImageBuffer = await sharp(file.buffer).toFormat("jpg").toBuffer();
 
     // //Load image with new converted data
     file.buffer = convertedImageBuffer;

@@ -12,9 +12,12 @@ const upload = multer({ storage });
 
 const uploadItemImages = async (req: Request, res: Response) => {
   let { file } = req;
+
+  console.log(file, req.body);
+
   const { productId } = req.body;
 
-  if (!file || !productId) return res.status(400).json({ error: "No file uploaded" });
+  if (!file || !productId) return res.status(400).json({ error: "No file uploaded or no product id" });
 
   //Convert image to jpeg if not already
   if (file.mimetype != "image/jpeg") {
@@ -38,4 +41,4 @@ const uploadItemImages = async (req: Request, res: Response) => {
   return res.json({ message: "Product image saved", activeLink: "/productImageUploaded" });
 };
 
-uploadItemImagesRouter.post("/", withAuth, upload.single("newPFP"), uploadItemImages);
+uploadItemImagesRouter.post("/", withAuth, upload.single("newImage"), uploadItemImages);
