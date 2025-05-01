@@ -1,4 +1,5 @@
 import mongoose, { Document, ObjectId, Decimal128 } from "mongoose";
+import { getProductImage } from "../../server/helpers/s3";
 
 export interface IItem extends Document {
   userCreatedId: ObjectId;
@@ -40,6 +41,21 @@ itemSchema.method("toJSON", function () {
     });
   }
   return obj;
+});
+
+itemSchema.virtual("awsLink").get(function () {
+  // If your bucket is publicly accessible:
+  // "example-bucket" is your bucket name, or you can store it in env vars
+  let links = [];
+  if (this.imageLinks) {
+    for (let i = 0; i < this.imageLinks.length; i++) {
+      const link = getProductImage(this._id as ObjectId, this.imageLinks[i]);
+      console.log(link);
+      links.push(link);
+    }
+    return links;
+  }
+  return ["err"];
 });
 
 const Item = mongoose.model<IItem>("Item", itemSchema);

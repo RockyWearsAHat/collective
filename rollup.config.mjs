@@ -48,27 +48,14 @@ export default [
   {
     input: Object.fromEntries(
       glob
-        .sync(
-          [
-            "*.ts",
-            "api/**/*.ts",
-            "db/*.ts",
-            "db/**/*.ts",
-            "server/**/*.ts",
-            "server/*.ts"
-          ],
-          {
-            ignore: ["**/*.d.ts", "**/*.test.ts"]
-          }
-        )
-        .map(file => [
-          file.slice(0, file.length - extname(file).length),
-          fileURLToPath(new URL(file, import.meta.url))
-        ])
+        .sync(["*.ts", "api/**/*.ts", "db/*.ts", "db/**/*.ts", "server/**/*.ts", "server/*.ts"], {
+          ignore: ["**/*.d.ts", "**/*.test.ts"]
+        })
+        .map(file => [file.slice(0, file.length - extname(file).length), fileURLToPath(new URL(file, import.meta.url))])
     ),
     output: {
       dir: "build",
-      format: "esm",
+      format: "cjs", // was "esm"
       sourcemap: true,
       preserveModules: true,
       preserveModulesRoot: "."

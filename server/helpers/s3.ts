@@ -131,7 +131,7 @@ export const uploadProductImagesToS3 = async (files: any[], itemId: ObjectId): P
   });
 };
 
-export const getProductImages = async (productId: ObjectId, _imagesToGet?: Number) => {
+export const getProductImage = async (productId: ObjectId, imageLink?: string) => {
   try {
     const foundProduct = await Item.findById(productId);
 
@@ -143,7 +143,7 @@ export const getProductImages = async (productId: ObjectId, _imagesToGet?: Numbe
 
     let currentKey: Array<string | undefined> | string | undefined = await Promise.all(
       imageKeys.filter(key => {
-        if (key && foundProduct?.imageLinks?.includes(key)) return key;
+        if (key && foundProduct.imageLinks?.includes(key)) return key;
       })
     );
 
